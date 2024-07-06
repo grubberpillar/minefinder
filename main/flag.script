@@ -1,7 +1,7 @@
 go.property("type", 1)
 
 function init(self)
-	self.theme = "light"
+	self.theme = "dark"
 	if self.type == 1 then
 		sprite.play_flipbook("#sprite", "flag-place-"..self.theme)
 	elseif self.type == 2 then
