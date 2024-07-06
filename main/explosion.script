@@ -1,0 +1,34 @@
+go.property("wick", false)
+
+function init(self)
+	if self.wick then
+		sprite.play_flipbook("#sprite", "explosion-wick")
+		self.anim_num = 0
+	else
+		sprite.play_flipbook("#sprite", "explosion-blink")
+		self.anim_num = 1
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("animation_done") then
+		if self.anim_num < 2 then
+			sprite.play_flipbook("#sprite", "explosion-blink")
+			self.anim_num = self.anim_num + 1
+		elseif self.anim_num == 2 then
+			sprite.play_flipbook("#sprite", "explosion-boom")
+			self.anim_num = self.anim_num + 1
+		elseif self.anim_num < 10 then
+			sprite.play_flipbook("#sprite", "explosion-flash")
+			self.anim_num = self.anim_num + 1
+		elseif self.anim_num == 10 then
+			sprite.play_flipbook("#sprite", "explosion-fade")
+			self.anim_num = self.anim_num + 1
+		else
+			msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
+			go.delete()
+		end
+	elseif message_id == hash("kill") then
+		go.delete()
+	end
+end

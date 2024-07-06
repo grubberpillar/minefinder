@@ -1,0 +1,22 @@
+go.property("tile", 11)
+
+function init(self)
+	self.theme = "light"
+	sprite.play_flipbook("#sprite", "tileflip-"..self.theme.."-"..self.tile)
+	tilemap.set_tile("/zoom#board", "layer1", (go.get_position().x-24)/48+1, (go.get_position().y-24)/48+1, 16)
+	self.anim = 0
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("animation_done") then
+		if self.anim == 0 then 
+			sprite.play_flipbook("#sprite", "tileflip-light-end")
+			self.anim = self.anim + 1
+		else
+			tilemap.set_tile("/zoom#board", "layer1", (go.get_position().x-24)/48+1, (go.get_position().y-24)/48+1, 11)
+			msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
+			go.delete()
+		end
+	end
+end
+

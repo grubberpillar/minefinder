@@ -1,0 +1,23 @@
+go.property("type", 1)
+
+function init(self)
+	self.theme = "light"
+	if self.type == 1 then
+		sprite.play_flipbook("#sprite", "flag-place-"..self.theme)
+	elseif self.type == 2 then
+		sprite.play_flipbook("#sprite", "flag-remove")
+	elseif self.type == 3 then
+		sprite.play_flipbook("#sprite", "flag-correct")
+	elseif self.type == 4 then
+		sprite.play_flipbook("#sprite", "flag-incorrect")
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("animation_done") then
+		msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
+		go.delete()
+	elseif message_id == hash("kill") then
+		go.delete()
+	end
+end

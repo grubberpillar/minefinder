@@ -1,0 +1,150 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	gui.set_color(gui.get_node("retry-select"), vmath.vector4(0, 0, 0, 0))
+	self.instances = {}
+	self.seconds = 0
+	self.seconds_storage = -1
+	self.minutes = 0
+	self.ticking = false
+	self.anim_s_state = 9
+	self.anims_on = true
+	self.resettable = true
+end
+
+function update(self, dt)
+	if self.ticking then
+		self.seconds = self.seconds + dt
+	elseif gui.get_text(gui.get_node("timer")) ~= hash("TIME: -:--") and self.seconds == 0 and self.minutes == 0 then
+		gui.set_text(gui.get_node("timer"), "TIME: -:--")
+	end
+	if self.seconds > 60 then
+		self.minutes = self.minutes + 1
+		self.seconds = self.seconds - 60
+	end
+	if math.floor(self.seconds) ~= math.floor(self.seconds_storage) and self.ticking then
+		local seconds_txt = ""
+		if self.seconds < 10 then
+			seconds_txt = "0" .. math.floor(self.seconds)
+		else
+			seconds_txt = "" .. math.floor(self.seconds)
+		end
+		gui.set_text(gui.get_node("timer"), "TIME: "..self.minutes..":"..seconds_txt)
+		self.seconds_storage = self.seconds
+	end
+	
+end
+
+function on_message(self, message_id, message)
+	if message_id == hash("add_url") then
+		table.insert(self.instances, message.hash)
+	elseif message_id == hash("remove_url") then
+		for i, k in ipairs(self.instances) do
+			if "url: [" .. k .. "]" == tostring(message.hash) then
+				table.remove(self.instances, i)
+				break
+			end
+			if i == #self.instances then
+				print("nothing removed (" .. tostring(message.hash) .. ")")
+			end
+		end
+	elseif message_id == hash("set_ticking") then
+		self.ticking = message.ticking
+	elseif message_id == hash("reset") then
+		self.seconds = 0
+		self.seconds_storage = -1
+		self.minutes = 0
+		self.ticking = false
+		gui.set_text(gui.get_node("flags-placed"), "FLAGS PLACED: 0")
+	elseif message_id == hash("set_flags") then
+		-- print("update flags!")
+		-- print(message.num)
+		
+		gui.set_text(gui.get_node("flags-placed"), "FLAGS PLACED: "..message.num)
+	elseif message_id == hash("set_resettable") then
+		self.resettable = message.bool
+	end
+end
+
+function on_input(self, action_id, action)
+	local retry = gui.get_node("retry")
+	local retry_s = gui.get_node("retry-select")
+	local anim_sel = gui.get_node("anim-switch-select")
+	local anim_sel_bg = gui.get_node("anim-switch-select-bg")
+	local anim_sel_light = gui.get_node("anim-switch-select-heavy-bg")
+	local more_box = gui.get_node("more-box")
+	local more_down = gui.get_node("more-box-down")
+	local more_lit = gui.get_node("deselect")
+	
+	if gui.pick_node(retry, action.x, action.y) then
+		if gui.get_color(retry_s) ~= vmath.vector4(1, 1, 1, 1) then
+			gui.set_color(retry_s, vmath.vector4(1, 1, 1, 1))
+		end
+		if action_id == hash("touch") and action.pressed and self.resettable then
+			msg.post("/zoom#minefinder", "reset")
+			while self.instances[1] do
+				for i, k in ipairs(self.instances) do
+					msg.post(k, "kill")
+					table.remove(self.instances, i)
+				end
+			end
+		end
+	elseif gui.get_color(retry_s) ~= vmath.vector4(0, 0, 0, 0) then
+		gui.set_color(retry_s, vmath.vector4(0, 0, 0, 0))
+	end
+
+	if gui.pick_node(more_box, action.x, action.y) then
+		if gui.get_color(more_lit) ~= vmath.vector4(1, 1, 1, 1) then
+			gui.set_color(more_lit, vmath.vector4(1, 1, 1, 1))
+		end			
+		if action_id == hash("touch") and action.pressed and gui.get_color(more_down) ~= vmath.vector4(1, 1, 1, 1) then
+			gui.set_color(more_down, vmath.vector4(1, 1, 1, 1))
+		elseif action_id == hash("touch") and action.released and gui.get_color(more_down) ~= vmath.vector4(0, 0, 0, 0) then
+			gui.set_color(more_down, vmath.vector4(0, 0, 0, 0))
+		end 
+	elseif gui.get_color(more_lit) ~= vmath.vector4(0, 0, 0, 0) then
+		gui.set_color(more_lit, vmath.vector4(0, 0, 0, 0))
+	end
+	
+
+	if gui.pick_node(anim_sel, action.x, action.y) then
+		if gui.get_color(anim_sel_bg) ~= vmath.vector4(1, 1, 1, 1) then
+			gui.set_color(anim_sel_bg, vmath.vector4(1, 1, 1, 1))
+		end
+		if action_id == hash("minus") and action.pressed and self.anim_s_state > 1 then
+			self.anim_s_state = self.anim_s_state - 1
+			sprite.play_flipbook("/anim-switch", "switch-"..self.anim_s_state)
+		elseif action_id == hash("plus") and action.pressed and self.anim_s_state < 9 then
+			self.anim_s_state = self.anim_s_state + 1
+			sprite.play_flipbook("/anim-switch", "switch-"..self.anim_s_state)
+		elseif action_id == hash("touch") and action.pressed and gui.get_color(anim_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
+			gui.set_color(anim_sel_light, vmath.vector4(1, 1, 1, 1))
+		elseif action_id == hash("touch") and action.released then
+			if gui.get_color(anim_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
+				gui.set_color(anim_sel_light, vmath.vector4(0, 0, 0, 0))
+			end
+			
+			if self.anim_s_state == 9 then
+				sprite.play_flipbook("/anim-switch", "switch-off")
+				self.anim_s_state = 1
+			elseif self.anim_s_state == 1 then
+				sprite.play_flipbook("/anim-switch", "switch-on")
+				self.anim_s_state = 9
+			elseif self.anim_s_state < 5 then
+				self.anim_s_state = 1
+				sprite.play_flipbook("/anim-switch", "switch-1")
+			else
+				self.anim_s_state = 9
+				sprite.play_flipbook("/anim-switch", "switch-9")
+			end
+			self.anims_on = not self.anims_on
+		end
+	else
+		if gui.get_color(anim_sel_bg) ~= vmath.vector4(0, 0, 0, 0) then
+			gui.set_color(anim_sel_bg, vmath.vector4(0, 0, 0, 0))
+		end
+		if gui.get_color(anim_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
+			gui.set_color(anim_sel_light, vmath.vector4(0, 0, 0, 0))
+		end
+	end
+
+end
