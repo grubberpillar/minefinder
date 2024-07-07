@@ -21,3 +21,6 @@ default_texture_mag_filter = nearest
 [osx]
 app_icon = /assets/bomb-icon.icns
 
+[sprite]
+max_count = 512
+

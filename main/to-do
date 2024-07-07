@@ -1,9 +1,5 @@
-- click/drag off bug switch
-- add bg for flips
-- reset timer + more before tiles flip
-
-
 - work on large/small tiles
-- animation on/off
+- animation options +
+	- display more options
+	- integrate more options
 - change light/dark mode
-- flag is correct/incorrect

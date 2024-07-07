@@ -5,6 +5,14 @@ local function shuffle(tbl)
 	end
 end
 
+local function theme_to_id(theme)
+	if theme == hash("dark") then
+		return 0
+	else 
+		return 1
+	end
+end
+
 local function mines_around(self, row, col)
 	local counter = 0
 	for r = -1, 1 do
@@ -52,6 +60,7 @@ end
 function init(self)
 	self.anims = {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false}
 	msg.post(".", "setup")
+	self.theme = "dark"
 	-- resource.set_texture(path, table, buffer)
 end
 
@@ -66,29 +75,50 @@ function on_message(self, message_id, message, sender)
 		self.wrong_flags = nil
 		self.to_flip = {}
 		self.timer = nil
-		msg.post("/gui#minefinder", "set_resettable", {bool = true})
+		self.anim_skip = false
+		self.resettable = true
 
 		msg.post(".", "acquire_input_focus")
 		math.randomseed(socket.gettime())
 	elseif message_id == hash("reset") then --checkpoint
-		self.mine_locs = nil
-		self.mine_i = nil
-		self.timer = 0
-		self.playing = false
-		msg.post("/gui#minefinder", "reset")
-		msg.post("/gui#minefinder", "set_resettable", {bool = false})
-		for r = self.size+self.offS, 1+self.offS, -1 do
-			for c = 1+self.offS, self.size+self.offS do
-				if tilemap.get_tile("/zoom#board", "layer1", c+1, r+1) ~= 11 or self.anims.flip_bg then
-					table.insert(self.to_flip, {r, c})
+		if self.resettable then
+			msg.post("/gui#minefinder", "purge_instances")
+			self.mine_locs = nil
+			self.mine_i = nil
+			self.timer = 0
+			self.playing = false
+			msg.post("/gui#minefinder", "reset")
+			self.resettable = false
+			for r = self.size+self.offS, 1+self.offS, -1 do
+				for c = 1+self.offS, self.size+self.offS do
+					if tilemap.get_tile("/zoom#board", "layer1", c+1, r+1) ~= 11 or self.anims.flip_bg then
+						table.insert(self.to_flip, {r, c})
+					end
 				end
 			end
+			if #self.to_flip < 1 then
+				msg.post(".", "setup")
+			end
+		elseif #self.to_flip > 0 then
+			self.anim_skip = true
+		else
+			print("no double reset")
 		end
-		if #self.to_flip < 1 then
-			msg.post(".", "setup")
+	elseif message_id == hash("set_anims") then
+		if message.anims == false then
+			msg.post("/gui#minefinder", "purge_instances")
+			if self.resettable == false and #self.to_flip == 0 then
+				msg.post(".", "setup")
+			end
+		end
+		if message.anims == true or message.anims == false then
+			self.anims = {flag_place = message.anims, flag_remove = message.anims, flag_correct = message.anims, flag_incorrect = message.anims, explosion = message.anims, timer = message.anims, ui = message.anims, tileflip = message.anims, flip_bg = self.anims.flip_bg}
+						
+			-- for i = 1, 8 do
+			-- 	self.anims[i] = message.anims
+			-- end
 		end
 	end
-	
 end
 
 function on_input(self, action_id, action)
@@ -154,13 +184,13 @@ function on_input(self, action_id, action)
 				if self.tile_clicked == 13 then -- remove flag
 					tilemap.set_tile("/zoom#board", "layer1", moveCol+1, moveRow+1, 11)
 					if self.anims.flag_remove then
-						local props = {type = 2}
+						local props = {type = 2, theme_id = theme_to_id(self.theme)}
 						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flag-factory", vmath.vector3(moveCol*48+24, moveRow*48+24, 0.5), nil, props).."#flag"})
 					end
 				elseif action_id == hash("select") and self.tile_clicked == 11 then -- place flag
 					tilemap.set_tile("/zoom#board", "layer1", moveCol+1, moveRow+1, 13)
 					if self.anims.flag_place then
-						local props = {type = 1}
+						local props = {type = 1, theme_id = theme_to_id(self.theme)}
 						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flag-factory", vmath.vector3(moveCol*48+24, moveRow*48+24, 0.5), nil, props).."#flag"})
 					end
 				elseif self.tile_clicked > 10 then -- digging a tile
@@ -226,14 +256,12 @@ function on_input(self, action_id, action)
 							if tilemap.get_tile("/zoom#board", "layer1", c+1, r+1) == 11 then
 								tilemap.set_tile("/zoom#board", "layer1", moveCol+1, moveRow+1, 13)
 								if self.anims.flag_place then
-									local props = {type = 1}
+									local props = {type = 1, theme_id = theme_to_id(self.theme)}
 									msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flag-factory", vmath.vector3(moveCol*48+24, moveRow*48+24, 0.5), nil, props).."#flag"})
 								end
 							end
 						end
 					end
-					
-					
 				end
 			end
 		end
@@ -266,7 +294,7 @@ end
 function update(self, dt) --checkpoint
 	-- print(self.timer, self.board[1], #self.to_flip)
 	if self.timer and (self.board[1] or #self.to_flip > 0) then
-		while (self.timer <= 0 or self.anims.timer == false) and (self.flashing or (self.mine_locs and self.mine_i <= #self.mine_locs) or #self.to_flip > 0) do
+		while (self.timer <= 0 or self.anims.timer == false or self.anim_skip == true) and (self.flashing or (self.mine_locs and self.mine_i <= #self.mine_locs) or #self.to_flip > 0) do
 			-- print("acting")
 			-- tilemap.set_tile("/zoom#board", "layer1", moveCol+1, moveRow+1, self.board[moveRow][moveCol])
 			if self.flashing then
@@ -280,15 +308,24 @@ function update(self, dt) --checkpoint
 				self.flashing = false
 			elseif #self.to_flip > 0 then
 				if self.anims.tileflip then
-					local props = {tile = tilemap.get_tile("/zoom#board", "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1)}
-					factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*48+24, self.to_flip[1][1]*48+24, 0.5), nil, props)
+					if #self.to_flip == 1 then
+						local props = {final = 1, tile = tilemap.get_tile("/zoom#board", "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1)}
+						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*48+24, self.to_flip[1][1]*48+24, 0.5), nil, props).."#tileflip"})
+						
+					else
+						local props = {final = 0, tile = tilemap.get_tile("/zoom#board", "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1)}
+						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*48+24, self.to_flip[1][1]*48+24, 0.5), nil, props).."#tileflip"})
+						
+					end
+				else
+					tilemap.set_tile("/zoom#board", "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1, 11)
 				end
 				if self.anims.flip_bg then
 					self.timer = 0.01
 				else
 					self.timer = 0.02
 				end
-				if #self.to_flip == 1 then
+				if #self.to_flip == 1 and self.anims.tileflip == false then
 					msg.post(".", "setup")
 				end
 				table.remove(self.to_flip, 1)
@@ -297,7 +334,7 @@ function update(self, dt) --checkpoint
 				local mineCol = self.mine_locs[self.mine_i][2]
 				if self.mine_locs[self.mine_i][3] then
 					if self.anims.flag_correct then
-						local props = {type = 3}
+						local props = {type = 3, theme_id = theme_to_id(self.theme)}
 						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flag-factory", vmath.vector3(mineCol*48+24, mineRow*48+24, 0.5), nil, props).."#flag"})
 					end
 					tilemap.set_tile("/zoom#board", "layer1", mineCol+1, mineRow+1, 17)
@@ -327,7 +364,7 @@ function update(self, dt) --checkpoint
 				self.mine_i = self.mine_i + 1
 			end
 		end
-		while (self.timer <= 0 or self.anims.timer == false) and self.wrong_flags and self.flag_i <= #self.wrong_flags do
+		while (self.timer <= 0 or self.anims.timer == false or self.anim_skip == true) and self.wrong_flags and self.flag_i <= #self.wrong_flags do
 			local flagRow = self.wrong_flags[self.flag_i][1]
 			local flagCol = self.wrong_flags[self.flag_i][2]
 			if self.anims.flag_incorrect then
