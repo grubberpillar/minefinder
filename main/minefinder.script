@@ -78,6 +78,9 @@ function on_message(self, message_id, message, sender)
 		self.anim_skip = false
 		self.resettable = true
 
+		-- print(self.offS)
+		-- print(self.size + self.offS*2)
+
 		msg.post(".", "acquire_input_focus")
 		math.randomseed(socket.gettime())
 	elseif message_id == hash("reset") then --checkpoint

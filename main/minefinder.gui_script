@@ -8,6 +8,7 @@ function init(self)
 	self.ticking = false
 	self.anim_s_state = 9
 	self.anims_on = true
+	self.more_anims = false
 end
 
 function update(self, dt)
@@ -78,8 +79,9 @@ function on_input(self, action_id, action)
 	local more_box = gui.get_node("more-box")
 	local more_down = gui.get_node("more-box-down")
 	local more_lit = gui.get_node("deselect")
+	local more_symbol = gui.get_node("more-symbol-mod")
 	
-	if gui.pick_node(retry, action.x, action.y) then
+	if gui.pick_node(retry, action.x, action.y) then -- retry button
 		if gui.get_color(retry_s) ~= vmath.vector4(1, 1, 1, 1) then
 			gui.set_color(retry_s, vmath.vector4(1, 1, 1, 1))
 		end
@@ -90,19 +92,30 @@ function on_input(self, action_id, action)
 		gui.set_color(retry_s, vmath.vector4(0, 0, 0, 0))
 	end
 
-	if gui.pick_node(more_box, action.x, action.y) then
+	if gui.pick_node(more_box, action.x, action.y) then -- more anims button
 		if gui.get_color(more_lit) ~= vmath.vector4(1, 1, 1, 1) then
 			gui.set_color(more_lit, vmath.vector4(1, 1, 1, 1))
-		end			
+		end
 		if action_id == hash("touch") and action.pressed and gui.get_color(more_down) ~= vmath.vector4(1, 1, 1, 1) then
 			gui.set_color(more_down, vmath.vector4(1, 1, 1, 1))
 		elseif action_id == hash("touch") and action.released and gui.get_color(more_down) ~= vmath.vector4(0, 0, 0, 0) then
 			gui.set_color(more_down, vmath.vector4(0, 0, 0, 0))
+			self.more_anims = not self.more_anims
+			if self.more_anims then
+				gui.set_color(more_symbol, vmath.vector4(0, 0, 0, 0))
+			else
+				gui.set_color(more_symbol, vmath.vector4(1, 1, 1, 1))
+			end
 		end 
-	elseif gui.get_color(more_lit) ~= vmath.vector4(0, 0, 0, 0) then
-		gui.set_color(more_lit, vmath.vector4(0, 0, 0, 0))
+	else
+		if gui.get_color(more_lit) ~= vmath.vector4(0, 0, 0, 0) then
+			gui.set_color(more_lit, vmath.vector4(0, 0, 0, 0))
+		end
+		if gui.get_color(more_down) ~= vmath.vector4(0, 0, 0, 0) then
+			gui.set_color(more_down, vmath.vector4(0, 0, 0, 0))
+		end
 	end
-	
+
 
 	if gui.pick_node(anim_sel, action.x, action.y) then --switch click
 		if gui.get_color(anim_sel_bg) ~= vmath.vector4(1, 1, 1, 1) then

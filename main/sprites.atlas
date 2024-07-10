@@ -26,6 +26,10 @@ images {
   image: "/assets/negative-select.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assets/less-symbol.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "frame"
   images {
