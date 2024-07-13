@@ -49,6 +49,8 @@ function on_message(self, message_id, message)
 		end
 	elseif message_id == hash("set_ticking") then
 		self.ticking = message.ticking
+	elseif message_id == hash("set_mines") then
+		gui.set_text(gui.get_node("total-mines"), "TOTAL MINES: "..message.mines)
 	elseif message_id == hash("reset") then
 		self.seconds = 0
 		self.seconds_storage = -1
@@ -56,9 +58,6 @@ function on_message(self, message_id, message)
 		self.ticking = false
 		gui.set_text(gui.get_node("flags-placed"), "FLAGS PLACED: 0")
 	elseif message_id == hash("set_flags") then
-		-- print("update flags!")
-		-- print(message.num)
-		
 		gui.set_text(gui.get_node("flags-placed"), "FLAGS PLACED: "..message.num)
 	elseif message_id == hash("purge_instances") then
 		while self.instances[1] do

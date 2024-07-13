@@ -16,7 +16,7 @@ background_color {
 nodes {
   position {
     x: 1104.0
-    y: 288.0
+    y: 144.0
     z: 0.0
     w: 1.0
   }
@@ -294,7 +294,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "TOTAL MINES: 40"
   font: "pixel-font"
-  id: "total mines"
+  id: "total-mines"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_SW
