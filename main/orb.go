@@ -1,5 +1,5 @@
 components {
-  id: "flag"
+  id: "orb"
   component: "/main/orb.script"
   position {
     x: 0.0
