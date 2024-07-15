@@ -1,8 +1,9 @@
 go.property("type", 1)
-go.property("theme_id", 0)
+go.property("theme_id", -1)
 
 function init(self)
 	self.theme = "dark"
+	print(self.theme_id)
 	if self.theme_id == 1 then
 		self.theme = "light"
 	elseif self.theme_id == 0 then

@@ -15,9 +15,11 @@ local function shuffle(tbl)
 end
 
 local function theme_to_id(theme)
-	if theme == hash("dark") then
+	if theme == "dark" then
+		print("dark")
 		return 0
 	else 
+		print("light")
 		return 1
 	end
 end
@@ -66,10 +68,14 @@ local function show_block(self, row, col)
 	end
 end
 
+go.property("light_theme", resource.tile_source("/main/minefinder-light.tilesource"))
+go.property("dark_theme", resource.tile_source("/main/minefinder-dark.tilesource"))
+
 function init(self)
 	self.anims = {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false}
 	msg.post(".", "setup")
 	self.theme = "dark"
+	self.tilesources = {light = self.light_theme, dark = self.dark_theme}
 	self.diff = 3
 	self.hard_select = true
 	self.large_select = false
@@ -79,7 +85,7 @@ function init(self)
 	self.faster_flip = true
 	self.current_orb = nil
 	go.set("/diff-selected", "position", vmath.vector3((19 + self.diff)*8+4, 5*8+4, 0.7))
-	
+	go.set("/zoom#board", "tile_source", self.tilesources[self.theme])
 	
 	-- resource.set_texture(path, table, buffer)
 end
@@ -386,6 +392,15 @@ function on_input(self, action_id, action)
 
 	self.m_row_prev = moveRow*8+4
 	self.m_col_prev = moveCol*8+4
+
+	if action_id == hash("theme") and action.released then
+		if self.theme == "light" then
+			self.theme = "dark"
+		else
+			self.theme = "light"
+		end
+		go.set("/zoom#board", "tile_source", self.tilesources[self.theme])
+	end
 end
 
 
@@ -466,7 +481,7 @@ function update(self, dt) --checkpoint
 			local flagRow = self.wrong_flags[self.flag_i][1]
 			local flagCol = self.wrong_flags[self.flag_i][2]
 			if self.anims.flag_incorrect then
-				local props = {type = 4}
+				local props = {type = 4, theme_id = theme_to_id(self.theme)}
 				msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flag-factory", vmath.vector3(flagCol*48+24, flagRow*48+24, 0.5), nil, props).."#flag"})
 			end
 			self.timer = 1
