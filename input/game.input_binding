@@ -22,3 +22,11 @@ mouse_trigger {
   input: MOUSE_BUTTON_2
   action: "select"
 }
+gamepad_trigger {
+  input: GAMEPAD_LTRIGGER
+  action: "select"
+}
+gamepad_trigger {
+  input: GAMEPAD_RTRIGGER
+  action: "touch"
+}

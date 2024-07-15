@@ -1,9 +1,9 @@
 local function set_props(self)
 	local mine_nums = {10, 14, 40, 100, 150}
 	local size_nums = {{8, 10, 16, 16, 24}, {8, 10, 16, 30, 30}}
-	self.num_mines = 1--mine_nums[self.diff]
-	self.row_size = 2 --size_nums[1][self.diff]
-	self.col_size = 2 --size_nums[2][self.diff]
+	self.num_mines = mine_nums[self.diff]
+	self.row_size = size_nums[1][self.diff]
+	self.col_size = size_nums[2][self.diff]
 	msg.post("/gui#minefinder", "set_mines", {mines = self.num_mines})
 end
 
@@ -30,7 +30,7 @@ local function mines_around(self, row, col)
 				if self.board[row+r][col+c] == 12 then 
 					counter = counter + 1
 				elseif self.board[row+r][col+c] == 14 then
-					return 10
+					return 11
 				end
 			end
 		end
@@ -71,6 +71,15 @@ function init(self)
 	msg.post(".", "setup")
 	self.theme = "dark"
 	self.diff = 3
+	self.hard_select = true
+	self.large_select = false
+	self.tile_lit = false
+	self.m_row_prev = 0
+	self.m_col_prev = 0
+	self.faster_flip = true
+	go.set("/diff-selected", "position", vmath.vector3((19 + self.diff)*8+4, 5*8+4, 0.7))
+	
+	
 	-- resource.set_texture(path, table, buffer)
 end
 
@@ -81,7 +90,6 @@ function on_message(self, message_id, message, sender)
 		self.row_offS = (16-self.row_size)/2
 		self.col_offS = (16-self.col_size)/2
 		self.playing = true
-		self.hard_select = true
 		self.wrong_flags = nil
 		self.to_flip = {}
 		self.timer = nil
@@ -97,6 +105,24 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 
+		if tilemap.get_tile("/zoom#board", "layer1", 2+self.col_offS, 9) ~= 11 or tilemap.get_tile("/zoom#board", "layer1", 9, 2+self.row_offS) ~= 11 then
+			for r = 1, 16 do
+				for c = 1, 16 do
+					if tilemap.get_tile("/zoom#board", "layer1", c+1, r+1) ~= 11  then
+						tilemap.set_tile("/zoom#board", "layer1", c+1, r+1, 11)
+					end
+				end
+			end
+		end
+
+		if self.row_size > 16 or self.col_size > 16 then
+			for r = 1, 16 do
+				for c = 1, 16 do
+					tilemap.set_tile("/zoom#board", "layer1", c+1, r+1, 20)
+				end
+			end
+		end
+		
 		msg.post(".", "acquire_input_focus")
 		math.randomseed(socket.gettime())
 	elseif message_id == hash("reset") then --checkpoint
@@ -120,8 +146,8 @@ function on_message(self, message_id, message, sender)
 			end
 		elseif #self.to_flip > 0 then
 			self.anim_skip = true
-		else
-			print("no double reset")
+		-- else
+		-- 	print("no double reset")
 		end
 	elseif message_id == hash("set_anims") then
 		if message.anims == false then
@@ -176,7 +202,7 @@ function on_input(self, action_id, action)
 				while count <= self.num_mines do -- adding mines
 					local randRow = math.random(1, self.row_size)
 					local randCol = math.random(1, self.col_size)
-					if mines_around(self, randRow, randCol) < spaces_around(self, randRow, randCol)+1 and self.board[randRow][randCol] ~= 12 then
+					if mines_around(self, randRow, randCol) <= spaces_around(self, randRow, randCol)+1 and self.board[randRow][randCol] ~= 12 then
 						-- print(randRow .. ", " .. randCol)
 						self.board[randRow][randCol] = 12
 						count = count + 1
@@ -298,15 +324,51 @@ function on_input(self, action_id, action)
 		self.col_clicked = nil
 	end
 	-- tilemap.set_tile("/zoom#board", "layer1", moveCol+1, moveRow+1, 12)
-	if moveCol > 17 and self.hard_select then
-		sprite.play_flipbook("/selection", "frame-light")
-		self.hard_select = false
-	elseif moveCol < 18 and not self.hard_select then
-		sprite.play_flipbook("/selection", "frame")
-		self.hard_select = true
+	if moveCol > 19 and moveCol < 26 and moveRow == 5 then
+		if not self.large_select then
+			sprite.play_flipbook("/selection", "selection-large")
+			self.large_select = true
+		end
+		-- if moveCol == 25 then
+		-- 	msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#orb-factory", vmath.vector3(25*48+24, 5*48+24, 0.5)).."#orb"})
+		-- end
+		if action_id == hash("touch") and action.pressed and not self.tile_lit then
+			go.set("/brighten", "position", vmath.vector3(moveCol*8+4, moveRow*8+4, 1))
+			self.tile_lit = true
+		elseif action_id == hash("touch") and action.released and self.tile_lit then
+			self.diff = moveCol - 19
+			go.set("/diff-selected", "position", vmath.vector3((19 + self.diff)*8+4, 5*8+4, 0.7))			
+			go.set("/brighten", "position", vmath.vector3(20, 12, 0))
+			self.tile_lit = false
+		end
+	else
+		if self.tile_lit then
+			go.set("/brighten", "position", vmath.vector3(20, 12, 0))
+			self.tile_lit = false
+		end
+		if moveCol > 17 and (self.hard_select or self.large_select) then
+			sprite.play_flipbook("/selection", "frame-light")
+			self.hard_select = false
+			self.large_select = false
+			self.tile_lit = false
+		elseif moveCol < 18 and (not self.hard_select or self.large_select) then
+			sprite.play_flipbook("/selection", "frame")
+			self.hard_select = true
+			self.large_select = false
+			self.tile_lit = false
+		end
 	end
-	go.set("/selection", "position", vmath.vector3(moveCol*8+4, moveRow*8+4, 0.8))
 	
+	local m_row = moveRow*8+4
+	local m_col = moveCol*8+4
+
+	if self.m_row_prev ~= m_row or self.m_col_prev ~= m_col then
+		-- go.set("/diff-selected", "position", vmath.vector3(moveCol*8+4, moveRow*8+4, 0.8))
+		go.set("/selection", "position", vmath.vector3(moveCol*8+4, moveRow*8+4, 0.8))
+	end
+
+	self.m_row_prev = moveRow*8+4
+	self.m_col_prev = moveCol*8+4
 end
 
 
@@ -339,7 +401,7 @@ function update(self, dt) --checkpoint
 				else
 					tilemap.set_tile("/zoom#board", "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1, 11)
 				end
-				if self.anims.flip_bg then
+				if self.faster_flip then
 					self.timer = 0.01
 				else
 					self.timer = 0.02
