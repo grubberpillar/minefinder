@@ -9,6 +9,7 @@ function init(self)
 	self.anim_s_state = 9
 	self.anims_on = true
 	self.more_anims = false
+	self.theme = "dark"
 end
 
 function update(self, dt)
@@ -75,6 +76,9 @@ function on_input(self, action_id, action)
 	local anim_sel = gui.get_node("anim-switch-select")
 	local anim_sel_bg = gui.get_node("anim-switch-select-bg")
 	local anim_sel_light = gui.get_node("anim-switch-select-heavy-bg")
+	local theme_sel = gui.get_node("theme-switch-select")
+	local theme_sel_bg = gui.get_node("theme-switch-select-bg")
+	local theme_sel_light = gui.get_node("theme-switch-select-heavy-bg")
 	local more_box = gui.get_node("more-box")
 	local more_down = gui.get_node("more-box-down")
 	local more_lit = gui.get_node("deselect")
@@ -158,5 +162,44 @@ function on_input(self, action_id, action)
 			gui.set_color(anim_sel_light, vmath.vector4(0, 0, 0, 0))
 		end
 	end
+
+	if gui.pick_node(theme_sel, action.x, action.y) then --switch click
+		if gui.get_color(theme_sel_bg) ~= vmath.vector4(1, 1, 1, 1) then
+			gui.set_color(theme_sel_bg, vmath.vector4(1, 1, 1, 1))
+		end
+		if action_id == hash("touch") and action.pressed and gui.get_color(theme_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
+			gui.set_color(theme_sel_light, vmath.vector4(1, 1, 1, 1))
+		elseif action_id == hash("touch") and action.released then
+			if gui.get_color(theme_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
+				gui.set_color(theme_sel_light, vmath.vector4(0, 0, 0, 0))
+			end
+
+			if self.theme == "dark" then
+				if self.anims_on then
+					sprite.play_flipbook("/light-switch", "light-switch-on")
+				else
+					sprite.play_flipbook("/light-switch", "light-switch5")
+				end
+				self.theme = "light"
+				msg.post("/zoom#minefinder", "set_theme", {theme = "light"})
+			elseif self.theme == "light" then
+				if self.anims_on then
+					sprite.play_flipbook("/light-switch", "light-switch-off")
+				else
+					sprite.play_flipbook("/light-switch", "light-switch1")
+				end
+				self.theme = "dark"
+				msg.post("/zoom#minefinder", "set_theme", {theme = "dark"})
+			end
+		end
+	else
+		if gui.get_color(theme_sel_bg) ~= vmath.vector4(0, 0, 0, 0) then
+			gui.set_color(theme_sel_bg, vmath.vector4(0, 0, 0, 0))
+		end
+		if gui.get_color(theme_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
+			gui.set_color(theme_sel_light, vmath.vector4(0, 0, 0, 0))
+		end
+	end
+	
 
 end

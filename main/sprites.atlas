@@ -54,16 +54,21 @@ images {
   image: "/assets/selection-large-light.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
-animations {
-  id: "frame"
-  images {
-    image: "/assets/selection.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
+images {
+  image: "/assets/switch/light-switch1.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/switch/light-switch5.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/selection-2.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/selection-mini.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 animations {
   id: "explosion-wick"
@@ -303,17 +308,6 @@ animations {
   }
   playback: PLAYBACK_ONCE_FORWARD
   fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "frame-light"
-  images {
-    image: "/assets/selection-2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_LOOP_FORWARD
-  fps: 0
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -825,6 +819,52 @@ animations {
   }
   playback: PLAYBACK_ONCE_FORWARD
   fps: 80
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "light-switch-on"
+  images {
+    image: "/assets/switch/light-switch2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/switch/light-switch3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/switch/light-switch4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/switch/light-switch5.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 30
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "light-switch-off"
+  images {
+    image: "/assets/switch/light-switch4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/switch/light-switch3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/switch/light-switch2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/switch/light-switch1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 30
   flip_horizontal: 0
   flip_vertical: 0
 }

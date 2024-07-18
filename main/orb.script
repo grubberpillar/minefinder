@@ -9,6 +9,9 @@ function on_message(self, message_id, message, sender)
 		msg.post("/zoom#minefinder", "remove_orb")
 		msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
 		go.delete() 
+	elseif message_id == hash("erase") then
+		msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
+		go.delete()
 	elseif message_id == hash("kill") then
 		go.delete()
 	end
