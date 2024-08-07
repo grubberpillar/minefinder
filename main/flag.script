@@ -8,7 +8,9 @@ function init(self)
 	elseif self.theme_id == 0 then
 		self.theme = "dark"
 	end
-	if self.type == 1 then
+	if self.type == 0 then
+		sprite.play_flipbook("#sprite", "flag-place-mini-"..self.theme)
+	elseif self.type == 1 then
 		sprite.play_flipbook("#sprite", "flag-place-"..self.theme)
 	elseif self.type == 2 then
 		sprite.play_flipbook("#sprite", "flag-remove")
@@ -16,6 +18,8 @@ function init(self)
 		sprite.play_flipbook("#sprite", "flag-correct")
 	elseif self.type == 4 then
 		sprite.play_flipbook("#sprite", "flag-incorrect")
+	elseif self.type == 5 then
+		sprite.play_flipbook("#sprite", "flag-incorrect-mini")
 	end
 end
 

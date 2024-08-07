@@ -1,11 +1,16 @@
 go.property("wick", false)
+go.property("mini", 0)
 
 function init(self)
+	self.mini_txt = ""
+	if self.mini == 1 then
+		self.mini_txt = "-mini"
+	end
 	if self.wick then
-		sprite.play_flipbook("#sprite", "explosion-wick")
+		sprite.play_flipbook("#sprite", "explosion-wick"..self.mini_txt)
 		self.anim_num = 0
 	else
-		sprite.play_flipbook("#sprite", "explosion-blink")
+		sprite.play_flipbook("#sprite", "explosion-blink"..self.mini_txt)
 		self.anim_num = 1
 	end
 end
@@ -13,16 +18,16 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("animation_done") then
 		if self.anim_num < 2 then
-			sprite.play_flipbook("#sprite", "explosion-blink")
+			sprite.play_flipbook("#sprite", "explosion-blink"..self.mini_txt)
 			self.anim_num = self.anim_num + 1
 		elseif self.anim_num == 2 then
-			sprite.play_flipbook("#sprite", "explosion-boom")
+			sprite.play_flipbook("#sprite", "explosion-boom"..self.mini_txt)
 			self.anim_num = self.anim_num + 1
 		elseif self.anim_num < 10 then
-			sprite.play_flipbook("#sprite", "explosion-flash")
+			sprite.play_flipbook("#sprite", "explosion-flash"..self.mini_txt)
 			self.anim_num = self.anim_num + 1
 		elseif self.anim_num == 10 then
-			sprite.play_flipbook("#sprite", "explosion-fade")
+			sprite.play_flipbook("#sprite", "explosion-fade"..self.mini_txt)
 			self.anim_num = self.anim_num + 1
 		else
 			msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
