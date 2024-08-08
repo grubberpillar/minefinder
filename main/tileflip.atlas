@@ -1,5 +1,5 @@
 animations {
-  id: "tileflip-light-1"
+  id: "tileflip-1-light"
   images {
     image: "/assets/tileflip/light/tileflip-1-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -18,7 +18,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-2"
+  id: "tileflip-2-light"
   images {
     image: "/assets/tileflip/light/tileflip-2-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -37,7 +37,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-3"
+  id: "tileflip-3-light"
   images {
     image: "/assets/tileflip/light/tileflip-3-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -56,7 +56,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-4"
+  id: "tileflip-4-light"
   images {
     image: "/assets/tileflip/light/tileflip-4-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -75,7 +75,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-5"
+  id: "tileflip-5-light"
   images {
     image: "/assets/tileflip/light/tileflip-5-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -94,7 +94,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-6"
+  id: "tileflip-6-light"
   images {
     image: "/assets/tileflip/light/tileflip-6-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -113,7 +113,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-7"
+  id: "tileflip-7-light"
   images {
     image: "/assets/tileflip/light/tileflip-7-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -132,7 +132,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-8"
+  id: "tileflip-8-light"
   images {
     image: "/assets/tileflip/light/tileflip-8-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -151,7 +151,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-9"
+  id: "tileflip-9-light"
   images {
     image: "/assets/tileflip/light/tileflip-9-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -170,7 +170,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-11"
+  id: "tileflip-11-light"
   images {
     image: "/assets/tileflip/light/tileflip-end-light3.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -189,7 +189,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-12"
+  id: "tileflip-12-light"
   images {
     image: "/assets/tileflip/light/tileflip-12-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -208,7 +208,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-13"
+  id: "tileflip-13-light"
   images {
     image: "/assets/tileflip/light/tileflip-13-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -227,7 +227,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-17"
+  id: "tileflip-17-light"
   images {
     image: "/assets/tileflip/light/tileflip-17-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -246,7 +246,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-light-end"
+  id: "tileflip-end-light"
   images {
     image: "/assets/tileflip/light/tileflip-end-light1.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -265,7 +265,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-1"
+  id: "tileflip-1-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-1-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -284,7 +284,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-2"
+  id: "tileflip-2-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-2-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -303,7 +303,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-3"
+  id: "tileflip-3-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-3-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -322,7 +322,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-4"
+  id: "tileflip-4-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-4-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -341,7 +341,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-5"
+  id: "tileflip-5-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-5-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -360,7 +360,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-6"
+  id: "tileflip-6-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-6-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -379,7 +379,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-7"
+  id: "tileflip-7-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-7-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -398,7 +398,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-8"
+  id: "tileflip-8-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-8-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -417,7 +417,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-9"
+  id: "tileflip-9-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-9-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -436,7 +436,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-11"
+  id: "tileflip-11-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-end-dark3.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -455,7 +455,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-12"
+  id: "tileflip-12-dark"
   images {
     image: "/assets/tileflip/light/tileflip-12-light-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -474,7 +474,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-13"
+  id: "tileflip-13-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-13-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -493,7 +493,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-17"
+  id: "tileflip-17-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-17-dark-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -512,7 +512,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "tileflip-dark-end"
+  id: "tileflip-end-dark"
   images {
     image: "/assets/tileflip/dark/tileflip-end-dark1.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -527,6 +527,336 @@ animations {
   }
   playback: PLAYBACK_ONCE_FORWARD
   fps: 20
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-1-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-1-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-2-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-2-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-3-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-3-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-4-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-4-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-5-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-5-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-6-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-6-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-7-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-7-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-8-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-8-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-9-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-8-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-10-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-10-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-11-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-11-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-12-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-12-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-13-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-13-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-17-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-17-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-end-dark-mini"
+  images {
+    image: "/assets/tileflip/dark-mini/tileflip-end-dark-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-1-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-1-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-2-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-2-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-3-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-3-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-4-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-4-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-5-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-5-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-6-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-6-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-7-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-7-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-8-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-8-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-9-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-9-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-10-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-10-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-11-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-11-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-12-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-12-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-13-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-13-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-17-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-17-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-end-light-mini"
+  images {
+    image: "/assets/tileflip/light-mini/tileflip-end-light-mini.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 15
   flip_horizontal: 0
   flip_vertical: 0
 }

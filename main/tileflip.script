@@ -1,6 +1,8 @@
 go.property("tile", 11)
 go.property("final", -1)
 go.property("theme_id", 0)
+go.property("mini", 0)
+go.property("tile_size", 8)
 
 function init(self)
 	self.theme = "dark"
@@ -9,22 +11,28 @@ function init(self)
 	elseif self.theme_id == 0 then
 		self.theme = "dark"
 	end
-	sprite.play_flipbook("#sprite", "tileflip-"..self.theme.."-"..self.tile)
+
+	self.mini_txt = ""
+	if self.mini == 1 then
+		self.mini_txt = "-mini"
+	end
+
+	sprite.play_flipbook("#sprite", "tileflip-"..self.tile.."-"..self.theme..self.mini_txt)
 	local tile_diff = 0
 	if self.theme == "dark" then
 		tile_diff = 2
 	end
-	tilemap.set_tile("/zoom#board", "layer1", (go.get_position().x-24)/48+1, (go.get_position().y-24)/48+1, 16 + tile_diff)
+	tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 16 + tile_diff)
 	self.anim = 0
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("animation_done") then
 		if self.anim == 0 then 
-			sprite.play_flipbook("#sprite", "tileflip-"..self.theme.."-end")
+			sprite.play_flipbook("#sprite", "tileflip-end-"..self.theme..self.mini_txt)
 			self.anim = self.anim + 1
 		else
-			tilemap.set_tile("/zoom#board", "layer1", (go.get_position().x-24)/48+1, (go.get_position().y-24)/48+1, 11)
+			tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 11)
 			msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
 			if self.final == 1 then
 				msg.post("/zoom#minefinder", "setup")
@@ -32,7 +40,7 @@ function on_message(self, message_id, message, sender)
 			go.delete()
 		end
 	elseif message_id == hash("kill") then
-		tilemap.set_tile("/zoom#board", "layer1", (go.get_position().x-24)/48+1, (go.get_position().y-24)/48+1, 11)
+		tilemap.set_tile("/zoom#board", "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 11)
 		go.delete()
 	end
 end

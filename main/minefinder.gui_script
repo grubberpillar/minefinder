@@ -57,9 +57,14 @@ function on_message(self, message_id, message)
 		self.seconds_storage = -1
 		self.minutes = 0
 		self.ticking = false
-		gui.set_text(gui.get_node("flags-placed"), "FLAGS PLACED: 0")
+		gui.set_text(gui.get_node("flags-left"), message.mines)
 	elseif message_id == hash("set_flags") then
-		gui.set_text(gui.get_node("flags-placed"), "FLAGS PLACED: "..message.num)
+		gui.set_text(gui.get_node("flags-left"), message.num)
+		if message.num < 0 and gui.get_color(gui.get_node("flags-left")) == vmath.vector4(1, 1, 1, 1) then
+			gui.set_color(gui.get_node("flags-left"), vmath.vector4(0.6, 0, 0, 1))
+		elseif message.num >= 0 and gui.get_color(gui.get_node("flags-left")) == vmath.vector4(0.6, 0, 0, 1) then
+			gui.set_color(gui.get_node("flags-left"), vmath.vector4(1, 1, 1, 1))
+		end
 	elseif message_id == hash("purge_instances") then
 		while self.instances[1] do
 			for i, k in ipairs(self.instances) do
