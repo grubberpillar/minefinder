@@ -10,6 +10,7 @@ function init(self)
 	self.anims_on = true
 	self.more_anims = false
 	self.theme = "dark"
+	msg.post("/anims#anims", "disable")
 end
 
 function update(self, dt)
@@ -72,6 +73,11 @@ function on_message(self, message_id, message)
 				table.remove(self.instances, i)
 			end
 		end
+	elseif message_id == hash("update_switch") then
+		if message.index < 9 then
+			self.anim_s_state = self.anim_s_state + message.diff
+			sprite.play_flipbook("/anim-switch", "switch-"..self.anim_s_state)
+		end
 	end
 end
 
@@ -111,8 +117,10 @@ function on_input(self, action_id, action)
 			self.more_anims = not self.more_anims
 			if self.more_anims then
 				gui.set_color(more_symbol, vmath.vector4(0, 0, 0, 0))
+				msg.post("/anims#anims", "enable")
 			else
 				gui.set_color(more_symbol, vmath.vector4(1, 1, 1, 1))
+				msg.post("/anims#anims", "disable")
 			end
 		end 
 	else
@@ -129,13 +137,7 @@ function on_input(self, action_id, action)
 		if gui.get_color(anim_sel_bg) ~= vmath.vector4(1, 1, 1, 1) then
 			gui.set_color(anim_sel_bg, vmath.vector4(1, 1, 1, 1))
 		end
-		if action_id == hash("minus") and action.pressed and self.anim_s_state > 1 then --inc down
-			self.anim_s_state = self.anim_s_state - 1
-			sprite.play_flipbook("/anim-switch", "switch-"..self.anim_s_state)
-		elseif action_id == hash("plus") and action.pressed and self.anim_s_state < 9 then --inc up
-			self.anim_s_state = self.anim_s_state + 1
-			sprite.play_flipbook("/anim-switch", "switch-"..self.anim_s_state)
-		elseif action_id == hash("touch") and action.pressed and gui.get_color(anim_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
+		if action_id == hash("touch") and action.pressed and gui.get_color(anim_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
 			gui.set_color(anim_sel_light, vmath.vector4(1, 1, 1, 1))
 		elseif action_id == hash("touch") and action.released then
 			if gui.get_color(anim_sel_light) ~= vmath.vector4(0, 0, 0, 0) then

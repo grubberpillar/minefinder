@@ -1,11 +1,11 @@
 go.property("tile", 11)
 go.property("final", -1)
-go.property("theme_id", 0)
+go.property("theme_id", -1)
 go.property("mini", 0)
 go.property("tile_size", 8)
 
 function init(self)
-	self.theme = "dark"
+	self.theme = "adsf"
 	if self.theme_id == 1 then
 		self.theme = "light"
 	elseif self.theme_id == 0 then

@@ -95,7 +95,9 @@ go.property("light_theme_mini", resource.tile_source("/main/minefinder-mini-ligh
 go.property("dark_theme_mini", resource.tile_source("/main/minefinder-mini-dark.tilesource"))
 
 function init(self)
-	self.anims = {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false}
+	go.set("/anims", "position", vmath.vector3()) -- un-offset anims gui (offset for readability in main.collection
+	self.anims = {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false, faster_flip = true}
+	self.anim_vars = {"flag_place", "flag_remove", "flag_correct", "flag_incorrect", "explosion", "timer", "tileflip", "ui", "flip_bg", "faster_flip"}
 	msg.post(".", "setup")
 	self.theme = "dark"
 	self.tilesources = {light = self.light_theme, dark = self.dark_theme}
@@ -108,7 +110,6 @@ function init(self)
 	self.tile_lit = false
 	self.m_row_prev = 0
 	self.m_col_prev = 0
-	self.faster_flip = true
 	self.current_orb = nil
 	self.board_size = 16
 	self.mini_offS = 0
@@ -203,12 +204,12 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 		if message.anims == true or message.anims == false then
-			self.anims = {flag_place = message.anims, flag_remove = message.anims, flag_correct = message.anims, flag_incorrect = message.anims, explosion = message.anims, timer = message.anims, ui = message.anims, tileflip = message.anims, flip_bg = self.anims["flip_bg"]}
-						
-			-- for i = 1, 8 do
-			-- 	self.anims[i] = message.anims
-			-- end
+			for i = 1, 8 do
+				self.anims[self.anim_vars[i]] = message.anims
+			end
 		end
+	elseif message_id == hash("update_anims") then
+		self.anims[self.anim_vars[message.index]] = message.setting
 	elseif message_id == hash("remove_orb") then
 		self.current_orb = "done"
 	elseif message_id == hash("set_theme") then
@@ -533,18 +534,18 @@ function update(self, dt) --checkpoint
 			elseif #self.to_flip > 0 then
 				if self.anims["tileflip"] then
 					if #self.to_flip == 1 then
-						local props = {final = 1, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size}
+						local props = {final = 1, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
 						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*(6*self.tile_size)+3*self.tile_size, self.to_flip[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props).."#tileflip"})
 						
 					else
-						local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size}
+						local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
 						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*(6*self.tile_size)+3*self.tile_size, self.to_flip[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props).."#tileflip"})
 						
 					end
 				else
 					tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1, 11)
 				end
-				if self.faster_flip then
+				if self.anims["faster_flip"] then
 					self.timer = 0.01
 				else
 					self.timer = 0.02

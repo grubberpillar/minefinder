@@ -1,0 +1,76 @@
+function init(self)
+-- 	self.time_alive = 0
+-- 	self.stage = 0
+-- 	self.fade_num = 0
+-- 	self.fade_reps = 6
+-- 	msg.post("#", "enable")
+-- 	gui.set_color(gui.get_node("bg"), vmath.vector4(1, 1, 1, 1))
+-- 	gui.set_color(gui.get_node("logo"), vmath.vector4(1, 1, 1, 0))
+-- 	gui.set_color(gui.get_node("text"), vmath.vector4(1, 1, 1, 0))
+end
+
+
+function update(self, dt)
+-- 	self.time_alive = self.time_alive + dt
+-- 	local logo = gui.get_node("logo")
+-- 	local text = gui.get_node("text")
+-- 	local logo_pos = gui.get_position(logo)
+-- 	local text_pos = gui.get_position(text)
+-- 
+-- 	
+-- 	if self.time_alive >= 6 and self.stage == 4 then
+-- 		msg.post("#", "disable")
+-- 	elseif self.time_alive >= 3 and self.stage == 3 then
+-- 		self.stage = 4
+-- 		self.fade_timer = 0
+-- 	elseif self.time_alive >= 1.12 and self.stage == 2 then
+-- 		self.stage = 3
+-- 		gui.set_position(logo, vmath.vector3(696, logo_pos.y-6, 0))
+-- 		gui.set_position(text, vmath.vector3(696, text_pos.y-6, 0))
+-- 	elseif self.time_alive >= 1.02 and self.stage == 1 then
+-- 		self.stage = 2
+-- 		gui.set_position(logo, vmath.vector3(696, logo_pos.y+6, 0))
+-- 		gui.set_position(text, vmath.vector3(696, text_pos.y+6, 0))
+-- 	elseif self.time_alive >= 1 and self.stage == 0 then
+-- 		self.stage = 1
+-- 		gui.play_flipbook(logo, "logo")
+-- 		gui.play_flipbook(text, "text")
+-- 		gui.set_color(logo, vmath.vector4(1, 1, 1, 1))
+-- 		gui.set_color(text, vmath.vector4(1, 1, 1, 1))
+-- 	end
+-- 
+-- 	local logo_color = gui.get_color(logo)
+-- 	
+-- 	if self.fade_timer and self.fade_num < self.fade_reps then --logo fading out
+-- 		self.fade_timer = self.fade_timer + dt
+-- 		if self.fade_timer > 0.4*self.fade_num then
+-- 			self.fade_num = self.fade_num + 1
+-- 			gui.set_color(logo, vmath.vector4(1, 1, 1, logo_color.w - 1/self.fade_reps))
+-- 			gui.set_color(text, vmath.vector4(1, 1, 1, logo_color.w - 1/self.fade_reps))
+-- 		end
+-- 	end
+end
+
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end
