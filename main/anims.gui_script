@@ -1,10 +1,10 @@
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	self.boxes = {"place", "rmv", "right", "wrong", "mines", "delay", "t.flip", "ui", "flip_all", "fast_flip"}
-	self.box_nodes = {}
+	self.hitbox_nodes = {}
 	self.check_nodes = {}
 	for i = 1, 10 do
-		self.box_nodes[i] = gui.get_node(self.boxes[i] .. "-box")
+		self.hitbox_nodes[i] = gui.get_node(self.boxes[i] .. "-hitbox")
 	end
 	
 	for i = 1, 10 do
@@ -35,7 +35,7 @@ end
 
 function on_input(self, action_id, action)
 	for i = 1, 10 do 
-		if gui.pick_node(self.box_nodes[i], action.x, action.y) then -- all checkboxes
+		if gui.pick_node(self.hitbox_nodes[i], action.x, action.y) then -- all checkboxes
 			-- WIP - make selection box invisible
 			if action_id == hash("touch") and action.pressed then
 				if self.checked[i] then -- uncheck
