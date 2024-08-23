@@ -443,7 +443,7 @@ function on_input(self, action_id, action)
 			self.tile_lit = true
 		elseif action_id == hash("touch") and action.released and self.tile_lit then
 			self.diff = moveCol - 19
-			go.set("/diff-selected", "position", vmath.vector3((19 + self.diff)*8+4, 5*8+4, 0.7))			
+			go.set("/diff-selected", "position", vmath.vector3((19 + self.diff)*8+4, 5*8+4, 0.7))
 			go.set("/brighten", "position", vmath.vector3(20, 12, -0.5))
 			self.tile_lit = false
 		elseif moveCol*8+4 ~= self.m_col_prev and self.tile_lit then

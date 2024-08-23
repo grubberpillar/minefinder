@@ -6,8 +6,10 @@ function init(self)
 	self.boxes = {"place", "rmv", "right", "wrong", "mines", "delay", "t.flip", "ui", "flip_all", "fast_flip"}
 	self.hitbox_nodes = {}
 	self.check_nodes = {}
+	self.text_nodes = {}
 	self.top_text_nodes = {}
 	self.node_hover = nil
+	self.node_clicked = nil
 	
 	for i = 1, 10 do
 		self.hitbox_nodes[i] = gui.get_node(self.boxes[i] .. "-hitbox")
@@ -15,6 +17,13 @@ function init(self)
 	for i = 1, 10 do
 		self.check_nodes[i] = gui.get_node(self.boxes[i] .. "-check")
 	end
+	for i = 1, 10 do
+		self.text_nodes[i] = gui.get_node(self.boxes[i] .. "-txt")
+	end
+	self.text_nodes[9] = gui.get_node(self.boxes[9] .. "-txt-a")
+	self.text_nodes[11] = gui.get_node(self.boxes[9] .. "-txt-b")
+	self.text_nodes[12] = gui.get_node(self.boxes[9] .. "-txt-c")
+	
 	for i = 1, 10 do
 		self.top_text_nodes[i] = gui.get_node(self.boxes[i] .. "-txt-top")
 	end
@@ -78,7 +87,12 @@ function on_input(self, action_id, action)
 				self.node_hover = i
 			end
 			-- WIP - make selection box invisible
+
 			if action_id == hash("touch") and action.pressed then
+				gui.set_color(self.text_nodes[i], vmath.vector4(1, 1, 1, 1))
+			end
+			
+			if action_id == hash("touch") and action.released then
 				if self.checked[i] then -- uncheck
 					gui.play_flipbook(self.check_nodes[i], "check-remove")
 					self.checked[i] = false
