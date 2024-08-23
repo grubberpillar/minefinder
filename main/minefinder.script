@@ -96,6 +96,7 @@ go.property("dark_theme_mini", resource.tile_source("/main/minefinder-mini-dark.
 
 function init(self)
 	go.set("/anims", "position", vmath.vector3()) -- un-offset anims gui (offset for readability in main.collection
+	self.odd_instance = true --controls inconsistant animation instances across versions
 	self.anims = {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false, faster_flip = true}
 	self.anim_vars = {"flag_place", "flag_remove", "flag_correct", "flag_incorrect", "explosion", "timer", "tileflip", "ui", "flip_bg", "faster_flip"}
 	msg.post(".", "setup")
@@ -319,13 +320,15 @@ function on_input(self, action_id, action)
 					tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, 11)
 					if self.anims["flag_remove"] then
 						local props = {type = 2, theme_id = theme_to_id(self.theme)}
-						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flag-factory", vmath.vector3(moveCol_t*6*self.tile_size+self.tile_size*3, moveRow_t*6*self.tile_size+self.tile_size*3, 0.5), nil, props).."#flag"})
+						local id = factory.create("#flag-factory", vmath.vector3(moveCol_t*6*self.tile_size+self.tile_size*3, moveRow_t*6*self.tile_size+self.tile_size*3, 0.5), nil, props)
+						msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 					end
 				elseif action_id == hash("select") and self.tile_clicked == 11 then -- place flag
 					tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, 13)
 					if self.anims["flag_place"] then
 						local props = {type = 1-self.mini_offS, theme_id = theme_to_id(self.theme)}
-						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flag-factory", vmath.vector3(moveCol_t*(6*self.tile_size)+3*self.tile_size, moveRow_t*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props).."#flag"})
+						local id = factory.create("#flag-factory", vmath.vector3(moveCol_t*(6*self.tile_size)+3*self.tile_size, moveRow_t*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+						msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 					end
 				elseif self.tile_clicked > 10 then -- reveal block
 					if self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS] == 1 then -- flip tile
@@ -340,7 +343,8 @@ function on_input(self, action_id, action)
 						self.playing = false
 						if self.anims["explosion"] then
 							local props = {wick = true, mini = self.mini_offS}
-							msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#explosion-factory", vmath.vector3(moveCol_t*(6*self.tile_size)+3*self.tile_size, moveRow_t*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props).."#explosion"})
+							local id = factory.create("#explosion-factory", vmath.vector3(moveCol_t*(6*self.tile_size)+3*self.tile_size, moveRow_t*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+							msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 						end
 						
 						self.mine_locs = {}
@@ -391,7 +395,8 @@ function on_input(self, action_id, action)
 								tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1, r+1, 13)
 								if self.anims["flag_place"] then
 									local props = {type = 1-self.mini_offS, theme_id = theme_to_id(self.theme)}
-									msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flag-factory", vmath.vector3(c*(6*self.tile_size)+3*self.tile_size, r*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props).."#flag"})
+									local id = factory.create("#flag-factory", vmath.vector3(c*(6*self.tile_size)+3*self.tile_size, r*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+									msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 								end
 							end
 						end
@@ -423,7 +428,8 @@ function on_input(self, action_id, action)
 		end
 		if moveCol == 25 then
 			if self.current_orb == nil and self.anims["ui"] then
-				self.current_orb = "main:"..factory.create("#orb-factory", vmath.vector3(25*48+24, 5*48+24, 0.9)).."#orb"
+				local id = factory.create("#orb-factory", vmath.vector3(25*48+24, 5*48+24, 0.9))
+				self.current_orb = msg.url(nil, id, nil)
 				msg.post("/gui#minefinder", "add_url", {hash = self.current_orb})
 			end
 		elseif self.current_orb ~= nil then
@@ -536,12 +542,12 @@ function update(self, dt) --checkpoint
 				if self.anims["tileflip"] then
 					if #self.to_flip == 1 then
 						local props = {final = 1, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
-						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*(6*self.tile_size)+3*self.tile_size, self.to_flip[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props).."#tileflip"})
-						
+						local id = factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*(6*self.tile_size)+3*self.tile_size, self.to_flip[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+						msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 					else
 						local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
-						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*(6*self.tile_size)+3*self.tile_size, self.to_flip[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props).."#tileflip"})
-						
+						local id = factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*(6*self.tile_size)+3*self.tile_size, self.to_flip[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+						msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 					end
 				else
 					tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1, 11)
@@ -561,14 +567,16 @@ function update(self, dt) --checkpoint
 				if self.mine_locs[self.mine_i][3] then
 					if self.anims["flag_correct"] then
 						local props = {type = 3, theme_id = theme_to_id(self.theme)}
-						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flag-factory", vmath.vector3(mineCol*(6*self.tile_size)+3*self.tile_size, mineRow*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props).."#flag"})
+						local id = factory.create("#flag-factory", vmath.vector3(mineCol*(6*self.tile_size)+3*self.tile_size, mineRow*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+						msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 					end
 					tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", mineCol+1, mineRow+1, 17)
 				else
 					tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", mineCol+1, mineRow+1, self.board[mineRow-self.row_offS-self.mini_offS][mineCol-self.col_offS-self.mini_offS])
 					if self.anims["explosion"] then
 						local props = {wick = false, mini = self.mini_offS}
-						msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#explosion-factory", vmath.vector3(mineCol*(6*self.tile_size)+3*self.tile_size, mineRow*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props).."#explosion"})
+						local id = factory.create("#explosion-factory", vmath.vector3(mineCol*(6*self.tile_size)+3*self.tile_size, mineRow*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+						msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 					end
 				end
 
@@ -597,7 +605,8 @@ function update(self, dt) --checkpoint
 			local flagCol = self.wrong_flags[self.flag_i][2]
 			if self.anims["flag_incorrect"] then
 				local props = {type = 4 + self.mini_offS, theme_id = theme_to_id(self.theme)}
-				msg.post("/gui#minefinder", "add_url", {hash = "main:"..factory.create("#flag-factory", vmath.vector3(flagCol*(6*self.tile_size)+3*self.tile_size, flagRow*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props).."#flag"})
+				local id = factory.create("#flag-factory", vmath.vector3(flagCol*(6*self.tile_size)+3*self.tile_size, flagRow*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+				msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 			end
 			self.timer = 1
 			self.flag_i = self.flag_i + 1

@@ -43,7 +43,7 @@ function on_message(self, message_id, message)
 		table.insert(self.instances, message.hash)
 	elseif message_id == hash("remove_url") then
 		for i, k in ipairs(self.instances) do
-			if "url: [" .. k .. "]" == tostring(message.hash) then
+			if k.path == message.hash.path then
 				table.remove(self.instances, i)
 				break
 			end
