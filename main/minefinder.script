@@ -209,6 +209,7 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 	elseif message_id == hash("update_anims") then
+		-- WIP - purge specific instances
 		self.anims[self.anim_vars[message.index]] = message.setting
 	elseif message_id == hash("remove_orb") then
 		self.current_orb = "done"
