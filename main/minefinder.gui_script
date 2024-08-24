@@ -210,7 +210,7 @@ function on_input(self, action_id, action)
 			end
 
 			if self.theme == "dark" then
-				if self.anims_on then
+				if self.gui_anims then
 					sprite.play_flipbook("/light-switch", "light-switch-on")
 				else
 					sprite.play_flipbook("/light-switch", "light-switch5")
@@ -218,7 +218,7 @@ function on_input(self, action_id, action)
 				self.theme = "light"
 				msg.post("/zoom#minefinder", "set_theme", {theme = "light"})
 			elseif self.theme == "light" then
-				if self.anims_on then
+				if self.gui_anims then
 					sprite.play_flipbook("/light-switch", "light-switch-off")
 				else
 					sprite.play_flipbook("/light-switch", "light-switch1")

@@ -1,3 +1,15 @@
+local function replace_txt_color(self)
+	if self.node_clicked < 9 then
+		gui.set_color(self.text_nodes[self.node_clicked], vmath.vector4((142/255), (149/255), (219/255), 1))
+	else
+		gui.set_color(self.text_nodes[self.node_clicked], vmath.vector4((154/255), (186/255), (254/255), 1))
+	end
+	if self.node_clicked == 9 then
+		gui.set_color(self.text_nodes[11], vmath.vector4((154/255), (186/255), (254/255), 1))
+		gui.set_color(self.text_nodes[12], vmath.vector4((154/255), (186/255), (254/255), 1))
+	end
+end
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	self.anims_on = true
@@ -75,7 +87,7 @@ function on_input(self, action_id, action)
 		if gui.pick_node(self.hitbox_nodes[i], action.x, action.y) then -- all checkboxes
 			found_node = true
 			if self.node_hover ~= i then
-				if self.node_hover then --replacing text color
+				if self.node_hover then --lift text
 					if self.node_hover < 9 then
 						gui.set_color(self.top_text_nodes[self.node_hover], vmath.vector4((63/255), (63/255), (116/255), 1))
 					else
@@ -83,45 +95,76 @@ function on_input(self, action_id, action)
 					end
 				end
 				
-				gui.set_color(self.top_text_nodes[i], vmath.vector4(0, 0, 0, 0))--highlight text color
+				gui.set_color(self.top_text_nodes[i], vmath.vector4(0, 0, 0, 0))--depress text
 				self.node_hover = i
 			end
 			-- WIP - make selection box invisible
 
+			if self.node_clicked and self.node_clicked ~= i then
+				replace_txt_color(self)
+			end
+
 			if action_id == hash("touch") and action.pressed then
 				gui.set_color(self.text_nodes[i], vmath.vector4(1, 1, 1, 1))
+				if i == 9 then
+					gui.set_color(self.text_nodes[11], vmath.vector4(1, 1, 1, 1))
+					gui.set_color(self.text_nodes[12], vmath.vector4(1, 1, 1, 1))
+				end
+				self.node_clicked = i
 			end
 			
-			if action_id == hash("touch") and action.released then
-				if self.checked[i] then -- uncheck
-					gui.play_flipbook(self.check_nodes[i], "check-remove")
-					self.checked[i] = false
-					if self.disabling == false then
-						self.disabling = true
-						msg.post("/gui#minefinder", "switch_preference", {prefer_up = false})
-					end
-					msg.post("/gui#minefinder", "update_switch", {diff = -1, index = i})
-					msg.post("/zoom#minefinder", "update_anims", {setting = false, index = i})
+			if action.released and action_id == hash("touch") and self.node_clicked == i then
+				replace_txt_color(self)
+				local check_bool
+				local check_int
+				if self.checked[i] then --checking vars
+					check_bool, check_int = false, -1
 				else -- check
-					gui.play_flipbook(self.check_nodes[i], "check-write")
-					self.checked[i] = true
-					if self.disabling == true then
-						self.disabling = false
-						msg.post("/gui#minefinder", "switch_preference", {prefer_up = true})
-					end
-					msg.post("/gui#minefinder", "update_switch", {diff = 1, index = i})
-					msg.post("/zoom#minefinder", "update_anims", {setting = true, index = i})
+					check_bool, check_int = true, 1
 				end
+				
+				if i == 8 then
+					self.anims_on = check_bool
+				end
+
+				if self.checked[i] then 
+					if self.anims_on then --uncheck
+						gui.play_flipbook(self.check_nodes[i], "check-remove")
+					else
+						gui.play_flipbook(self.check_nodes[i], "uncheck12")
+					end
+				else -- check
+					if self.anims_on then
+						gui.play_flipbook(self.check_nodes[i], "check-write")
+					else
+						gui.play_flipbook(self.check_nodes[i], "check")
+					end
+				end
+				
+				self.checked[i] = check_bool
+				if self.disabling == check_bool then
+					self.disabling = not check_bool
+					msg.post("/gui#minefinder", "switch_preference", {prefer_up = check_bool})
+				end
+				msg.post("/gui#minefinder", "update_switch", {diff = check_int, index = i})
+				msg.post("/zoom#minefinder", "update_anims", {setting = check_bool, index = i})
+				
 			end
 		end
 	end
-	if not found_node and self.node_hover then --replacing text color
-		if self.node_hover < 9 then
-			gui.set_color(self.top_text_nodes[self.node_hover], vmath.vector4((63/255), (63/255), (116/255), 1))
-		else
-			gui.set_color(self.top_text_nodes[self.node_hover], vmath.vector4((91/255), (110/255), (225/255), 1))
+	if not found_node then --lift text
+		if self.node_hover then
+			if self.node_hover < 9 then
+				gui.set_color(self.top_text_nodes[self.node_hover], vmath.vector4((63/255), (63/255), (116/255), 1))
+			else
+				gui.set_color(self.top_text_nodes[self.node_hover], vmath.vector4((91/255), (110/255), (225/255), 1))
+			end
+			self.node_hover = nil
 		end
-		self.node_hover = nil
+		if self.node_clicked then
+			replace_txt_color(self)
+			self.node_clicked = nil
+		end
 	end
 end
 

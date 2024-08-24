@@ -95,8 +95,8 @@ go.property("light_theme_mini", resource.tile_source("/main/minefinder-mini-ligh
 go.property("dark_theme_mini", resource.tile_source("/main/minefinder-mini-dark.tilesource"))
 
 function init(self)
+	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 	go.set("/anims", "position", vmath.vector3()) -- un-offset anims gui (offset for readability in main.collection
-	self.odd_instance = true --controls inconsistant animation instances across versions
 	self.anims = {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false, faster_flip = true}
 	self.anim_vars = {"flag_place", "flag_remove", "flag_correct", "flag_incorrect", "explosion", "timer", "tileflip", "ui", "flip_bg", "faster_flip"}
 	msg.post(".", "setup")
