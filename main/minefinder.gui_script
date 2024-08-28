@@ -237,8 +237,8 @@ function on_input(self, action_id, action)
 	end
 
 
-	if (action_id == hash("debug")) and action.pressed then
-		print(self.more_anims)
-	end
-
+-- 	if (action_id == hash("debug")) and action.pressed then
+-- 		print(self.more_anims)
+-- 	end
+-- 
 end
