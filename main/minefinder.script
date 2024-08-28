@@ -540,18 +540,20 @@ function on_input(self, action_id, action)
 		m_col = moveCol*8+4
 	end
 
+	local change_cover_var = true
 	if self.more_anims and not self.covered_select and (mouse_y > 168 and mouse_y < 552) and (mouse_x > 888 and mouse_x < 1320) then --invisible select on more anims
-		go.set("/selection", "position", vmath.vector3(m_col, m_row, -0.8))
-		print("a")
 		self.covered_select = true
-	elseif self.convered_select then
-		go.set("/selection", "position", vmath.vector3(m_col, m_row, 0.8))
+	elseif self.covered_select and not ((mouse_y > 168 and mouse_y < 552) and (mouse_x > 888 and mouse_x < 1320)) then
 		self.covered_select = false
-		print("b")
+	else
+		change_cover_var = false
 	end
 
-	
-	if self.m_row_prev ~= m_row or self.m_col_prev ~= m_col then
+	if self.covered_select then
+		if self.covered_select then
+			go.set("/selection", "position", vmath.vector3(m_col, m_row, -0.8))
+		end
+	elseif self.m_row_prev ~= m_row or self.m_col_prev ~= m_col or change_cover_var then
 		if moveRow < 0 or moveRow > 17 or moveCol < 0 or moveCol > 28 then
 			if self.visible_select then
 				sprite.set_constant("/selection", "tint", vmath.vector4(1, 1, 1, 0))
