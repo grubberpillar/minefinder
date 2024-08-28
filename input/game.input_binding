@@ -6,6 +6,10 @@ key_trigger {
   input: KEY_D
   action: "touch"
 }
+key_trigger {
+  input: KEY_TAB
+  action: "debug"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "touch"
@@ -21,4 +25,8 @@ gamepad_trigger {
 gamepad_trigger {
   input: GAMEPAD_RTRIGGER
   action: "touch"
+}
+gamepad_trigger {
+  input: GAMEPAD_RPAD_DOWN
+  action: "select"
 }

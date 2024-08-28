@@ -2,8 +2,10 @@ local function set_props(self)
 	local mine_nums = {10, 14, 40, 100, 150}
 	local size_nums = {{8, 10, 16, 16, 24}, {8, 10, 16, 30, 30}}
 	self.num_mines = mine_nums[self.diff]
-	self.row_size = size_nums[1][self.diff]
-	self.col_size = size_nums[2][self.diff]
+	-- self.row_size = size_nums[1][self.diff]
+	-- self.col_size = size_nums[2][self.diff]
+	self.row_size = 17
+	self.col_size = 15
 	if self.row_size > 16 or self.col_size > 16 then
 		self.mini_txt = "-mini"
 		-- self.tiny_select = true
@@ -17,7 +19,7 @@ local function set_props(self)
 		self.board_size = 16
 		self.mini_offS = 0
 	end
-		
+	
 	msg.post("/gui#minefinder", "set_mines", {mines = self.num_mines})
 	msg.post("/gui#minefinder", "reset", {mines = self.num_mines})
 	
@@ -84,6 +86,12 @@ end
 
 
 
+local function window_callback(self, event, data)
+	if event == window.WINDOW_EVENT_RESIZED then
+		self.screen_size.x, self.screen_size.y = data.width, data.height
+	end
+end
+
 
 
 
@@ -95,6 +103,11 @@ go.property("light_theme_mini", resource.tile_source("/main/minefinder-mini-ligh
 go.property("dark_theme_mini", resource.tile_source("/main/minefinder-mini-dark.tilesource"))
 
 function init(self)
+	window.set_listener(window_callback)
+	self.screen_size = {x = nil, y = nil}
+	self.screen_ratio = {x = 1392, y = 864}
+	self.screen_size.x, self.screen_size.y = window.get_size()
+	
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 	go.set("/anims", "position", vmath.vector3()) -- un-offset anims gui (offset for readability in main.collection
 	self.anims = {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false, faster_flip = true}
@@ -108,12 +121,14 @@ function init(self)
 	self.hard_select = true
 	self.mini_select = false
 	self.large_select = false
+	self.visible_select = true
 	self.tile_lit = false
 	self.m_row_prev = 0
 	self.m_col_prev = 0
 	self.current_orb = nil
 	self.board_size = 16
 	self.mini_offS = 0
+	self.more_anims = false
 	go.set("/diff-selected", "position", vmath.vector3((19 + self.diff)*8+4, 5*8+4, 0.7))
 	go.set("/zoom#board", "tile_source", self.tilesources[self.theme])
 	go.set("/zoom#board-mini", "tile_source", self.tilesources_mini[self.theme])
@@ -130,10 +145,27 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("setup") then
+		print("setup")
+		
 		self.board = {}
 		set_props(self)
-		self.row_offS = (self.board_size-self.row_size)/2
-		self.col_offS = (self.board_size-self.col_size)/2
+		self.row_offS = math.floor((self.board_size-self.row_size)/2)
+		self.col_offS = math.floor((self.board_size-self.col_size)/2)
+		if self.row_size%2 == 1 then
+			self.row_odd_offS = 1
+			print("odd row")
+		else
+			self.row_odd_offS = 0
+			print("no odd row offset")
+		end
+		if self.col_size%2 == 1 then
+			self.col_odd_offS = 1
+			print("odd col")
+		else
+			self.col_odd_offS = 0
+			print("no odd col offset")
+			
+		end
 		self.playing = true
 		self.wrong_flags = nil
 		self.to_flip = {}
@@ -156,7 +188,7 @@ function on_message(self, message_id, message, sender)
 		if self.row_offS > 0 or self.col_offS > 0 then
 			for r = 1, self.board_size do
 				for c = 1, self.board_size do
-					if (r <= self.row_offS or r > self.board_size-self.row_offS) or (c <= self.col_offS or c > self.board_size-self.col_offS) then
+					if (r <= self.row_offS or r > self.board_size-self.row_offS-self.row_odd_offS) or (c <= self.col_offS or c > self.board_size-self.col_offS-self.col_odd_offS) then
 						if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 14 then
 							tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS, 14)
 						end
@@ -242,6 +274,8 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 		self.playing = true
+	elseif message_id == hash("more_anims") then
+		self.more_anims = message.shown
 	end
 end
 
@@ -252,11 +286,19 @@ end
 
 
 function on_input(self, action_id, action)
+	local zoom = math.min(self.screen_size.x / self.screen_ratio.x, self.screen_size.y / self.screen_ratio.y)
+	local projected_width = self.screen_size.x / zoom
+	local projected_height = self.screen_size.y / zoom
+	local xoffset = -(projected_width - self.screen_ratio.x) / 2
+	local yoffset = -(projected_height - self.screen_ratio.y) / 2
+	local mouse_x = (action.x / self.screen_ratio.x) * projected_width + xoffset
+	local mouse_y = (action.y / self.screen_ratio.y) * projected_height + yoffset
+	
 	if (action_id == hash("touch") or action_id == hash("select")) and action.pressed and self.playing then
-		-- local moveRow = math.floor(action.y/48) --gives the mouse tile for strictly 8x8 tiles
-		-- local moveCol = math.floor(action.x/48)
-		local moveRow_t = math.floor(action.y/(6*self.tile_size)) --gives the mouse tile for varying game tiles
-		local moveCol_t = math.floor(action.x/(6*self.tile_size))
+		-- local moveRow = math.floor(mouse_y/48) --gives the mouse tile for strictly 8x8 tiles
+		-- local moveCol = math.floor(mouse_x/48)
+		local moveRow_t = math.floor(mouse_y/(6*self.tile_size)) --gives the mouse tile for varying game tiles
+		local moveCol_t = math.floor(mouse_x/(6*self.tile_size))
 		if moveRow_t < self.row_size+1+self.mini_offS+self.row_offS and moveCol_t < self.col_size+1+self.mini_offS+self.col_offS and moveRow_t > self.row_offS+self.mini_offS and moveCol_t > self.col_offS+self.mini_offS then
 			self.tile_clicked = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1)
 			self.row_clicked = moveRow_t
@@ -267,10 +309,10 @@ function on_input(self, action_id, action)
 	end
 	
 	if self.tile_clicked and (action_id == hash("touch") or action_id == hash("select")) and action.released and self.playing then
-		-- local moveRow = math.floor(action.y/48)
-		-- local moveCol = math.floor(action.x/48)
-		local moveRow_t = math.floor(action.y/(6*self.tile_size))
-		local moveCol_t = math.floor(action.x/(6*self.tile_size))
+		-- local moveRow = math.floor(mouse_y/48)
+		-- local moveCol = math.floor(mouse_x/48)
+		local moveRow_t = math.floor(mouse_y/(6*self.tile_size))
+		local moveCol_t = math.floor(mouse_x/(6*self.tile_size))
 		-- print(11-moveRow .. ", " .. moveCol)
 
 		if moveRow_t < self.row_size+1+self.mini_offS+self.row_offS and moveCol_t < self.col_size+1+self.mini_offS+self.col_offS and moveRow_t > self.row_offS+self.mini_offS and moveCol_t > self.col_offS+self.mini_offS then
@@ -364,6 +406,9 @@ function on_input(self, action_id, action)
 						self.timer = 3
 						self.mine_i = 1
 					else -- digging a tile
+						-- local a = self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS]
+						-- print(a)
+						-- print("at " .. moveRow_t-self.row_offS-self.mini_offS .. ", " .. moveCol_t-self.col_offS-self.mini_offS)
 						tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
 						
 					end
@@ -387,9 +432,10 @@ function on_input(self, action_id, action)
 
 				if won_game then
 					print("you win!")
+					self.playing = false
 					msg.post("/gui#minefinder", "set_ticking", {ticking = false})
 					
-					for r = self.row_offS, self.row_size+self.row_offS do -- WIP flag anims
+					for r = self.row_offS, self.row_size+self.row_offS do
 						for c = self.col_offS, self.col_size+self.col_offS do
 							if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1, r+1) == 11 then
 								tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1, r+1, 13)
@@ -409,10 +455,10 @@ function on_input(self, action_id, action)
 		self.col_clicked = nil
 	end
 
-	local moveRow = math.floor(action.y/(48))
-	local moveCol = math.floor(action.x/(48))
-	local moveRow_t = math.floor(action.y/(6*self.tile_size))
-	local moveCol_t = math.floor(action.x/(6*self.tile_size))
+	local moveRow = math.floor(mouse_y/(48))
+	local moveCol = math.floor(mouse_x/(48))
+	local moveRow_t = math.floor(mouse_y/(6*self.tile_size))
+	local moveCol_t = math.floor(mouse_x/(6*self.tile_size))
 	if self.row_clicked and (self.row_clicked ~= moveRow_t or self.col_clicked ~= moveCol_t) then --reset tile when mouse moved off
 		tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", self.col_clicked+1, self.row_clicked+1, self.tile_clicked)
 		self.tile_clicked = nil
@@ -421,7 +467,7 @@ function on_input(self, action_id, action)
 	end
 
 	
-	if moveCol > 19 and moveCol < 26 and math.floor(moveRow) == 5 then
+	if not self.more_anims and moveCol > 19 and moveCol < 26 and math.floor(moveRow) == 5 then
 		if not self.large_select then
 			sprite.play_flipbook("/selection", "selection-large")
 			self.large_select = true
@@ -479,9 +525,6 @@ function on_input(self, action_id, action)
 			self.large_select = false
 			self.tile_lit = false
 			self.mini_select = false
-		-- else
-			-- print(moveCol)
-			-- print(17*(3-self.tile_size/4))
 		end
 	end
 
@@ -498,8 +541,19 @@ function on_input(self, action_id, action)
 
 	
 	if self.m_row_prev ~= m_row or self.m_col_prev ~= m_col then
+
+		if moveRow < 0 or moveRow > 17 or moveCol < 0 or moveCol > 28 then
+			if self.visible_select then
+				sprite.set_constant("/selection", "tint", vmath.vector4(1, 1, 1, 0))
+				self.visible_select = false
+			end
+		elseif not self.visible_select then
+			sprite.set_constant("/selection", "tint", vmath.vector4(1, 1, 1, 1))
+			self.visible_select = true
+		end
+		
 		local z_pos = 0.8
-		if self.mini_offS == 1 and self.mini_select and (moveRow_t >= self.row_size+1+self.mini_offS+self.row_offS or moveCol_t >= self.col_size+1+self.mini_offS+self.col_offS or moveRow_t <= self.row_offS+self.mini_offS or moveCol_t <= self.col_offS+self.mini_offS) then
+		if self.mini_offS == 1 and self.mini_select and (moveRow_t >= self.row_size+1+self.mini_offS+self.row_offS or moveCol_t >= self.col_size+1+self.mini_offS+self.col_offS or moveRow_t <= self.row_offS+self.mini_offS or moveCol_t <= self.col_offS+self.mini_offS) or self.more_anims and (m_row > nil or m_row < nil) and (m_col > nil or m_col < nil) then
 			z_pos = -0.8
 		end
 		-- go.set("/diff-selected", "position", vmath.vector3(moveCol*8+4, moveRow*8+4, 0.8))

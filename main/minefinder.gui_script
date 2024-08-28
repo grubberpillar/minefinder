@@ -35,7 +35,6 @@ function update(self, dt)
 		gui.set_text(gui.get_node("timer"), "TIME: "..self.minutes..":"..seconds_txt)
 		self.seconds_storage = self.seconds
 	end
-	
 end
 
 function on_message(self, message_id, message)
@@ -106,7 +105,7 @@ function on_input(self, action_id, action)
 	local more_lit = gui.get_node("deselect")
 	local more_symbol = gui.get_node("more-symbol-mod")
 	
-	if gui.pick_node(retry, action.x, action.y) then -- retry button
+	if gui.pick_node(retry, action.x, action.y) and not self.more_anims then -- retry button
 		if gui.get_color(retry_s) ~= vmath.vector4(1, 1, 1, 1) then
 			gui.set_color(retry_s, vmath.vector4(1, 1, 1, 1))
 		end
@@ -126,6 +125,7 @@ function on_input(self, action_id, action)
 		elseif action_id == hash("touch") and action.released and gui.get_color(more_down) ~= vmath.vector4(0, 0, 0, 0) then
 			gui.set_color(more_down, vmath.vector4(0, 0, 0, 0))
 			self.more_anims = not self.more_anims
+			msg.post("/zoom#minefinder", "more_anims", {shown = self.more_anims})
 			if self.more_anims then
 				gui.set_color(more_symbol, vmath.vector4(0, 0, 0, 0))
 				msg.post("/anims#anims", "enable")
@@ -198,7 +198,7 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if gui.pick_node(theme_sel, action.x, action.y) then --switch click
+	if gui.pick_node(theme_sel, action.x, action.y)  and not self.more_anims then --theme switch click
 		if gui.get_color(theme_sel_bg) ~= vmath.vector4(1, 1, 1, 1) then
 			gui.set_color(theme_sel_bg, vmath.vector4(1, 1, 1, 1))
 		end
@@ -235,6 +235,10 @@ function on_input(self, action_id, action)
 			gui.set_color(theme_sel_light, vmath.vector4(0, 0, 0, 0))
 		end
 	end
-	
+
+
+	if (action_id == hash("debug")) and action.pressed then
+		print(self.more_anims)
+	end
 
 end
