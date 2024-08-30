@@ -96,6 +96,7 @@ end
 
 
 
+require "main.highscores"
 
 go.property("light_theme", resource.tile_source("/main/minefinder-light.tilesource"))
 go.property("dark_theme", resource.tile_source("/main/minefinder-dark.tilesource"))
