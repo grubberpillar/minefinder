@@ -2,10 +2,10 @@ local function set_props(self)
 	local mine_nums = {10, 14, 40, 100, 150}
 	local size_nums = {{8, 10, 16, 16, 24}, {8, 10, 16, 30, 30}}
 	self.num_mines = mine_nums[self.diff]
-	-- self.row_size = size_nums[1][self.diff]
-	-- self.col_size = size_nums[2][self.diff]
-	self.row_size = 17
-	self.col_size = 15
+	self.row_size = size_nums[1][self.diff]
+	self.col_size = size_nums[2][self.diff]
+	-- self.row_size = 15
+	-- self.col_size = 15
 	if self.row_size > 16 or self.col_size > 16 then
 		self.mini_txt = "-mini"
 		-- self.tiny_select = true
@@ -186,7 +186,7 @@ function on_message(self, message_id, message, sender)
 		end
 		
 		-- setting border
-		if self.row_offS > 0 or self.col_offS > 0 then
+		if self.row_offS > 0 or self.col_offS > 0 or self.row_odd_offS > 0 or self.col_odd_offS > 0 then
 			for r = 1, self.board_size do
 				for c = 1, self.board_size do
 					if (r <= self.row_offS or r > self.board_size-self.row_offS-self.row_odd_offS) or (c <= self.col_offS or c > self.board_size-self.col_offS-self.col_odd_offS) then

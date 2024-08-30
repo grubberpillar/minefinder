@@ -86,6 +86,10 @@ images {
   image: "/assets/checkbox/uncheck12.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assets/trophy.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "explosion-wick"
   images {
