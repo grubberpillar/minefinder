@@ -1,8 +1,8 @@
-- work on large/small tiles
-- animation options +
-	- display more options
-	- integrate more options
-- change light/dark mode
+- win animation
+- fix lose animation
+- new hs animation
+- custom level
+- custom level hs/presets
+- set difficulty polish
 
 - lose and win at the same time on a pre-won board
-- odd board sizes

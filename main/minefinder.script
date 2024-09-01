@@ -96,8 +96,7 @@ end
 
 
 
-require "main.highscores"
-
+local hs = require "main.highscores"
 go.property("light_theme", resource.tile_source("/main/minefinder-light.tilesource"))
 go.property("dark_theme", resource.tile_source("/main/minefinder-dark.tilesource"))
 go.property("light_theme_mini", resource.tile_source("/main/minefinder-mini-light.tilesource"))
@@ -208,7 +207,7 @@ function on_message(self, message_id, message, sender)
 		end
 		
 		msg.post(".", "acquire_input_focus")
-		math.randomseed(socket.gettime())
+		-- math.randomseed(socket.gettime())
 	elseif message_id == hash("reset") then --checkpoint
 		if self.resettable then
 			msg.post("/gui#minefinder", "purge_instances")
@@ -408,9 +407,6 @@ function on_input(self, action_id, action)
 						self.timer = 3
 						self.mine_i = 1
 					else -- digging a tile
-						-- local a = self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS]
-						-- print(a)
-						-- print("at " .. moveRow_t-self.row_offS-self.mini_offS .. ", " .. moveCol_t-self.col_offS-self.mini_offS)
 						tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
 						
 					end
@@ -419,12 +415,14 @@ function on_input(self, action_id, action)
 				end
 				local flag_count = 0
 				local won_game = true 
+				local tile = nil
 				for r = 1, self.row_size do
 					for c = 1, self.col_size do
-						if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS) == 13 then
+						tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS)
+						if tile == 13 then
 							flag_count = flag_count + 1
 						end
-						if won_game and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS) > 9 and self.board[r][c] < 10 then
+						if won_game and tile > 9 and tile ~= 16 and self.board[r][c] < 10 then
 							won_game = false
 						end
 					end
@@ -436,6 +434,7 @@ function on_input(self, action_id, action)
 					print("you win!")
 					self.playing = false
 					msg.post("/gui#minefinder", "set_ticking", {ticking = false})
+					msg.post("/gui#minefinder", "set_hs", {diff = self.diff})
 					
 					for r = self.row_offS, self.row_size+self.row_offS do
 						for c = self.col_offS, self.col_size+self.col_offS do
@@ -493,6 +492,7 @@ function on_input(self, action_id, action)
 			self.diff = moveCol - 19
 			go.set("/diff-selected", "position", vmath.vector3((19 + self.diff)*8+4, 5*8+4, 0.7))
 			go.set("/brighten", "position", vmath.vector3(20, 12, -0.5))
+			msg.post("/gui#minefinder", "switch_hs", {diff = self.diff})
 			self.tile_lit = false
 		elseif moveCol*8+4 ~= self.m_col_prev and self.tile_lit then
 			go.set("/brighten", "position", vmath.vector3(20, 12, -0.5))
@@ -577,8 +577,7 @@ function on_input(self, action_id, action)
 	self.m_col_prev = m_col
 
 	if (action_id == hash("debug")) and action.pressed then
-		print(m_row)
-		print(mouse_y)
+		print(hs.level[self.diff])
 	end
 	
 end

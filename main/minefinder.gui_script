@@ -1,3 +1,5 @@
+local hs = require "main.highscores"
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	gui.set_color(gui.get_node("retry-select"), vmath.vector4(0, 0, 0, 0))
@@ -88,6 +90,28 @@ function on_message(self, message_id, message)
 		end
 	elseif message_id == hash("switch_preference") then
 		self.prefer_switch_up = message.prefer_up
+	elseif message_id == hash("set_hs") then
+		if hs.level[message.diff] == nil or math.floor(self.seconds + self.minutes*60) < hs.level[message.diff] then
+			hs.level[message.diff] = math.floor(self.seconds + self.minutes*60)
+			local seconds_txt = ""
+			if self.seconds < 10 then
+				seconds_txt = "0" .. math.floor(self.seconds)
+			else
+				seconds_txt = "" .. math.floor(self.seconds)
+			end
+			gui.set_text(gui.get_node("highscore"), self.minutes .. ":".. seconds_txt)
+		end
+	elseif message_id == hash("switch_hs") then
+		if hs.level[message.diff] then
+			local minutes_txt = math.floor(hs.level[message.diff]/60)
+			local seconds_txt = math.floor(hs.level[message.diff]%60)
+			if seconds_txt < 10 then
+				seconds_txt = "0" + seconds_txt
+			end
+			gui.set_text(gui.get_node("highscore"), minutes_txt .. ":".. seconds_txt)
+		else
+			gui.set_text(gui.get_node("highscore"), "-:--")
+		end
 	end
 end
 
