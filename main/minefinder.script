@@ -22,7 +22,6 @@ local function set_props(self)
 	
 	msg.post("/gui#minefinder", "set_mines", {mines = self.num_mines})
 	msg.post("/gui#minefinder", "reset", {mines = self.num_mines})
-	
 end
 
 local function shuffle(tbl)
