@@ -139,7 +139,7 @@ function on_input(self, action_id, action)
 	local more_lit = gui.get_node("deselect")
 	local more_symbol = gui.get_node("more-symbol-mod")
 	local floppy = gui.get_node("floppy")
-	local floppy_lit = gui.get_node("floppy_lit")
+	-- local floppy_lit = gui.get_node("floppy_lit")
 	
 	if gui.pick_node(retry, action.x, action.y) and not self.more_anims then -- retry button
 		if gui.get_color(retry_s) ~= vmath.vector4(1, 1, 1, 1) then
@@ -272,9 +272,9 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if gui.pick_node(theme_sel, action.x, action.y) and not self.more_anims and gui.get(floppy, "color.w" == 1) then --theme switch click
+	if gui.pick_node(floppy, action.x, action.y) and not self.more_anims and gui.get(floppy, "color.w") == 1 then --theme switch click
 		if action_id == hash("touch") and action.released then
-			--fill in
+			gui.set(floppy, "color.w", 0)
 		end
 	end
 
