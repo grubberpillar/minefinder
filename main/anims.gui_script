@@ -146,7 +146,7 @@ function on_input(self, action_id, action)
 					self.disabling = not check_bool
 					msg.post("/gui#minefinder", "switch_preference", {prefer_up = check_bool})
 				end
-				msg.post("/gui#minefinder", "update_switch", {diff = check_int, index = i})
+				msg.post("/gui#minefinder", "update_switch", {move = check_int, index = i})
 				msg.post("/zoom#minefinder", "update_anims", {setting = check_bool, index = i})
 				
 			end

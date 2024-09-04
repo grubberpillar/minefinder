@@ -1,9 +1,11 @@
+local l_data = require "main.leveldata"
+
 local function set_props(self)
 	local mine_nums = {10, 14, 40, 100, 150}
 	local size_nums = {{8, 10, 16, 16, 24}, {8, 10, 16, 30, 30}}
-	self.num_mines = mine_nums[self.diff]
-	self.row_size = size_nums[1][self.diff]
-	self.col_size = size_nums[2][self.diff]
+	self.num_mines = mine_nums[l_data.diff]
+	self.row_size = size_nums[1][l_data.diff]
+	self.col_size = size_nums[2][l_data.diff]
 	-- self.row_size = 15
 	-- self.col_size = 15
 	if self.row_size > 16 or self.col_size > 16 then
@@ -95,7 +97,6 @@ end
 
 
 
-local hs = require "main.highscores"
 go.property("light_theme", resource.tile_source("/main/minefinder-light.tilesource"))
 go.property("dark_theme", resource.tile_source("/main/minefinder-dark.tilesource"))
 go.property("light_theme_mini", resource.tile_source("/main/minefinder-mini-light.tilesource"))
@@ -115,7 +116,7 @@ function init(self)
 	self.theme = "dark"
 	self.tilesources = {light = self.light_theme, dark = self.dark_theme}
 	self.tilesources_mini = {light = self.light_theme_mini, dark = self.dark_theme_mini}
-	self.diff = 3 -- CHANGE HERE
+	l_data.diff = 3 -- CHANGE HERE
 	self.tile_size = 8
 	self.hard_select = true
 	self.mini_select = false
@@ -129,10 +130,10 @@ function init(self)
 	self.board_size = 16
 	self.mini_offS = 0
 	self.more_anims = false
-	go.set("/diff-selected", "position", vmath.vector3((19 + self.diff)*8+4, 5*8+4, 0.7))
+	go.set("/diff-selected", "position", vmath.vector3((19 + l_data.diff)*8+4, 8*8+4, 0.7))
 	go.set("/zoom#board", "tile_source", self.tilesources[self.theme])
 	go.set("/zoom#board-mini", "tile_source", self.tilesources_mini[self.theme])
-	
+	go.set("/diff-selected-temp", "position.z", -0.7)
 	-- resource.set_texture(path, table, buffer)
 end
 
@@ -206,7 +207,7 @@ function on_message(self, message_id, message, sender)
 		end
 		
 		msg.post(".", "acquire_input_focus")
-		-- math.randomseed(socket.gettime())
+		math.randomseed(socket.gettime())
 	elseif message_id == hash("reset") then --checkpoint
 		if self.resettable then
 			msg.post("/gui#minefinder", "purge_instances")
@@ -433,7 +434,7 @@ function on_input(self, action_id, action)
 					print("you win!")
 					self.playing = false
 					msg.post("/gui#minefinder", "set_ticking", {ticking = false})
-					msg.post("/gui#minefinder", "set_hs", {diff = self.diff})
+					msg.post("/gui#minefinder", "set_hs")
 					
 					for r = self.row_offS, self.row_size+self.row_offS do
 						for c = self.col_offS, self.col_size+self.col_offS do
@@ -467,14 +468,14 @@ function on_input(self, action_id, action)
 	end
 
 	
-	if not self.more_anims and moveCol > 19 and moveCol < 26 and math.floor(moveRow) == 5 then --change difficulty
+	if not self.more_anims and moveCol > 19 and moveCol < 26 and math.floor(moveRow) == 8 then --change difficulty
 		if not self.large_select then
 			sprite.play_flipbook("/selection", "selection-large")
 			self.large_select = true
 		end
 		if moveCol == 25 then
 			if self.current_orb == nil and self.anims["ui"] then
-				local id = factory.create("#orb-factory", vmath.vector3(25*48+24, 5*48+24, 0.9))
+				local id = factory.create("#orb-factory", vmath.vector3(25*48+24, 8*48+24, 0.9))
 				self.current_orb = msg.url(nil, id, nil)
 				msg.post("/gui#minefinder", "add_url", {hash = self.current_orb})
 			end
@@ -488,11 +489,19 @@ function on_input(self, action_id, action)
 			go.set("/brighten", "position", vmath.vector3(moveCol*8+4, moveRow*8+4, 1))
 			self.tile_lit = true
 		elseif action_id == hash("touch") and action.released and self.tile_lit then
-			self.diff = moveCol - 19
-			go.set("/diff-selected", "position", vmath.vector3((19 + self.diff)*8+4, 5*8+4, 0.7))
-			go.set("/brighten", "position", vmath.vector3(20, 12, -0.5))
-			msg.post("/gui#minefinder", "switch_hs", {diff = self.diff})
-			self.tile_lit = false
+			if moveCol - 19 ~= l_data.diff then
+				l_data.diff_temp = moveCol - 19
+				go.set("/diff-selected-temp", "position", vmath.vector3((19 + l_data.diff_temp)*8+4, 8*8+4, 0.7))
+				go.set("/brighten", "position", vmath.vector3(20, 12, -0.5))
+				msg.post("/gui#minefinder", "switch_hs")
+				self.tile_lit = false
+			else
+				l_data.diff_temp = nil
+				go.set("/diff-selected-temp", "position.z", -0.7)
+				go.set("/brighten", "position", vmath.vector3(20, 12, -0.5))
+				msg.post("/gui#minefinder", "switch_hs")
+				self.tile_lit = false
+			end
 		elseif moveCol*8+4 ~= self.m_col_prev and self.tile_lit then
 			go.set("/brighten", "position", vmath.vector3(20, 12, -0.5))
 			self.tile_lit = false
@@ -576,7 +585,7 @@ function on_input(self, action_id, action)
 	self.m_col_prev = m_col
 
 	if (action_id == hash("debug")) and action.pressed then
-		print(hs.level[self.diff])
+		print(l_data.diff_temp)
 	end
 	
 end

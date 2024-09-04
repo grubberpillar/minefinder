@@ -1816,7 +1816,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "UI"
+  text: "GUI"
   font: "pixel-font"
   id: "ui-txt"
   xanchor: XANCHOR_NONE
@@ -3791,7 +3791,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "UI"
+  text: "GUI"
   font: "pixel-font"
   id: "ui-txt-top"
   xanchor: XANCHOR_NONE

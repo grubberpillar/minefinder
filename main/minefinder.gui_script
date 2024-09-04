@@ -1,4 +1,4 @@
-local hs = require "main.highscores"
+local l_data = require "main.leveldata"
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
@@ -78,11 +78,11 @@ function on_message(self, message_id, message)
 		end
 	elseif message_id == hash("update_switch") then
 		if message.index < 9 then
-			self.anim_s_state = self.anim_s_state + message.diff
+			self.anim_s_state = self.anim_s_state + message.move
 			sprite.play_flipbook("/anim-switch", "switch-"..self.anim_s_state)
 		end
 		if message.index == 8 then
-			if message.diff == 1 then
+			if message.move == 1 then
 				self.gui_anims = true
 			else
 				self.gui_anims = false
@@ -91,8 +91,8 @@ function on_message(self, message_id, message)
 	elseif message_id == hash("switch_preference") then
 		self.prefer_switch_up = message.prefer_up
 	elseif message_id == hash("set_hs") then
-		if hs.level[message.diff] == nil or math.floor(self.seconds + self.minutes*60) < hs.level[message.diff] then
-			hs.level[message.diff] = math.floor(self.seconds + self.minutes*60)
+		if l_data.highscore[l_data.diff] == nil or math.floor(self.seconds + self.minutes*60) < l_data.highscore[l_data.diff] then
+			l_data.highscore[l_data.diff] = math.floor(self.seconds + self.minutes*60)
 			local seconds_txt = ""
 			if self.seconds < 10 then
 				seconds_txt = "0" .. math.floor(self.seconds)
@@ -102,16 +102,26 @@ function on_message(self, message_id, message)
 			gui.set_text(gui.get_node("highscore"), self.minutes .. ":".. seconds_txt)
 		end
 	elseif message_id == hash("switch_hs") then
-		if hs.level[message.diff] then
-			local minutes_txt = math.floor(hs.level[message.diff]/60)
-			local seconds_txt = math.floor(hs.level[message.diff]%60)
-			if seconds_txt < 10 then
-				seconds_txt = "0" + seconds_txt
+		if l_data.highscore[l_data.diff] then
+			local minutes_txt = ""..math.floor(l_data.highscore[l_data.diff]/60)
+			local seconds_txt = ""..math.floor(l_data.highscore[l_data.diff]%60)
+			if tonumber(seconds_txt) < 10 then
+				seconds_txt = "0" .. seconds_txt
 			end
+			
 			gui.set_text(gui.get_node("highscore"), minutes_txt .. ":".. seconds_txt)
 		else
 			gui.set_text(gui.get_node("highscore"), "-:--")
 		end
+
+		local floppy = gui.get_node("floppy")
+		
+		if l_data.diff_temp then
+			gui.set(floppy, "color.w", 1)
+		else
+			gui.set(floppy, "color.w", 0)
+		end
+			
 	end
 end
 
@@ -128,6 +138,8 @@ function on_input(self, action_id, action)
 	local more_down = gui.get_node("more-box-down")
 	local more_lit = gui.get_node("deselect")
 	local more_symbol = gui.get_node("more-symbol-mod")
+	local floppy = gui.get_node("floppy")
+	local floppy_lit = gui.get_node("floppy_lit")
 	
 	if gui.pick_node(retry, action.x, action.y) and not self.more_anims then -- retry button
 		if gui.get_color(retry_s) ~= vmath.vector4(1, 1, 1, 1) then
@@ -257,6 +269,12 @@ function on_input(self, action_id, action)
 		end
 		if gui.get_color(theme_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
 			gui.set_color(theme_sel_light, vmath.vector4(0, 0, 0, 0))
+		end
+	end
+
+	if gui.pick_node(theme_sel, action.x, action.y) and not self.more_anims and gui.get(floppy, "color.w" == 1) then --theme switch click
+		if action_id == hash("touch") and action.released then
+			--fill in
 		end
 	end
 

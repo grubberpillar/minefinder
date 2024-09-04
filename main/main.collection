@@ -5,6 +5,7 @@ embedded_instances {
   children: "anim-switch"
   children: "brighten"
   children: "diff-selected"
+  children: "diff-selected-temp"
   children: "light-switch"
   children: "selection"
   data: "components {\n"
@@ -128,7 +129,7 @@ embedded_instances {
   "\"\n"
   "  position {\n"
   "    x: 184.0\n"
-  "    y: 44.0\n"
+  "    y: 68.0\n"
   "    z: 0.2\n"
   "  }\n"
   "  rotation {\n"
@@ -151,7 +152,7 @@ embedded_instances {
   "\"\n"
   "  position {\n"
   "    x: 184.0\n"
-  "    y: 44.0\n"
+  "    y: 68.0\n"
   "    z: 0.9\n"
   "  }\n"
   "  rotation {\n"
@@ -492,6 +493,49 @@ embedded_instances {
     x: 600.0
     y: 0.0
     z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "diff-selected-temp"
+  data: "embedded_components {\n"
+  "  id: \"/diff-selected-temp_img\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"selection-large-temp\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "blend_mode: BLEND_MODE_ALPHA\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/sprites.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 36.0
+    y: 12.0
+    z: 0.7
   }
   rotation {
     x: 0.0
