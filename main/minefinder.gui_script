@@ -1,5 +1,10 @@
 local l_data = require "main.leveldata"
 
+local function hide(self, node)
+	gui.set(node, "color.w", 0)
+	print("A")
+end
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	gui.set_color(gui.get_node("retry-select"), vmath.vector4(0, 0, 0, 0))
@@ -117,9 +122,14 @@ function on_message(self, message_id, message)
 		local floppy = gui.get_node("floppy")
 		
 		if l_data.diff_temp then
-			gui.set(floppy, "color.w", 1)
+			if gui.get(floppy, "color.w") == 0 then
+				gui.play_flipbook(floppy, "floppy-appear")
+				gui.set(floppy, "color.w", 1)
+			end
 		else
-			gui.set(floppy, "color.w", 0)
+			if gui.get(floppy, "color.w") == 1 then
+				gui.play_flipbook(floppy, "floppy-disappear", hide(self, floppy))
+			end
 		end
 			
 	end
@@ -139,7 +149,7 @@ function on_input(self, action_id, action)
 	local more_lit = gui.get_node("deselect")
 	local more_symbol = gui.get_node("more-symbol-mod")
 	local floppy = gui.get_node("floppy")
-	-- local floppy_lit = gui.get_node("floppy_lit")
+	local floppy_lit = gui.get_node("floppy-lit")
 	
 	if gui.pick_node(retry, action.x, action.y) and not self.more_anims then -- retry button
 		if gui.get_color(retry_s) ~= vmath.vector4(1, 1, 1, 1) then
@@ -273,7 +283,11 @@ function on_input(self, action_id, action)
 	end
 
 	if gui.pick_node(floppy, action.x, action.y) and not self.more_anims and gui.get(floppy, "color.w") == 1 then --theme switch click
+		if action_id == hash("touch") and action.pressed then
+			gui.set(floppy_lit, "color.w", 1)
+		end
 		if action_id == hash("touch") and action.released then
+			gui.set(floppy_lit, "color.w", 0)
 			gui.set(floppy, "color.w", 0)
 		end
 	end

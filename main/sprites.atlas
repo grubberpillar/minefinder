@@ -1352,6 +1352,60 @@ animations {
   flip_horizontal: 0
   flip_vertical: 0
 }
+animations {
+  id: "floppy-appear"
+  images {
+    image: "/assets/floppy/floppy-appear-01.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/floppy/floppy-appear-02.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/floppy/floppy-appear-03.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/floppy/floppy-appear-04.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/floppy/floppy-appear-05.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 20
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "floppy-disappear"
+  images {
+    image: "/assets/floppy/floppy-appear-05.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/floppy/floppy-appear-04.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/floppy/floppy-appear-03.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/floppy/floppy-appear-02.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/floppy/floppy-appear-01.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 5
+  flip_horizontal: 0
+  flip_vertical: 0
+}
 margin: 0
 extrude_borders: 0
 inner_padding: 0
