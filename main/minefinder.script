@@ -282,6 +282,8 @@ function on_message(self, message_id, message, sender)
 		l_data.diff_temp = nil
 		go.set("/diff-selected", "position", vmath.vector3((19 + l_data.diff)*8+4, 8*8+4, 0.7))
 		go.set("/diff-selected-temp", "position.z", -0.7)
+	elseif message_id == hash("hide_dfs") then --(hide diff-selected-temp)
+		go.set("/diff-selected-temp", "position.z", -0.7)
 	end
 end
 

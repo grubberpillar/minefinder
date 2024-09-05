@@ -4,6 +4,10 @@ local function hide_floppy(self)
 	gui.set(gui.get_node("floppy"), "color.w", 0)
 end
 
+local function hide_x(self)
+	gui.set(gui.get_node("cancel-x"), "color.w", 0)
+end
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	gui.set_color(gui.get_node("retry-select"), vmath.vector4(0, 0, 0, 0))
@@ -119,15 +123,19 @@ function on_message(self, message_id, message)
 		end
 
 		local floppy = gui.get_node("floppy")
+		local cancel_x = gui.get_node("cancel-x")
 		
 		if l_data.diff_temp then
 			if gui.get(floppy, "color.w") == 0 then
 				gui.play_flipbook(floppy, "floppy-appear")
+				gui.play_flipbook(cancel_x, "x-appear")
 				gui.set(floppy, "color.w", 1)
+				gui.set(cancel_x, "color.w", 1)
 			end
 		else
 			if gui.get(floppy, "color.w") == 1 then
 				gui.play_flipbook(floppy, "floppy-disappear", hide_floppy)
+				gui.play_flipbook(cancel_x, "x-disappear", hide_x)
 			end
 		end
 			
@@ -149,7 +157,10 @@ function on_input(self, action_id, action)
 	local more_symbol = gui.get_node("more-symbol-mod")
 	local floppy = gui.get_node("floppy")
 	local floppy_lit = gui.get_node("floppy-lit")
-	
+	local cancel_x = gui.get_node("cancel-x")
+	local cancel_x_hit = gui.get_node("x-hitbox")
+	local cancel_x_lit = gui.get_node("cancel-x-lit")
+		
 	if gui.pick_node(retry, action.x, action.y) and not self.more_anims then -- retry button
 		if gui.get_color(retry_s) ~= vmath.vector4(1, 1, 1, 1) then
 			gui.set_color(retry_s, vmath.vector4(1, 1, 1, 1))
@@ -281,18 +292,39 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if gui.pick_node(floppy, action.x, action.y) and not self.more_anims and gui.get(floppy, "color.w") == 1 then --theme switch click
+	if gui.pick_node(floppy, action.x, action.y) and not self.more_anims and gui.get(floppy, "color.w") == 1 then --save new diff floppy disk click
 		if action_id == hash("touch") and action.pressed then
-			gui.set(floppy_lit, "color.w", 1)
-		end
-		if action_id == hash("touch") and action.released then
+			gui.set_color(floppy_lit, vmath.vector4(1, 1, 1, 1))
+		elseif action_id == hash("touch") and action.released then
 			gui.set(floppy_lit, "color.w", 0)
 			gui.set(floppy, "color.w", 0)
+			gui.play_flipbook(cancel_x, "x-disappear", hide_x)
 			msg.post("/zoom#minefinder", "set_diff")
 			msg.post("/zoom#minefinder", "reset")
+		elseif gui.get(floppy_lit, "color.w") ~= 1 then
+			gui.set_color(floppy_lit, vmath.vector4((91/255), (110/255), (225/255), 1))
 		end
+	elseif gui.get(floppy_lit, "color.w") ~= 0 then
+		gui.set(floppy_lit, "color.w", 0)
 	end
 
+	if gui.pick_node(cancel_x_hit, action.x, action.y) and not self.more_anims and gui.get(cancel_x, "color.w") == 1 then --save new diff floppy disk click
+		if action_id == hash("touch") and action.pressed then
+			gui.set(cancel_x_lit, "color.w", 1)
+		elseif action_id == hash("touch") and action.released then
+			gui.set(cancel_x_lit, "color.w", 0)
+			gui.set(cancel_x, "color.w", 0)
+			gui.play_flipbook(floppy, "floppy-disappear", hide_floppy)
+			l_data.diff_temp = l_data.diff
+			msg.post("/zoom#minefinder", "set_diff")
+			msg.post(".", "switch_hs")
+		elseif gui.get(cancel_x_lit, "color.w") == 0 then
+			gui.set(cancel_x_lit, "color.w", 0.4)
+		end
+	elseif gui.get(cancel_x_lit, "color.w") ~= 0 then
+		gui.set(cancel_x_lit, "color.w", 0)
+	end
+	
 
 -- 	if (action_id == hash("debug")) and action.pressed then
 -- 		print(self.more_anims)
