@@ -110,35 +110,70 @@ function on_message(self, message_id, message)
 			gui.set_text(gui.get_node("highscore"), self.minutes .. ":".. seconds_txt)
 		end
 	elseif message_id == hash("switch_hs") then
-		if l_data.highscore[l_data.diff] then
-			local minutes_txt = ""..math.floor(l_data.highscore[l_data.diff]/60)
-			local seconds_txt = ""..math.floor(l_data.highscore[l_data.diff]%60)
+		local difficulty = l_data.diff_temp
+		local temporary = true
+		if difficulty == nil then
+			difficulty = l_data.diff
+			temporary = false
+		end
+
+		local highscore = gui.get_node("highscore")
+		local header = gui.get_node("diff-header")
+		local description = gui.get_node("diff-description")
+		
+		if l_data.highscore[difficulty] then
+			local minutes_txt = ""..math.floor(l_data.highscore[difficulty]/60)
+			local seconds_txt = ""..math.floor(l_data.highscore[difficulty]%60)
 			if tonumber(seconds_txt) < 10 then
 				seconds_txt = "0" .. seconds_txt
 			end
 			
-			gui.set_text(gui.get_node("highscore"), minutes_txt .. ":".. seconds_txt)
+			gui.set_text(highscore, minutes_txt .. ":".. seconds_txt)
 		else
-			gui.set_text(gui.get_node("highscore"), "-:--")
+			gui.set_text(highscore, "-:--")
 		end
+
+		gui.set_text(header, l_data.header[difficulty])
+		gui.set_text(description, l_data.description[difficulty])
+		
+		if temporary then
+			gui.set_color(highscore, vmath.vector4((203/255), (219/255), (252/255), 1))
+			gui.set_color(header, vmath.vector4((203/255), (219/255), (252/255), 1))
+			gui.set_color(description, vmath.vector4((203/255), (219/255), (252/255), 1))
+		else
+			gui.set_color(highscore, vmath.vector4(1, 1, 1, 1))
+			gui.set_color(header, vmath.vector4(1, 1, 1, 1))
+			gui.set_color(description, vmath.vector4(1, 1, 1, 1))
+		end
+		
 
 		local floppy = gui.get_node("floppy")
 		local cancel_x = gui.get_node("cancel-x")
 		
 		if l_data.diff_temp then
 			if gui.get(floppy, "color.w") == 0 then
-				gui.play_flipbook(floppy, "floppy-appear")
-				gui.play_flipbook(cancel_x, "x-appear")
+				if self.gui_anims then
+					gui.play_flipbook(floppy, "floppy-appear")
+					gui.play_flipbook(cancel_x, "x-appear")
+				else
+					gui.play_flipbook(floppy, "floppy")
+					gui.play_flipbook(cancel_x, "cancel-x4")
+				end
 				gui.set(floppy, "color.w", 1)
 				gui.set(cancel_x, "color.w", 1)
 			end
 		else
 			if gui.get(floppy, "color.w") == 1 then
-				gui.play_flipbook(floppy, "floppy-disappear", hide_floppy)
-				gui.play_flipbook(cancel_x, "x-disappear", hide_x)
+				if self.gui_anims then
+					gui.play_flipbook(floppy, "floppy-disappear", hide_floppy)
+					gui.play_flipbook(cancel_x, "x-disappear", hide_x)
+				else
+					gui.set(floppy, "color.w", 0)
+					gui.set(cancel_x, "color.w", 0)
+				end
 			end
 		end
-			
+		
 	end
 end
 
@@ -298,31 +333,43 @@ function on_input(self, action_id, action)
 		elseif action_id == hash("touch") and action.released then
 			gui.set(floppy_lit, "color.w", 0)
 			gui.set(floppy, "color.w", 0)
-			gui.play_flipbook(cancel_x, "x-disappear", hide_x)
+			if self.gui_anims then
+				gui.play_flipbook(cancel_x, "x-disappear", hide_x)
+			else
+				gui.set(cancel_x, "color.w", 0)
+			end
+			gui.set_color(gui.get_node("highscore"), vmath.vector4(1, 1, 1, 1))
+			gui.set_color(gui.get_node("diff-header"), vmath.vector4(1, 1, 1, 1))
+			gui.set_color(gui.get_node("diff-description"), vmath.vector4(1, 1, 1, 1))
 			msg.post("/zoom#minefinder", "set_diff")
 			msg.post("/zoom#minefinder", "reset")
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
 		elseif gui.get(floppy_lit, "color.w") ~= 1 then
 			gui.set_color(floppy_lit, vmath.vector4((91/255), (110/255), (225/255), 1))
+			msg.post("/zoom#minefinder", "hide_select", {hid = true})
 		end
 	elseif gui.get(floppy_lit, "color.w") ~= 0 then
 		gui.set(floppy_lit, "color.w", 0)
+		msg.post("/zoom#minefinder", "hide_select", {hid = false})
 	end
 
-	if gui.pick_node(cancel_x_hit, action.x, action.y) and not self.more_anims and gui.get(cancel_x, "color.w") == 1 then --save new diff floppy disk click
+	if gui.pick_node(cancel_x_hit, action.x, action.y) and not self.more_anims and gui.get(cancel_x, "color.w") == 1 then --cancel new diff (x)
 		if action_id == hash("touch") and action.pressed then
 			gui.set(cancel_x_lit, "color.w", 1)
 		elseif action_id == hash("touch") and action.released then
 			gui.set(cancel_x_lit, "color.w", 0)
 			gui.set(cancel_x, "color.w", 0)
-			gui.play_flipbook(floppy, "floppy-disappear", hide_floppy)
 			l_data.diff_temp = l_data.diff
 			msg.post("/zoom#minefinder", "set_diff")
 			msg.post(".", "switch_hs")
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
 		elseif gui.get(cancel_x_lit, "color.w") == 0 then
 			gui.set(cancel_x_lit, "color.w", 0.4)
+			msg.post("/zoom#minefinder", "hide_select", {hid = true})
 		end
 	elseif gui.get(cancel_x_lit, "color.w") ~= 0 then
 		gui.set(cancel_x_lit, "color.w", 0)
+		msg.post("/zoom#minefinder", "hide_select", {hid = false})
 	end
 	
 

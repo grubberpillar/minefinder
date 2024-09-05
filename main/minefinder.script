@@ -1,8 +1,8 @@
 local l_data = require "main.leveldata"
 
 local function set_props(self)
-	local mine_nums = {10, 14, 40, 100, 150}
-	local size_nums = {{8, 10, 16, 16, 24}, {8, 10, 16, 30, 30}}
+	local mine_nums = {10, 14, 40, 100, 150, 40}
+	local size_nums = {{8, 10, 16, 16, 24, 16}, {8, 10, 16, 30, 30, 16}}
 	self.num_mines = mine_nums[l_data.diff]
 	self.row_size = size_nums[1][l_data.diff]
 	self.col_size = size_nums[2][l_data.diff]
@@ -118,11 +118,12 @@ function init(self)
 	self.tilesources_mini = {light = self.light_theme_mini, dark = self.dark_theme_mini}
 	l_data.diff = 3 -- CHANGE HERE
 	self.tile_size = 8
-	self.hard_select = true
-	self.mini_select = false
-	self.large_select = false
-	self.visible_select = true
-	self.covered_select = false
+	self.hard_select = true -- basic large-corner select
+	self.mini_select = false -- tiny select for large boards
+	self.large_select = false -- difficulty selector
+	self.visible_select = true -- false when off the board on higher difficulty
+	self.covered_select = false -- true when touching advanced anims panel
+	self.hide_select = false -- for hiding select while touching other objects
 	self.tile_lit = false
 	self.m_row_prev = 0
 	self.m_col_prev = 0
@@ -282,8 +283,15 @@ function on_message(self, message_id, message, sender)
 		l_data.diff_temp = nil
 		go.set("/diff-selected", "position", vmath.vector3((19 + l_data.diff)*8+4, 8*8+4, 0.7))
 		go.set("/diff-selected-temp", "position.z", -0.7)
-	elseif message_id == hash("hide_dfs") then --(hide diff-selected-temp)
-		go.set("/diff-selected-temp", "position.z", -0.7)
+	elseif message_id == hash("hide_select") then 
+		if message.hid then
+			sprite.set_constant("/selection", "tint", vmath.vector4(1, 1, 1, 0))
+		else
+			sprite.set_constant("/selection", "tint", vmath.vector4(1, 1, 1, 1))
+			go.set("/selection", "position.z", 0.8)
+		end
+		self.hide_select = message.hid
+		self.select_update = true
 	end
 end
 
@@ -565,12 +573,14 @@ function on_input(self, action_id, action)
 		change_cover_var = false
 	end
 
-	if self.covered_select then
-		if self.covered_select then
-			go.set("/selection", "position", vmath.vector3(m_col, m_row, -0.8))
-		end
-	elseif self.m_row_prev ~= m_row or self.m_col_prev ~= m_col or change_cover_var then
+
+	if self.covered_select or self.hide_select then
+		go.set("/selection", "position", vmath.vector3(m_col, m_row, -0.8))
+	elseif self.m_row_prev ~= m_row or self.m_col_prev ~= m_col or change_cover_var or self.select_update then
 		if moveRow < 0 or moveRow > 17 or moveCol < 0 or moveCol > 28 then
+			if self.select_update then
+				self.select_update = nil
+			end
 			if self.visible_select then
 				sprite.set_constant("/selection", "tint", vmath.vector4(1, 1, 1, 0))
 				self.visible_select = false
