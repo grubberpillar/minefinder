@@ -1,13 +1,11 @@
 local l_data = require "main.leveldata"
 
 local function set_props(self)
-	local mine_nums = {10, 14, 40, 100, 150, 40}
-	local size_nums = {{8, 10, 16, 16, 24, 16}, {8, 10, 16, 30, 30, 16}}
-	self.num_mines = mine_nums[l_data.diff]
-	self.row_size = size_nums[1][l_data.diff]
-	self.col_size = size_nums[2][l_data.diff]
-	-- self.row_size = 15
-	-- self.col_size = 15
+	self.num_mines = l_data.mine_nums[l_data.diff]
+	self.row_size = l_data.size_nums[1][l_data.diff]
+	self.col_size = l_data.size_nums[2][l_data.diff]
+	self.row_size = 15
+	self.col_size = 15
 	if self.row_size > 16 or self.col_size > 16 then
 		self.mini_txt = "-mini"
 		-- self.tiny_select = true
@@ -252,30 +250,43 @@ function on_message(self, message_id, message, sender)
 		self.theme = message.theme
 		go.set("/zoom#board", "tile_source", self.tilesources[self.theme])
 		go.set("/zoom#board-mini", "tile_source", self.tilesources_mini[self.theme])
-		-- msg.post(".", "flash", {tile = 16})
-	elseif message_id == hash("flash") then -- WIP
-		self.playing = false
-		self.board_tiles = {}
-		for i = 1, self.row_size do
-			table.insert(self.board_tiles, {})
+		local tilenum
+		if self.theme == "light" then
+			tilenum = 16
+		else
+			tilenum = 18
 		end
-
-		for r = 1, self.row_size do 
+		msg.post(".", "flash", {tile = tilenum})
+	elseif message_id == hash("flash") then -- WIP
+		local set_tiles = false
+		if self.board_tiles == nil then
+			self.playing = false
+			self.board_tiles = {}
+			for i = 1, self.row_size do
+				table.insert(self.board_tiles, {})
+			end
+			set_tiles = true
+		end
+		
+		for r = 1, self.row_size do
 			for c = 1, self.col_size do
-				self.board_tiles[r][c] = tilemap.get_tile("/zoom#board", "layer1", r+1+self.row_offS, c+1+self.col_offS)
-				tilemap.set_tile("/zoom#board", "layer1", r+1+self.row_offS, c+1+self.col_offS, message.tile)
+				if set_tiles then
+					self.board_tiles[r][c] = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS)
+				end
+				tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS, message.tile)
 			end
 		end
 
-		timer = 0.3
+		self.timer = 0.1
 	elseif message_id == hash("replace_board") then -- WIP
-		print("replace")
 		for r = 1, self.row_size do 
 			for c = 1, self.col_size do
-				tilemap.set_tile("/zoom#board", "layer1", r+1+self.row_offS, c+1+self.col_offS, self.board_tiles[r][c])
+				tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS, self.board_tiles[r][c])
 			end
 		end
 		self.playing = true
+		self.board_tiles = nil
+		self.timer = nil
 	elseif message_id == hash("more_anims") then
 		self.more_anims = message.shown
 	elseif message_id == hash("set_diff") then
@@ -450,7 +461,6 @@ function on_input(self, action_id, action)
 					self.playing = false
 					msg.post("/gui#minefinder", "set_ticking", {ticking = false})
 					msg.post("/gui#minefinder", "set_hs")
-					
 					for r = self.row_offS, self.row_size+self.row_offS do
 						for c = self.col_offS, self.col_size+self.col_offS do
 							if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1, r+1) == 11 then
@@ -602,7 +612,7 @@ function on_input(self, action_id, action)
 	self.m_col_prev = m_col
 
 	if (action_id == hash("debug")) and action.pressed then
-		print(l_data.diff_temp)
+		print(self.timer)
 	end
 	
 end
@@ -618,12 +628,7 @@ end
 function update(self, dt) --checkpoint
 	-- print(self.timer, self.board[1], #self.to_flip)
 	if self.timer and (self.board[1] or #self.to_flip > 0 or self.board_tiles) then
-		if self.timer <= 0 and self.board_tiles ~= nil then
-			print("asdfself.board_tiles")
-			msg.post(".", "replace_board")
-			timer = 0.3
-		end
-		while (self.timer <= 0 or self.anims["timer"] == false or self.anim_skip == true) and (self.flashing or (self.mine_locs and self.mine_i <= #self.mine_locs) or #self.to_flip > 0) do
+		while (self.timer <= 0 or (self.anims["timer"] == false and not self.flashing) or self.anim_skip == true) and (self.flashing or (self.mine_locs and self.mine_i <= #self.mine_locs) or #self.to_flip > 0) do
 			-- print("acting")
 			-- tilemap.set_tile("/zoom#board", "layer1", moveCol+1, moveRow+1, self.board[moveRow][moveCol])
 			if self.flashing then
@@ -707,6 +712,9 @@ function update(self, dt) --checkpoint
 			end
 			self.timer = 1
 			self.flag_i = self.flag_i + 1
+		end
+		if self.timer <= 0 and self.board_tiles ~= nil then
+			msg.post(".", "replace_board")
 		end
 		if (self.board[1] or #self.to_flip > 0 or self.board_tiles) and self.flashing or (self.mine_locs and self.mine_i <= #self.mine_locs) or (self.wrong_flags and self.flag_i <= #self.wrong_flags) or #self.to_flip > 0 or self.board_tiles then
 			self.timer = self.timer - dt

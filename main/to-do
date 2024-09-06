@@ -1,12 +1,22 @@
 - win animation
+- switch diff animation
 - fix lose animation
 - new hs animation
 - custom level
 - custom level hs/presets
-- set difficulty polish
-- flash between themes
+- sounds
+X set difficulty polish
+X flash between themes
 - startup screen
-- x out
-- midnight mode
+X x out <--
+- midnight
+- ++
+- settings
+	- profanity
+	- sound
+	- click tile to dig around
+	- startup screen
+	- reset game
 
 - lose and win at the same time on a pre-won board
+- fix no-delay lose animation
