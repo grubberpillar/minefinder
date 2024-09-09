@@ -87,18 +87,17 @@ function on_input(self, action_id, action)
 		if gui.pick_node(self.hitbox_nodes[i], action.x, action.y) then -- all checkboxes
 			found_node = true
 			if self.node_hover ~= i then
-				if self.node_hover then --lift text
-					if self.node_hover < 9 then
+				if self.node_hover then --lift text (moved off text)
+					if self.node_hover < 9 then 
 						gui.set_color(self.top_text_nodes[self.node_hover], vmath.vector4((63/255), (63/255), (116/255), 1))
 					else
 						gui.set_color(self.top_text_nodes[self.node_hover], vmath.vector4((91/255), (110/255), (225/255), 1))
 					end
 				end
 				
-				gui.set_color(self.top_text_nodes[i], vmath.vector4(0, 0, 0, 0))--depress text
+				gui.set_color(self.top_text_nodes[i], vmath.vector4(0, 0, 0, 0))--depress text (mouse on text)
 				self.node_hover = i
 			end
-			-- WIP - make selection box invisible
 
 			if self.node_clicked and self.node_clicked ~= i then
 				replace_txt_color(self)
@@ -113,7 +112,7 @@ function on_input(self, action_id, action)
 				self.node_clicked = i
 			end
 			
-			if action.released and action_id == hash("touch") and self.node_clicked == i then
+			if action.released and action_id == hash("touch") and self.node_clicked == i then -- click action
 				replace_txt_color(self)
 				local check_bool
 				local check_int
@@ -152,7 +151,7 @@ function on_input(self, action_id, action)
 			end
 		end
 	end
-	if not found_node then --lift text
+	if not found_node then --lift text (moved off text)
 		if self.node_hover then
 			if self.node_hover < 9 then
 				gui.set_color(self.top_text_nodes[self.node_hover], vmath.vector4((63/255), (63/255), (116/255), 1))

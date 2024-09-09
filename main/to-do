@@ -1,6 +1,5 @@
 X win animation
 X switch diff animation
-- fix lose animation
 - new hs animation
 - custom level
 - custom level hs/presets
@@ -21,6 +20,8 @@ X x out <--
 
 
 
+- change more anims text animation
+- fix lose animation
 - lose and win at the same time on a pre-won board
 - fix no-delay lose animation
 X turning anims off doesn't turn off gui animation
