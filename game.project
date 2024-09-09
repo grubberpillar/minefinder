@@ -22,7 +22,7 @@ default_texture_mag_filter = nearest
 app_icon = /assets/bomb-icon.icns
 
 [sprite]
-max_count = 512
+max_count = 1024
 
 [tilemap]
 max_tile_count = 4096

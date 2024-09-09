@@ -1,8 +1,9 @@
 go.property("tile", 11)
-go.property("final", -1)
+go.property("final", 0)
 go.property("theme_id", -1)
 go.property("mini", 0)
 go.property("tile_size", 8)
+go.property("removing", 0)
 
 function init(self)
 	self.theme = "adsf"
@@ -18,17 +19,28 @@ function init(self)
 	end
 
 	sprite.play_flipbook("#sprite", "tileflip-"..self.tile.."-"..self.theme..self.mini_txt)
+
 	local tile_diff = 0
 	if self.theme == "dark" then
 		tile_diff = 2
 	end
+
+	if self.removing == 1 or self.tile == 14 then
+		tile_diff = -2
+	elseif self.removing == 2 then
+		tile_diff = 4
+	end
+	
 	tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 16 + tile_diff)
 	self.anim = 0
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("animation_done") then
-		if self.anim == 0 then 
+		if self.removing > 0 then
+			msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
+			go.delete()
+		elseif self.anim == 0 then 
 			sprite.play_flipbook("#sprite", "tileflip-end-"..self.theme..self.mini_txt)
 			self.anim = self.anim + 1
 		else
