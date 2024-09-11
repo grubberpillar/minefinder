@@ -71,7 +71,7 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/checkbox/corner.png"
+  image: "/assets/corner.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
@@ -128,6 +128,18 @@ images {
 }
 images {
   image: "/assets/red-x-lit.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/corner-dark.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/corner-light.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/custom-outline.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 animations {

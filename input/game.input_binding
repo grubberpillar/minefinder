@@ -8,7 +8,71 @@ key_trigger {
 }
 key_trigger {
   input: KEY_TAB
+  action: "tab"
+}
+key_trigger {
+  input: KEY_ESC
+  action: "esc"
+}
+key_trigger {
+  input: KEY_ENTER
+  action: "enter"
+}
+key_trigger {
+  input: KEY_RALT
   action: "debug"
+}
+key_trigger {
+  input: KEY_LSHIFT
+  action: "shift"
+}
+key_trigger {
+  input: KEY_RSHIFT
+  action: "shift"
+}
+key_trigger {
+  input: KEY_0
+  action: "0"
+}
+key_trigger {
+  input: KEY_1
+  action: "1"
+}
+key_trigger {
+  input: KEY_2
+  action: "2"
+}
+key_trigger {
+  input: KEY_3
+  action: "3"
+}
+key_trigger {
+  input: KEY_4
+  action: "4"
+}
+key_trigger {
+  input: KEY_5
+  action: "5"
+}
+key_trigger {
+  input: KEY_6
+  action: "6"
+}
+key_trigger {
+  input: KEY_7
+  action: "7"
+}
+key_trigger {
+  input: KEY_8
+  action: "8"
+}
+key_trigger {
+  input: KEY_9
+  action: "9"
+}
+key_trigger {
+  input: KEY_BACKSPACE
+  action: "del"
 }
 mouse_trigger {
   input: MOUSE_BUTTON_1

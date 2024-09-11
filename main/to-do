@@ -7,7 +7,8 @@ X switch diff animation
 X set difficulty polish
 X flash between themes
 - startup screen
-X x out <--
+X x out
+- saving
 - midnight
 - ++
 - settings
@@ -17,11 +18,13 @@ X x out <--
 	- startup screen
 	- reset game files
 	- controls
+	- large vs mini tiles diagram lol
 
 
 
-- change more anims text animation
+X change more anims text animation
 - fix lose animation
 - lose and win at the same time on a pre-won board
 - fix no-delay lose animation
+- dig/flag and move off tile keeps it white
 X turning anims off doesn't turn off gui animation
