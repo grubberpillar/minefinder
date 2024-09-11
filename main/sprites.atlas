@@ -1,1500 +1,1057 @@
 images {
   image: "/assets/selection.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/retry.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/retry-select.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/more-box1.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/more-box2.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/more-symbol.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/negative-select.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/less-symbol.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/diff-border.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/smileys.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/selection-large.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/brighten.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/dark-icon.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/selection-large-light.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/switch/light-switch1.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/switch/light-switch5.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/selection-2.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/selection-mini.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/corner.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/checkbox/box.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/checkbox/check.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/checkbox/uncheck12.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/trophy.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/floppy.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/floppy-outline.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/selection-large-temp.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/secret-door.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/cancel-x4.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/cancel-x-lit.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/mine-graphic.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/dark-x.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/red-x.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/red-x-lit.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/corner-dark.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/corner-light.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/custom-outline.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/lock.png"
 }
 animations {
   id: "explosion-wick"
   images {
     image: "/assets/bomb/bomb-00.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-01.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-02.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-03.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-04.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-05.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-06.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-07.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-08.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 4
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "explosion-blink"
   images {
     image: "/assets/bomb/bomb-09.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 4
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "explosion-boom"
   images {
     image: "/assets/bomb/bomb-17.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-18.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-19.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-20.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-21.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-22.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-23.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-24.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-25.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-26.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-27.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-28.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 10
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "explosion-flash"
   images {
     image: "/assets/bomb/bomb-29.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 1
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "explosion-fade"
   images {
     image: "/assets/bomb/bomb-30.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-31.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-32.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 4
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "flag-place-light"
   images {
     image: "/assets/flag/flag-place1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place10.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place12.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "flag-remove"
   images {
     image: "/assets/flag/flag-remove1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-remove2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-remove3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-remove4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-remove5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-remove6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-remove7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-remove8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-remove9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "flag-place-dark"
   images {
     image: "/assets/flag/flag-place-dark1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark10.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-dark12.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "flag-correct"
   images {
     image: "/assets/flag/flag-correct1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-correct2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-correct3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-correct4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-correct5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-correct6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-correct7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-correct8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 20
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "flag-incorrect"
   images {
     image: "/assets/flag/flag-incorrect1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect10.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect12.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect13.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect14.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect15.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect16.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect17.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect17.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect17.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect17.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect17.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect17.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect21.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect22.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect23.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 20
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-on"
   images {
     image: "/assets/switch/switch2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/switch5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/switch8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/switch9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-off"
   images {
     image: "/assets/switch/switch1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-1"
   images {
     image: "/assets/switch/switch1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-2"
   images {
     image: "/assets/switch/switch2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-3"
   images {
     image: "/assets/switch/switch3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-4"
   images {
     image: "/assets/switch/switch4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-5"
   images {
     image: "/assets/switch/switch5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-6"
   images {
     image: "/assets/switch/switch6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-7"
   images {
     image: "/assets/switch/switch7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-8"
   images {
     image: "/assets/switch/switch8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-9"
   images {
     image: "/assets/switch/switch9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-select-light"
   images {
     image: "/assets/switch-select-light.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-select-heavy"
   images {
     image: "/assets/switch-select-heavy.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 0
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "orb-cycle"
   images {
     image: "/assets/orb/rainbow-orb1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/orb/rainbow-orb8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 80
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "light-switch-on"
   images {
     image: "/assets/switch/light-switch2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/light-switch3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/light-switch4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/light-switch5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "light-switch-off"
   images {
     image: "/assets/switch/light-switch4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/light-switch3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/light-switch2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/light-switch1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "flag-place-mini-dark"
   images {
     image: "/assets/flag/flag-place-mini-dark1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark10.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-dark12.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "explosion-wick-mini"
   images {
     image: "/assets/bomb/bomb-mini-00.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-01.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-02.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 4
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "explosion-blink-mini"
   images {
     image: "/assets/bomb/bomb-mini-03.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-02.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 4
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "explosion-boom-mini"
   images {
     image: "/assets/bomb/bomb-mini-04.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-05.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-06.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-07.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-08.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-05.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-06.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-07.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-08.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-09.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-10.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 10
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "explosion-flash-mini"
   images {
     image: "/assets/bomb/bomb-mini-12.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 1
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "explosion-fade-mini"
   images {
     image: "/assets/bomb/bomb-mini-13.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-14.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/bomb/bomb-mini-15.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 4
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "flag-incorrect-mini"
   images {
     image: "/assets/flag/flag-incorrect-mini2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini10.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini12.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini13.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini14.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini15.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini16.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini17.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini18.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-incorrect-mini19.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 20
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "flag-place-mini-light"
   images {
     image: "/assets/flag/flag-place-mini-light1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light10.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/flag/flag-place-mini-light12.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "check-write"
   images {
     image: "/assets/checkbox/check1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check10.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/check12.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 60
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "check-remove"
   images {
     image: "/assets/checkbox/uncheck1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck6.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck7.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck10.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/checkbox/uncheck12.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-on-mid"
   images {
     image: "/assets/switch/switch5.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/switch8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/switch9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "switch-on-end"
   images {
     image: "/assets/switch/switch8.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/switch/switch9.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "floppy-appear"
   images {
     image: "/assets/floppy/floppy-appear-01.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/floppy/floppy-appear-02.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/floppy/floppy-appear-03.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/floppy/floppy-appear-04.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/floppy/floppy-appear-05.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
   fps: 25
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "floppy-disappear"
   images {
     image: "/assets/floppy/floppy-appear-05.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/floppy/floppy-appear-04.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/floppy/floppy-appear-03.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/floppy/floppy-appear-02.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/floppy/floppy-appear-01.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "x-appear"
   images {
     image: "/assets/cancel-x1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/cancel-x2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/cancel-x3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/cancel-x4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "x-disappear"
   images {
     image: "/assets/cancel-x1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/cancel-x2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/cancel-x3.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
     image: "/assets/cancel-x4.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_ONCE_BACKWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
 }
-margin: 0
-extrude_borders: 0
-inner_padding: 0
-max_page_width: 0
-max_page_height: 0
-rename_patterns: ""
