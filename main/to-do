@@ -22,6 +22,7 @@ X x out
 
 
 
+- check for win on frame 1
 X change more anims text animation
 - fix lose animation
 - lose and win at the same time on a pre-won board

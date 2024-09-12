@@ -225,7 +225,7 @@ function on_message(self, message_id, message, sender)
 				else
 					self.swap_board_timer = 0
 				end
-			elseif tilemap.get_tile("/zoom#board-mini", "layer1", 18, 18) ~= 14 and (self.row_size <= 16 or self.col_size <= 16) then --mini to regular swap
+			elseif tilemap.get_tile("/zoom#board-mini", "layer1", 18, 18) ~= 14 and (self.row_size <= 16 and self.col_size <= 16) then --mini to regular swap
 				self.playing = false
 				for r = 1, 32 do
 					for c = 1, 32 do
@@ -378,8 +378,16 @@ function on_input(self, action_id, action)
 	local yoffset = -(projected_height - self.screen_ratio.y) / 2
 	local mouse_x = (action.x / self.screen_ratio.x) * projected_width + xoffset
 	local mouse_y = (action.y / self.screen_ratio.y) * projected_height + yoffset
+
+	if action_id == hash("shift") then
+		if action.pressed then
+			self.shifting = true
+		elseif action.released then
+			self.shifting = false
+		end
+	end	
 	
-	if (action_id == hash("touch") or action_id == hash("select")) and action.pressed and self.playing then
+	if (action_id == hash("touch") or action_id == hash("select")) and action.pressed and self.playing and not l_data.unsaved then
 		-- local moveRow = math.floor(mouse_y/48) --gives the mouse tile for strictly 8x8 tiles
 		-- local moveCol = math.floor(mouse_x/48)
 		local moveRow_t = math.floor(mouse_y/(6*self.tile_size)) --gives the mouse tile for varying game tiles
@@ -452,7 +460,7 @@ function on_input(self, action_id, action)
 						local id = factory.create("#flag-factory", vmath.vector3(moveCol_t*6*self.tile_size+self.tile_size*3, moveRow_t*6*self.tile_size+self.tile_size*3, 0.5), nil, props)
 						msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 					end
-				elseif action_id == hash("select") and self.tile_clicked == 11 then -- place flag
+				elseif (action_id == hash("select") or (action_id == hash("touch") and self.shifting)) and self.tile_clicked == 11 then -- place flag
 					tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, 13)
 					if self.anims["flag_place"] then
 						local props = {type = 1-self.mini_offS, theme_id = theme_to_id(self.theme)}
