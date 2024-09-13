@@ -31,3 +31,4 @@ X dig/flag and move off tile keeps it white
 X turning anims off doesn't turn off gui animation
 X "01" text box (remove the zero)
 X changing custom setting to the same settings should not reset the board
+- clicking the board while setting the difficulty
