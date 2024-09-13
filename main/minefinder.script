@@ -192,7 +192,7 @@ function on_message(self, message_id, message, sender)
 		self.anim_skip = false
 		self.resettable = true
 
-		if self.new_diff and not l_data.swap_board then
+		if self.new_diff and not l_data.swap_board and not message.mines_only then
 			self.board_layout = {}
 			for i = 1, self.board_size do
 				table.insert(self.board_layout, {})
@@ -260,7 +260,7 @@ function on_message(self, message_id, message, sender)
 					for c = 1, self.board_size do
 						if self.board_layout[r][c] == 0 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 14 then
 							if self.anims["tileflip"] then
-								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), removing = 1}
+								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), removing = 1, set_playing = 1}
 								local id = factory.create("#flip-factory", vmath.vector3((c+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, (r+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 							else
@@ -268,7 +268,7 @@ function on_message(self, message_id, message, sender)
 							end
 						elseif self.board_layout[r][c] == 1 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 11 then
 							if self.anims["tileflip"] then
-								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
+								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), set_playing = 1}
 								local id = factory.create("#flip-factory", vmath.vector3((c+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, (r+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post("/gui#minefinder", "add_url", {hash = msg.url(nil, id, nil)})
 							else
@@ -300,6 +300,10 @@ function on_message(self, message_id, message, sender)
 						end
 					end
 				end
+			end
+			if message.change_diff then
+				print("adsf")
+				self.playing = false
 			end
 			if #self.to_flip < 1 then
 				msg.post(".", "setup")
@@ -370,6 +374,8 @@ function on_message(self, message_id, message, sender)
 		end
 		self.hide_select = message.hid
 		self.select_update = true
+	elseif message_id == hash("editing_dimensions") then
+		self.editing_dimensions = message.editing
 	end
 end
 
@@ -396,7 +402,7 @@ function on_input(self, action_id, action)
 		end
 	end	
 	
-	if (action_id == hash("touch") or action_id == hash("select")) and action.pressed and self.playing and not l_data.unsaved then
+	if (action_id == hash("touch") or action_id == hash("select")) and action.pressed and self.playing and not l_data.unsaved and not self.editing_dimensions then
 		-- local moveRow = math.floor(mouse_y/48) --gives the mouse tile for strictly 8x8 tiles
 		-- local moveCol = math.floor(mouse_x/48)
 		local moveRow_t = math.floor(mouse_y/(6*self.tile_size)) --gives the mouse tile for varying game tiles
@@ -731,7 +737,7 @@ function on_input(self, action_id, action)
 	self.m_col_prev = m_col
 
 	if (action_id == hash("debug")) and action.pressed then
-		print(self.timer)
+		print(#self.to_flip)
 	end
 	
 end
