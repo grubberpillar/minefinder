@@ -1,7 +1,7 @@
 X win animation
 X switch diff animation
 - new hs animation
-- custom level
+X custom level
 - custom level hs/presets
 - sounds
 X set difficulty polish
@@ -21,11 +21,13 @@ X x out
 	- large vs mini tiles diagram lol
 
 
-
-- check for win on frame 1
+X switch to custom does not reset if the board is the same
+X check for win on frame 1
 X change more anims text animation
 - fix lose animation
-- lose and win at the same time on a pre-won board
+X lose and win at the same time on a pre-won board
 - fix no-delay lose animation
-- dig/flag and move off tile keeps it white
+X dig/flag and move off tile keeps it white
 X turning anims off doesn't turn off gui animation
+X "01" text box (remove the zero)
+X changing custom setting to the same settings should not reset the board

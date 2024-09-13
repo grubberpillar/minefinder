@@ -10,22 +10,42 @@ local function hide_x(self)
 end
 
 local function deselect_txt(self)
+	local orig_rows = l_data.size_nums[1][6]
+	local orig_cols = l_data.size_nums[2][6]
+	local orig_mines = l_data.mine_nums[6]
 	gui.set_color(self.outlines[self.text_box], vmath.vector4((34/255), (32/255), (52/255), 1))
 	gui.set_color(node.get.text[self.text_box], vmath.vector4(1, 1, 1, 1))
 
 	if gui.get_text(node.get.text[self.text_box]) == "" then
-		gui.set_text(node.get.text[self.text_box], "10")
+		if self.text_box < 3 then
+			gui.set_text(node.get.text[self.text_box], l_data.size_nums[self.text_box][6])
+		else
+			gui.set_text(node.get.text[self.text_box], l_data.mine_nums[6])
+		end
 		gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
+	end
+
+	if self.text_box < 3 and tonumber(gui.get_text(node.get.text[self.text_box])) < 1 then
+		if #gui.get_text(node.get.text[self.text_box]) > 1 then
+			gui.set(node.get.boxes[self.text_box], "size.x", 8)
+		end
+		gui.set_text(node.get.text[self.text_box], "1")
 	end
 	
 	if tonumber(gui.get_text(node.get.text[self.text_box])) > 32 and self.text_box < 3 then
 		gui.set_text(node.get.text[self.text_box], "32")
 	end
-	if tonumber(gui.get_text(node.get.text[3])) > tonumber(gui.get_text(node.get.text[1]))*tonumber(gui.get_text(node.get.text[2]))-9 then
-		gui.set_text(node.get.text[3], ""..tonumber(gui.get_text(node.get.text[1]))*tonumber(gui.get_text(node.get.text[2]))-9)
+	if tonumber(gui.get_text(node.get.text[3])) > tonumber(gui.get_text(node.get.text[1]))*tonumber(gui.get_text(node.get.text[2]))-1 then
+		gui.set_text(node.get.text[3], ""..tonumber(gui.get_text(node.get.text[1]))*tonumber(gui.get_text(node.get.text[2]))-1)
 		gui.set(node.get.boxes[3], "size.x", #(gui.get_text(node.get.text[3]))*5+3)
+		l_data.mine_nums[6] = tonumber(gui.get_text(node.get.text[3]))
 	end
 
+	while #gui.get_text(node.get.text[self.text_box]) > 1 and string.sub(gui.get_text(node.get.text[self.text_box]), 1, 1) == "0" do
+		gui.set_text(node.get.text[self.text_box], string.sub(gui.get_text(node.get.text[self.text_box]), 2))
+		gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
+	end
+	
 	if self.text_box < 3 then
 		l_data.size_nums[self.text_box][6] = tonumber(gui.get_text(node.get.text[self.text_box]))
 	else
@@ -33,7 +53,9 @@ local function deselect_txt(self)
 	end
 	
 	self.text_box = nil
-	msg.post("/zoom#minefinder", "reset", {change_diff = true})
+	if l_data.size_nums[1][6] ~= orig_rows or l_data.size_nums[2][6] ~= orig_cols or l_data.mine_nums[6] ~= orig_mines then
+		msg.post("/zoom#minefinder", "reset", {change_diff = true})
+	end
 end
 
 local function set_nodes(self)
@@ -507,10 +529,19 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if self.text_box and action.pressed and (action_id == hash("esc") or action_id == hash("enter")) then
+	if self.text_box and action.pressed and action_id == hash("enter") then
 		deselect_txt(self)
 	end
 
+	if self.text_box and action.pressed and action_id == hash("esc") then
+		if self.text_box < 3 then
+			gui.set_text(node.get.text[self.text_box], l_data.size_nums[self.text_box][6])
+		else
+			gui.set_text(node.get.text[self.text_box], l_data.mine_nums[6])
+		end
+		gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
+		deselect_txt(self)
+	end
 
 		
 	if action_id == hash("del") and action.pressed and self.text_box then
@@ -526,7 +557,10 @@ function on_input(self, action_id, action)
 			gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
 		end
 	end
-		
+
+	if action_id == hash("r-arr") and action.pressed and self.text_box then
+		gui.set_color(node.get.text[self.text_box], vmath.vector4(1, 1, 1, 1))
+	end
 
 	if action_id == hash("tab") and action.pressed and self.text_box then
 		local txt_b_old = self.text_box

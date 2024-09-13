@@ -486,7 +486,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "sprites/switch-9"
+  texture: ""
   id: "anim-switch-select"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -503,7 +503,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_MANUAL
   custom_type: 0
@@ -562,7 +562,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
   custom_type: 0
@@ -621,7 +621,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
   custom_type: 0
@@ -2339,7 +2339,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "1"
+  text: "40"
   font: "pixel-font"
   id: "mine-ct"
   xanchor: XANCHOR_NONE
