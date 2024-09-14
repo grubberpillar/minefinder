@@ -2,6 +2,7 @@ X win animation
 X switch diff animation
 - new hs animation
 X custom level
+- custom level auto-mines
 - custom level hs/presets
 - sounds
 X set difficulty polish
@@ -31,4 +32,5 @@ X dig/flag and move off tile keeps it white
 X turning anims off doesn't turn off gui animation
 X "01" text box (remove the zero)
 X changing custom setting to the same settings should not reset the board
-- clicking the board while setting the difficulty
+X clicking the board while setting the difficulty
+- rapid board switching on custom

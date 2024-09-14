@@ -28,7 +28,7 @@ key_trigger {
 }
 key_trigger {
   input: KEY_RSHIFT
-  action: "shift"
+  action: "debug2"
 }
 key_trigger {
   input: KEY_0

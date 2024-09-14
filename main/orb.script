@@ -7,10 +7,10 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash("animation_done") then
 		-- print("delete")
 		msg.post("/zoom#minefinder", "remove_orb")
-		msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
+		msg.post("/zoom#minefinder", "remove_url", {hash = msg.url()})
 		go.delete() 
 	elseif message_id == hash("erase") then
-		msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
+		msg.post("/zoom#minefinder", "remove_url", {hash = msg.url()})
 		go.delete()
 	elseif message_id == hash("kill") then
 		go.delete()

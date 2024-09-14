@@ -113,7 +113,6 @@ function init(self)
 	gui.set_color(gui.get_node("retry-select"), vmath.vector4(0, 0, 0, 0))
 	set_nodes(self)
 	self.outlines = {node.get.row_OL, node.get.col_OL, node.get.mine_OL}
-	self.instances = {}
 	self.seconds = 0
 	self.seconds_storage = -1
 	self.minutes = 0
@@ -152,19 +151,7 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message)
-	if message_id == hash("add_url") then
-		table.insert(self.instances, message.hash)
-	elseif message_id == hash("remove_url") then
-		for i, k in ipairs(self.instances) do
-			if k.path == message.hash.path then
-				table.remove(self.instances, i)
-				break
-			end
-			if i == #self.instances then
-				print("nothing removed (" .. tostring(message.hash) .. ")")
-			end
-		end
-	elseif message_id == hash("set_ticking") then
+	if message_id == hash("set_ticking") then
 		self.ticking = message.ticking
 	elseif message_id == hash("set_mines") then
 		gui.set_text(gui.get_node("total-mines"), "TOTAL MINES: "..message.mines)
@@ -180,13 +167,6 @@ function on_message(self, message_id, message)
 			gui.set_color(gui.get_node("flags-left"), vmath.vector4(0.6, 0, 0, 1))
 		elseif message.num >= 0 and gui.get_color(gui.get_node("flags-left")) == vmath.vector4(0.6, 0, 0, 1) then
 			gui.set_color(gui.get_node("flags-left"), vmath.vector4(1, 1, 1, 1))
-		end
-	elseif message_id == hash("purge_instances") then
-		while self.instances[1] do
-			for i, k in ipairs(self.instances) do
-				msg.post(k, "kill")
-				table.remove(self.instances, i)
-			end
 		end
 	elseif message_id == hash("update_switch") then
 		if message.index < 9 then
@@ -361,7 +341,7 @@ function on_input(self, action_id, action)
 				msg.post("/zoom#minefinder", "set_anims", {anims = false})
 				self.anims_on = false
 				self.gui_anims = false
-				msg.post(".", "purge_instances")
+				msg.post("/zoom#minefinder", "purge_instances")
 			elseif self.anim_s_state == 1 then
 				sprite.play_flipbook("/anim-switch", "switch-on")
 				self.anim_s_state = 9
@@ -374,7 +354,7 @@ function on_input(self, action_id, action)
 				msg.post("/zoom#minefinder", "set_anims", {anims = false})
 				self.anims_on = false
 				self.gui_anims = false
-				msg.post(".", "purge_instances")
+				msg.post("/zoom#minefinder", "purge_instances")
 			else
 				if self.anim_s_state < 2 then
 					sprite.play_flipbook("/anim-switch", "switch-on")

@@ -30,7 +30,7 @@ function on_message(self, message_id, message, sender)
 			sprite.play_flipbook("#sprite", "explosion-fade"..self.mini_txt)
 			self.anim_num = self.anim_num + 1
 		else
-			msg.post("/gui#minefinder", "remove_url", {hash = msg.url()})
+			msg.post("/zoom#minefinder", "remove_url", {hash = msg.url()})
 			go.delete()
 		end
 	elseif message_id == hash("kill") then
