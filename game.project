@@ -25,5 +25,5 @@ app_icon = /assets/bomb-icon.icns
 max_count = 1024
 
 [tilemap]
-max_tile_count = 4096
+max_tile_count = 8192
 

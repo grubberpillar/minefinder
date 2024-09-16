@@ -624,7 +624,7 @@ function on_input(self, action_id, action)
 						end
 					end
 				end
-				print(#self.correct_flags)
+				msg.post("/gui#minefinder", "set_flags", {num = 0})
 				self.win_flag_timer = self.win_flag_timer + 0.3
 				if not self.anims["flag_correct"] then
 					self.win_flag_timer = self.win_flag_timer + 1
@@ -767,9 +767,9 @@ function on_input(self, action_id, action)
 	self.m_row_prev = m_row
 	self.m_col_prev = m_col
 
-	if (action_id == hash("debug")) and action.pressed then
-		print(count_t_flips(self))
-	end
+	-- if (action_id == hash("debug")) and action.pressed then
+	-- 	print(count_t_flips(self))
+	-- end
 end
 
 

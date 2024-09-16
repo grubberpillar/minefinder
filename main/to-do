@@ -2,8 +2,10 @@ X win animation
 X switch diff animation
 - new hs animation
 X custom level
-- custom level auto-mines
-- custom level hs/presets
+X custom level auto-mines
+* custom level hs/presets
+- custom level hs depends on board
+- zoom board
 - sounds
 X set difficulty polish
 X flash between themes
@@ -33,4 +35,5 @@ X turning anims off doesn't turn off gui animation
 X "01" text box (remove the zero)
 X changing custom setting to the same settings should not reset the board
 X clicking the board while setting the difficulty
+- clicking stars while editing board size
 - rapid board switching on custom

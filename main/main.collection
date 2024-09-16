@@ -230,7 +230,7 @@ embedded_instances {
   scale3 {
     x: 6.0
     y: 6.0
-    z: 1.0E-6
+    z: 1.0
   }
 }
 embedded_instances {
