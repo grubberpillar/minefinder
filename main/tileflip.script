@@ -12,6 +12,8 @@ function init(self)
 		self.theme = "light"
 	elseif self.theme_id == 0 then
 		self.theme = "dark"
+	elseif self.theme_id == 2 then
+		self.theme = "midnight"
 	end
 
 	self.mini_txt = ""
@@ -24,6 +26,8 @@ function init(self)
 	local tile_diff = 0
 	if self.theme == "dark" then
 		tile_diff = 2
+	elseif self.theme == "midnight" then
+		tile_diff = -2
 	end
 
 	if self.removing == 1 or self.tile == 14 then

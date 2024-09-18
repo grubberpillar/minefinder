@@ -9,6 +9,28 @@ local function hide_x(self)
 	gui.set(gui.get_node("cancel-x"), "color.w", 0)
 end
 
+local function hide_lock(self)
+	gui.set(gui.get_node("lock"), "color.w", 0)
+	gui.set(gui.get_node("lock-bg"), "color.w", 0)
+end
+
+local function hide_door_things(self)
+	hide_lock(self)
+	gui.set(node.get.secret_door, "color.w", 0)
+	gui.set(gui.get_node("anims-hint"), "color.w", 0)
+end
+
+local function show_retry_s(self, shown)
+	local alpha = 0
+	if shown then
+		alpha = 1
+	end
+	gui.set(gui.get_node("retry-select-nw"), "color.w", alpha)
+	gui.set(gui.get_node("retry-select-ne"), "color.w", alpha)
+	gui.set(gui.get_node("retry-select-sw"), "color.w", alpha)
+	gui.set(gui.get_node("retry-select-se"), "color.w", alpha)
+end
+
 local function round(num)
 	local fin_num = math.floor(num)
 	if num - math.floor(num) >= 0.5 then
@@ -96,7 +118,8 @@ local function deselect_txt(self)
 	if l_data.mine_nums[6] == calc_mine_ct(self) then
 		self.mines_calced = true
 		gui.set(node.get.stars, "color.w", 0)
-	else
+		gui.set(node.get.stars_lit, "color.w", 0)
+		else
 		self.mines_calced = false
 		gui.set(node.get.stars, "color.w", 1)
 	end
@@ -121,9 +144,48 @@ local function deselect_txt(self)
 	end
 end
 
+local function streamlined_deselect(self)
+	local orig_rows = l_data.size_nums[1][6]
+	local orig_cols = l_data.size_nums[2][6]
+	local orig_mines = l_data.mine_nums[6]
+
+	gui.set_color(self.outlines[self.text_box], vmath.vector4((34/255), (32/255), (52/255), 1))
+	gui.set_color(node.get.text[self.text_box], vmath.vector4(1, 1, 1, 1))
+
+	l_data.mine_nums[6] = tonumber(gui.get_text(node.get.text[self.text_box]))
+
+	if l_data.mine_nums[6] == calc_mine_ct(self) then
+		self.mines_calced = true
+		gui.set(node.get.stars, "color.w", 0)
+		gui.set(node.get.stars_lit, "color.w", 0)
+	else
+		self.mines_calced = false
+		gui.set(node.get.stars, "color.w", 1)
+	end
+
+	self.text_box = nil
+	if l_data.size_nums[1][6] ~= orig_rows or l_data.size_nums[2][6] ~= orig_cols or l_data.mine_nums[6] ~= orig_mines then
+		msg.post("/zoom#minefinder", "reset", {change_diff = true, debugging = true})
+	end
+
+	l_data.highscore[l_data.diff] = l_data.custom_hs_list[l_data.size_nums[1][6]][l_data.size_nums[2][6]][l_data.mine_nums[6]+1]
+
+	if l_data.highscore[l_data.diff] then
+		local minutes_txt = ""..math.floor(l_data.highscore[l_data.diff]/60)
+		local seconds_txt = ""..math.floor(l_data.highscore[l_data.diff]%60)
+		if tonumber(seconds_txt) < 10 then
+			seconds_txt = "0" .. seconds_txt
+		end
+
+		gui.set_text(gui.get_node("highscore"), minutes_txt .. ":".. seconds_txt)
+	else
+		gui.set_text(gui.get_node("highscore"), "-:--")
+	end
+end
+
 local function set_nodes(self)
 	node.get.retry = gui.get_node("retry")
-	node.get.retry_s = gui.get_node("retry-select")
+	node.get.retry_s = gui.get_node("retry-select-nw")
 	node.get.anim_sel = gui.get_node("anim-switch-select")
 	node.get.anim_sel_bg = gui.get_node("anim-switch-select-bg")
 	node.get.anim_sel_light = gui.get_node("anim-switch-select-heavy-bg")
@@ -176,7 +238,6 @@ end
 function init(self)
 	gui.set_render_order(0)
 	msg.post(".", "acquire_input_focus")
-	gui.set_color(gui.get_node("retry-select"), vmath.vector4(0, 0, 0, 0))
 	set_nodes(self)
 	self.outlines = {node.get.row_OL, node.get.col_OL, node.get.mine_OL}
 	self.seconds = 0
@@ -194,6 +255,8 @@ function init(self)
 	self.diff_colors = {vmath.vector4((55/255), (148/255), (110/255), 1), vmath.vector4((153/255), (229/255), (80/255), 1), vmath.vector4((251/255), (242/255), (54/255), 1), vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((172/255), (50/255), (50/255), 1), vmath.vector4((118/255), (66/255), (138/255), 1)}
 	self.mines_calced = true
 	self.door_state = "closed"
+	self.key_is_there = true
+	self.light_on = false
 	msg.post("/anims#anims", "disable")
 
 	for i = 1, 32 do
@@ -292,6 +355,7 @@ function on_message(self, message_id, message)
 		local highscore = gui.get_node("highscore")
 		local header = gui.get_node("diff-header")
 		local description = gui.get_node("diff-description")
+		local key = gui.get_node("key")
 		
 		if l_data.highscore[diffic] then
 			local minutes_txt = ""..math.floor(l_data.highscore[diffic]/60)
@@ -311,6 +375,16 @@ function on_message(self, message_id, message)
 		gui.set_text(node.get.row_ct, l_data.size_nums[1][diffic])
 		gui.set_text(node.get.col_ct, l_data.size_nums[2][diffic])
 		gui.set_text(node.get.mine_ct, l_data.mine_nums[diffic])
+
+		if diffic == 5 and self.key_is_there then
+			if temporary then
+				gui.set_color(key, vmath.vector4((203/255), (219/255), (252/255), 1))
+			else
+				gui.set_color(key, vmath.vector4(1, 1, 1, 1))
+			end
+		elseif gui.get(key, "color.w") == 1 then
+			gui.set(key, "color.w", 0)
+		end
 				
 		if temporary then
 			set_diff_details_blue(self, true)
@@ -372,20 +446,31 @@ function on_message(self, message_id, message)
 			gui.set(node.get.col_ct, "position.x", 1032)
 			gui.set(node.get.mine_ct, "position.x", 1194)
 		end
+	elseif message_id == hash("lightbulb_gotten") then
+		if self.gui_anims and self.door_state == "open" then
+			gui.play_flipbook(node.get.secret_door, "door-closed", hide_door_things)
+		else
+			hide_door_things(self)
+		end
+		self.door_state = "gone"
+		gui.set(gui.get_node("lightbulb"), "color.w", 1)
+		self.lightbulb_there = true
 	end
 end
+
+
 
 function on_input(self, action_id, action)
 	
 	if gui.pick_node(node.get.retry, action.x, action.y) and not self.more_anims then -- retry button
-		if gui.get_color(node.get.retry_s) ~= vmath.vector4(1, 1, 1, 1) then
-			gui.set_color(node.get.retry_s, vmath.vector4(1, 1, 1, 1))
+		if gui.get(node.get.retry_s, "color.w") ~= 1 then
+			show_retry_s(self, true)
 		end
 		if action_id == hash("touch") and action.pressed then
 			msg.post("/zoom#minefinder", "reset")
 		end
-	elseif gui.get_color(node.get.retry_s) ~= vmath.vector4(0, 0, 0, 0) then
-		gui.set_color(node.get.retry_s, vmath.vector4(0, 0, 0, 0))
+	elseif gui.get(node.get.retry_s, "color.w") ~= 0 then
+		show_retry_s(self, false)
 	end
 
 	if gui.pick_node(node.get.more_box, action.x, action.y) then -- more anims button
@@ -529,6 +614,9 @@ function on_input(self, action_id, action)
 				gui.set(node.get.cancel_x, "color.w", 0)
 			end
 			set_diff_details_blue(self, false)
+			if l_data.diff_temp == 5 and self.key_is_there then
+				gui.set_color(gui.get_node("key"), vmath.vector4(1, 1, 1, 1))
+			end
 			msg.post("/zoom#minefinder", "set_diff")
 			msg.post("/zoom#minefinder", "reset", {change_diff = true})
 			msg.post("/zoom#minefinder", "hide_select", {hid = false})
@@ -542,7 +630,7 @@ function on_input(self, action_id, action)
 		msg.post("/zoom#minefinder", "hide_select", {hid = false})
 	end
 
-	if gui.pick_node(node.get.cancel_x_hit, action.x, action.y) and not self.more_anims and gui.get(node.get.cancel_x, "color.w") == 1 then --cancel new diff (x)
+	if not self.more_anims and gui.get(node.get.cancel_x, "color.w") == 1 and gui.pick_node(node.get.cancel_x_hit, action.x, action.y) then --cancel new diff (x)
 		if action_id == hash("touch") and action.pressed then
 			gui.set(node.get.cancel_x_lit, "color.w", 1)
 		elseif action_id == hash("touch") and action.released then
@@ -637,11 +725,11 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if action_id == hash("r-arr") and action.pressed and self.text_box then
+	if action_id == hash("r-arr") and action.pressed and self.text_box then --right arrow
 		gui.set_color(node.get.text[self.text_box], vmath.vector4(1, 1, 1, 1))
 	end
 
-	if action_id == hash("tab") and action.pressed and self.text_box then
+	if action_id == hash("tab") and action.pressed and self.text_box then --tab
 		local txt_b_old = self.text_box
 		deselect_txt(self)
 		if self.shifting then
@@ -656,7 +744,7 @@ function on_input(self, action_id, action)
 		gui.set_color(self.outlines[self.text_box], vmath.vector4((107/255), (160/255), (255/255), 1))
 	end	
 
-	if action_id == hash("shift") then
+	if action_id == hash("shift") then --shift condition
 		if action.pressed then
 			self.shifting = true
 		elseif action.released then
@@ -664,7 +752,7 @@ function on_input(self, action_id, action)
 		end
 	end	
 	
-	if action.pressed and tonumber(string.gsub(string.gsub((""..action_id), "%[", ""), "]", "").."") and self.text_box then
+	if action.pressed and tonumber(string.gsub(string.gsub((""..action_id), "%[", ""), "]", "").."") and self.text_box then --typing numbers
 		if gui.get_color(node.get.text[self.text_box]) == vmath.vector4((172/255), (204/255), (255/255), 1) then
 			gui.set_text(node.get.text[self.text_box], string.gsub(string.gsub((""..action_id), "%[", ""), "]", "").."")
 			gui.set_color(node.get.text[self.text_box], vmath.vector4(1, 1, 1, 1))
@@ -676,7 +764,7 @@ function on_input(self, action_id, action)
 		set_stars_pos(self)
 	end
 
-	if l_data.diff == 6 and not self.mines_calced and gui.pick_node(node.get.stars_hit, action.x, action.y) then -- stars
+	if l_data.diff == 6 and not self.mines_calced and not self.more_anims and gui.pick_node(node.get.stars_hit, action.x, action.y) then -- stars
 		if action_id == hash("touch") and action.pressed then --click
 			gui.set(node.get.stars, "color.w", 0)
 			gui.set(node.get.stars_lit, "position.y", -1)
@@ -689,6 +777,7 @@ function on_input(self, action_id, action)
 			self.text_box = 3
 			gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
 			set_stars_pos(self)
+			-- deselect_txt(self)
 			deselect_txt(self)
 			self.mines_calced = true
 		elseif gui.get(node.get.stars_lit, "color.w") ~= 1 then --hover
@@ -704,7 +793,7 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if gui.pick_node(gui.get_node("door-hit-"..self.door_state), action.x, action.y) and action.pressed then
+	if self.door_state ~= "gone" and gui.pick_node(gui.get_node("door-hit-"..self.door_state), action.x, action.y) and action.pressed  then -- door
 		if self.door_state == "open" then
 			self.door_state = "closed"
 		else
@@ -717,12 +806,88 @@ function on_input(self, action_id, action)
 		end
 	end
 		
-	if (action_id == hash("debug")) and action.pressed then
-		if self.text_box then
-			deselect_txt(self)
+	if l_data.diff == 5 and self.key_is_there and self.door_state ~= "gone" then --key text
+		if gui.pick_node(gui.get_node("key-hit"), action.x, action.y) then
+			if action_id == hash("touch") and action.pressed then
+				gui.set_color(gui.get_node("key"), vmath.vector4((251/255), (242/255), (54/255), 1))
+				self.holding_key = true
+			elseif gui.get_color(gui.get_node("key")) == vmath.vector4(1, 1, 1, 1) then
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
+				gui.set_color(gui.get_node("key"), vmath.vector4(1, 1, (215/255), 1))
+				self.hovering_key = true
+			end
+		elseif action_id == hash("touch") and action.pressed and gui.get_color(gui.get_node("key")) == vmath.vector4((251/255), (242/255), (54/255), 1) and not gui.pick_node(gui.get_node("door-hit-closed"), action.x, action.y) then
+			self.holding_key = false
+			gui.set_color(gui.get_node("key"), vmath.vector4(1, 1, 1, 1))
+		elseif self.hovering_key then
+			self.hovering_key = false
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			if gui.get_color(gui.get_node("key")) == vmath.vector4(1, 1, (215/255), 1) then
+				gui.set_color(gui.get_node("key"), vmath.vector4(1, 1, 1, 1))
+			end
 		end
-		-- self.text_box = 3
-		print(calc_mine_ct(self))
 	end
--- 
+
+	if self.holding_key and self.door_state == "open" and not self.door_unlocked then --lock
+		if gui.pick_node(gui.get_node("door-hit-closed"), action.x, action.y) then 
+			if gui.get(gui.get_node("lock-lit"), "color.w") == 0 and not self.door_unlocked then
+				gui.set(gui.get_node("lock-lit"), "color.w", 1)
+			elseif action_id == hash("touch") and action.pressed then
+				self.key_is_there = false
+				gui.set(gui.get_node("key"), "color.w", 0)
+				self.door_unlocked = true
+				gui.set(gui.get_node("lock-lit"), "color.w", 0)
+				gui.play_flipbook(gui.get_node("lock"), "unlock", hide_lock)
+			end
+		elseif gui.get(gui.get_node("lock-lit"), "color.w") == 1 then
+			gui.set(gui.get_node("lock-lit"), "color.w", 0)
+		end
+	elseif gui.get(gui.get_node("lock-lit"), "color.w") == 1 then
+		gui.set(gui.get_node("lock-lit"), "color.w", 0)
+	end
+
+	if self.lightbulb_there and gui.pick_node(gui.get_node("lightbulb-hit"), action.x, action.y) then --cancel new diff (x)
+		if action_id == hash("touch") and action.pressed then --click
+			gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4(1, 1, 1, 1))
+		elseif action_id == hash("touch") and action.released then --release
+			self.light_on = not self.light_on
+			if self.light_on then
+				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((142/255), (149/255), (219/255), 1))
+				gui.play_flipbook(gui.get_node("lightbulb"), "lightbulb-lit")
+				self.theme = "midnight"
+				msg.post("/zoom#minefinder", "set_theme", {theme = "midnight"})
+				if self.gui_anims then
+					sprite.play_flipbook("/light-switch", "midnight-switch")
+				else
+					sprite.play_flipbook("/light-switch", "midnight-switch-09")
+				end
+			else
+				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((203/255), (219/255), (252/255), 1))
+				gui.play_flipbook(gui.get_node("lightbulb"), "lightbulb")
+				self.theme = "dark"
+				msg.post("/zoom#minefinder", "set_theme", {theme = "dark"})
+				if self.gui_anims then
+					sprite.play_flipbook("/light-switch", "midnight-switch-reverse")
+				else
+					sprite.play_flipbook("/light-switch", "midnight-switch-00")
+				end
+			end
+		elseif gui.get(gui.get_node("lightbulb-click"), "color.w") == 0 then --hover
+			msg.post("/zoom#minefinder", "hide_select", {hid = true})
+			if self.light_on then
+				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((142/255), (149/255), (219/255), 1))
+			else
+				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((203/255), (219/255), (252/255), 1))
+			end
+		end
+	elseif gui.get(gui.get_node("lightbulb-click"), "color.w") ~= 0 then --unhover
+		msg.post("/zoom#minefinder", "hide_select", {hid = false})
+		gui.set(gui.get_node("lightbulb-click"), "color.w", 0)
+	end
+
+
+	
+	if (action_id == hash("debug")) and action.pressed then
+		print("de bug")
+	end
 end
