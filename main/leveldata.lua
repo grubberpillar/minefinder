@@ -13,4 +13,7 @@ D.size_nums = {{8, 10, 16, 16, 24, 16}, {8, 10, 16, 30, 30, 16}}
 D.diff = 3
 D.diff_temp = nil
 
+D.snake = false
+D.s_hs = 0
+
 return D

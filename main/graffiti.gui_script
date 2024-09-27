@@ -1,0 +1,7 @@
+function init(self)
+	gui.set_render_order(1)
+end
+
+function on_message(self, message_id, message, sender)
+end
+

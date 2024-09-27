@@ -1,0 +1,120 @@
+local l_data = require "main.leveldata"
+
+local function hide_lock(self)
+	gui.set(gui.get_node("lock"), "color.w", 0)
+	gui.set(gui.get_node("lock-bg"), "color.w", 0)
+end
+
+local function hide_door_things(self)
+	hide_lock(self)
+	gui.set(gui.get_node("secret-door"), "color.w", 0)
+	gui.set(gui.get_node("anims-hint"), "color.w", 0)
+end
+
+function init(self)
+	gui.set_render_order(3)
+	self.door_found = false
+	self.door_state = "closed"
+	self.key_is_there = true 
+	self.gui_anims = true
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("lightbulb_gotten") then
+		if self.gui_anims and self.door_state == "open" then
+			gui.play_flipbook(gui.get_node("secret-door"), "door-closed", hide_door_things)
+		else
+			hide_door_things(self)
+		end
+		self.door_state = "gone"
+		gui.set(gui.get_node("noah-msg"), "color.w", 1)
+	elseif message_id == hash("gui_anims") then
+		self.gui_anims = message.on
+	elseif message_id == hash("key_color") then
+		gui.set_color(gui.get_node("key"), message.color)
+	elseif message_id == hash("zoom") then
+		if message.zoom then
+			gui.set(gui.get_node("key"), "color.w", 0)
+		elseif (l_data.diff == 5 and l_data.diff_temp == nil) or l_data.diff_temp == 5 then
+			gui.set(gui.get_node("key"), "color.w", 1)
+		end			
+	end
+end
+
+function on_input(self, action_id, action)
+	if self.door_state ~= "gone" and gui.pick_node(gui.get_node("door-hit-"..self.door_state), action.x, action.y) and action.pressed  then -- door
+		if not self.door_found then
+			gui.set(gui.get_node("noah-msg"), "color.w", 1)
+			self.door_found = true
+		end
+
+		if self.door_state == "open" then
+			self.door_state = "closed"
+		else
+			self.door_state = "open"
+		end
+		if self.gui_anims then
+			gui.play_flipbook(gui.get_node("secret-door"), "door-"..self.door_state)
+		else
+			gui.play_flipbook(gui.get_node("secret-door"), "secret-door-"..self.door_state)
+		end
+	end
+
+	if l_data.diff == 5 and self.key_is_there and self.door_state ~= "gone" then --key text
+		if gui.pick_node(gui.get_node("key-hit"), action.x, action.y) then
+			if action_id == hash("touch") and action.pressed then
+				gui.set_color(gui.get_node("key"), vmath.vector4((251/255), (242/255), (54/255), 1))
+				self.holding_key = true
+			elseif gui.get_color(gui.get_node("key")) == vmath.vector4(1, 1, 1, 1) then
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
+				gui.set_color(gui.get_node("key"), vmath.vector4(1, 1, (215/255), 1))
+				self.hovering_key = true
+			end
+		elseif action_id == hash("touch") and action.pressed and gui.get_color(gui.get_node("key")) == vmath.vector4((251/255), (242/255), (54/255), 1) and not gui.pick_node(gui.get_node("door-hit-closed"), action.x, action.y) then
+			self.holding_key = false
+			gui.set_color(gui.get_node("key"), vmath.vector4(1, 1, 1, 1))
+		elseif self.hovering_key then
+			self.hovering_key = false
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			if gui.get_color(gui.get_node("key")) == vmath.vector4(1, 1, (215/255), 1) then
+				gui.set_color(gui.get_node("key"), vmath.vector4(1, 1, 1, 1))
+			end
+		end
+	end
+
+	if self.holding_key and self.door_state == "open" and not self.door_unlocked then --lock
+		if gui.pick_node(gui.get_node("door-hit-closed"), action.x, action.y) then 
+			if gui.get(gui.get_node("lock-lit"), "color.w") == 0 and not self.door_unlocked then
+				gui.set(gui.get_node("lock-lit"), "color.w", 1)
+			elseif action_id == hash("touch") and action.pressed then
+				self.key_is_there = false
+				msg.post("/gui#minefinder", "key_taken")
+				gui.set(gui.get_node("key"), "color.w", 0)
+				self.door_unlocked = true
+				gui.set(gui.get_node("noah-msg"), "color.w", 1)
+				gui.set(gui.get_node("lock-lit"), "color.w", 0)
+				gui.play_flipbook(gui.get_node("lock"), "unlock", hide_lock)
+			end
+		elseif gui.get(gui.get_node("lock-lit"), "color.w") == 1 then
+			gui.set(gui.get_node("lock-lit"), "color.w", 0)
+		end
+	elseif gui.get(gui.get_node("lock-lit"), "color.w") == 1 then
+		gui.set(gui.get_node("lock-lit"), "color.w", 0)
+	end
+
+	if gui.get(gui.get_node("noah-msg"), "color.w") == 1 and action_id == hash("touch") and action.pressed and gui.pick_node(gui.get_node("noah-msg"), action.x, action.y) then --noah message
+		gui.set(gui.get_node("noah-msg"), "color.w", 0)
+	end
+end

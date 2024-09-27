@@ -1,6 +1,6 @@
 key_trigger {
   input: KEY_F
-  action: "select"
+  action: "select-key"
 }
 key_trigger {
   input: KEY_D
@@ -28,7 +28,7 @@ key_trigger {
 }
 key_trigger {
   input: KEY_RSHIFT
-  action: "debug2"
+  action: "shift"
 }
 key_trigger {
   input: KEY_0
@@ -77,6 +77,26 @@ key_trigger {
 key_trigger {
   input: KEY_RIGHT
   action: "r-arr"
+}
+key_trigger {
+  input: KEY_LEFT
+  action: "l-arr"
+}
+key_trigger {
+  input: KEY_UP
+  action: "u-arr"
+}
+key_trigger {
+  input: KEY_DOWN
+  action: "d-arr"
+}
+key_trigger {
+  input: KEY_R
+  action: "retry"
+}
+key_trigger {
+  input: KEY_LALT
+  action: "debug2"
 }
 mouse_trigger {
   input: MOUSE_BUTTON_1

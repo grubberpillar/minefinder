@@ -1,0 +1,63 @@
+function init(self)
+	gui.set_render_order(2)
+	msg.post(".", "acquire_input_focus")
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("enable") then
+		msg.post("/gui#door", "enable")
+	elseif message_id == hash("edit_arrows") then
+		gui.set(gui.get_node("arrow-"..message.dir.."-bot"), "color.w", message.alpha)
+		gui.set(gui.get_node("arrow-"..message.dir.."-top"), "color.w", message.alpha)
+	end
+end
+
+function on_input(self, action_id, action)
+	if action.pressed and action_id == hash("touch") and gui.pick_node(gui.get_node("zoom-out-hit"), action.x, action.y) then
+		msg.post("/gui#minefinder", "enable")
+		msg.post(".", "disable")
+		msg.post("/gui#door", "zoom", {zoom = false})
+		msg.post("/zoom#minefinder", "zoom", {zoom = false})
+	end
+
+	if gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) then --quit game
+		if action_id == hash("touch") and action.pressed then
+			gui.play_flipbook(gui.get_node("quit-x"), "red-x-lit")
+			gui.set(gui.get_node("quit-underline"), "color.w", 0)
+			sys.exit(0)
+		elseif gui.get(gui.get_node("quit-underline"), "color.w") == 0 then
+			gui.set(gui.get_node("quit-underline"), "color.w", 1)
+		end
+	elseif gui.get(gui.get_node("quit-underline"), "color.w") ~= 0 then
+		gui.set(gui.get_node("quit-underline"), "color.w", 0)
+	end
+
+	local dir = {"n", "e", "s", "w"}
+	for i = 1,4 do
+		if gui.get(gui.get_node("arrow-"..dir[i].."-bot"), "color.w") ~= 0 and gui.pick_node(gui.get_node("arrow-"..dir[i].."-hit"), action.x, action.y) then
+			if action.pressed and action_id == hash("touch") then
+				gui.set(gui.get_node("arrow-"..dir[i].."-top"), "color.w", 0)
+				gui.set_color(gui.get_node("arrow-"..dir[i].."-bot"), vmath.vector4(1, 1, 1, 1))
+			elseif action.released and action_id == hash("touch") then
+				gui.set(gui.get_node("arrow-"..dir[i].."-top"), "color.w", 1)
+				gui.set_color(gui.get_node("arrow-"..dir[i].."-bot"), vmath.vector4((175/255), (175/255), (0/255), 1))
+				gui.set(gui.get_node("arrow-"..dir[i].."-bot"), "color.w", 0)
+				gui.set(gui.get_node("arrow-"..dir[i].."-top"), "color.w", 0)
+				gui.set(gui.get_node("arrow-"..dir[(i+1)%4+1].."-bot"), "color.w", 1)
+				gui.set(gui.get_node("arrow-"..dir[(i+1)%4+1].."-top"), "color.w", 1)
+				msg.post("/zoom#minefinder", "arrow_press", {dir = dir[i]})
+			elseif gui.get(gui.get_node("arrow-"..dir[i].."-top"), "color.w") ~= 0 and gui.get_color(gui.get_node("arrow-"..dir[i].."-top")) ~= vmath.vector4(1, 1, (215/255), 1) then
+				gui.set_color(gui.get_node("arrow-"..dir[i].."-top"), vmath.vector4(1, 1, (215/255), 1))
+			end
+		elseif gui.get(gui.get_node("arrow-"..dir[i].."-bot"), "color.w") ~= 0 and gui.get_color(gui.get_node("arrow-"..dir[i].."-top")) ~= vmath.vector4((251/255), (242/255), (54/255), 1) then
+			gui.set_color(gui.get_node("arrow-"..dir[i].."-top"), vmath.vector4((251/255), (242/255), (54/255), 1))
+			gui.set_color(gui.get_node("arrow-"..dir[i].."-bot"), vmath.vector4((175/255), (175/255), (0/255), 1))
+		end
+	end
+end

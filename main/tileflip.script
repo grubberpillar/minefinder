@@ -4,7 +4,7 @@ go.property("theme_id", -1)
 go.property("mini", 0)
 go.property("tile_size", 8)
 go.property("removing", 0)
-go.property("log_flipping", 0)
+go.property("reverse", 0)
 
 function init(self)
 	self.theme = "adsf"
@@ -21,8 +21,12 @@ function init(self)
 		self.mini_txt = "-mini"
 	end
 
-	sprite.play_flipbook("#sprite", "tileflip-"..self.tile.."-"..self.theme..self.mini_txt)
-
+	if self.reverse == 1 then
+		sprite.play_flipbook("#sprite", "tileflip-".."11".."-"..self.theme..self.mini_txt)
+	else
+		sprite.play_flipbook("#sprite", "tileflip-"..self.tile.."-"..self.theme..self.mini_txt)
+	end
+		
 	local tile_diff = 0
 	if self.theme == "dark" then
 		tile_diff = 2
@@ -46,10 +50,19 @@ function on_message(self, message_id, message, sender)
 			msg.post("/zoom#minefinder", "remove_url", {hash = msg.url()})
 			go.delete()
 		elseif self.anim == 0 then 
-			sprite.play_flipbook("#sprite", "tileflip-end-"..self.theme..self.mini_txt)
+			if self.reverse == 1 then
+				sprite.play_flipbook("#sprite", "tileflip-"..self.tile.."-"..self.theme..self.mini_txt.."-rev")
+			else
+				sprite.play_flipbook("#sprite", "tileflip-end-"..self.theme..self.mini_txt)
+			end
+			
 			self.anim = self.anim + 1
 		else
-			tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 11)
+			if self.reverse == 1 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1) ~= 4 then
+				tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, self.tile)
+			elseif self.reverse ~= 1 then
+				tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 11)
+			end
 			msg.post("/zoom#minefinder", "remove_url", {hash = msg.url()})
 			if self.final == 1 then
 				msg.post("/zoom#minefinder", "setup")
@@ -57,7 +70,9 @@ function on_message(self, message_id, message, sender)
 			go.delete()
 		end
 	elseif message_id == hash("kill") then
-		tilemap.set_tile("/zoom#board", "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 11)
+		if not (self.reverse == 1 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1) == 4) then
+			tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 11)
+		end
 		go.delete()
 	end
 end
