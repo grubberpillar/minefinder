@@ -81,6 +81,16 @@ local function calc_mine_ct(self)
 	return mine_calc
 end
 
+local function zoom_in(self)
+	msg.post("/anims#anims", "disable")
+	msg.post(".", "disable")
+	msg.post("/gui-zoom#zoom", "enable")
+	msg.post("/gui-zoom#zoom", "set_props", {seconds = self.seconds, minutes = self.minutes, ticking = self.ticking, flags = self.flag_count, mines = self.mine_count, highscore = gui.get_text(gui.get_node("highscore"))})
+	msg.post("/gui-zoom#zoom", "set_flags", {num = self.flag_count})
+	msg.post("/gui#door", "zoom", {zoom = true})
+	msg.post("/zoom#minefinder", "zoom", {zoom = true})
+end
+
 local function deselect_txt(self)
 	local orig_rows = l_data.size_nums[1][6]
 	local orig_cols = l_data.size_nums[2][6]
@@ -307,14 +317,16 @@ function on_message(self, message_id, message)
 	if message_id == hash("set_ticking") then
 		self.ticking = message.ticking
 	elseif message_id == hash("set_mines") then
+		self.mine_count = message.mines
 		gui.set_text(gui.get_node("total-mines"), message.mines.." TOTAL")
 	elseif message_id == hash("reset") then
 		self.seconds = 0
 		self.seconds_storage = -1
 		self.minutes = 0
 		self.ticking = false
-		gui.set_text(gui.get_node("flags-left"), message.mines.." LEFT")
+		msg.post(".", "set_flags", {num = message.mines})
 	elseif message_id == hash("set_flags") then
+		self.flag_count = message.num
 		gui.set_text(gui.get_node("flags-left"), message.num.." LEFT")
 		if message.num < 0 and gui.get_color(gui.get_node("flags-left")) == vmath.vector4(1, 1, 1, 1) then
 			gui.set_color(gui.get_node("flags-left"), vmath.vector4(0.6, 0, 0, 1))
@@ -478,6 +490,27 @@ function on_message(self, message_id, message)
 		end
 	elseif message_id == hash("key_gotten") then
 		self.key_is_there = false
+	elseif message_id == hash("zoom_click") then
+		zoom_in(self)
+	elseif message_id == hash("set_props") then
+		self.seconds = message.seconds
+		self.ticking = message.ticking
+		self.minutes = message.minutes
+		local seconds_txt = ""
+		if self.seconds < 10 then
+			seconds_txt = "0" .. math.floor(self.seconds)
+		else
+			seconds_txt = "" .. math.floor(self.seconds)
+		end
+		gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
+		self.seconds_storage = self.seconds
+	elseif message_id == hash("full_board_anim") then
+		self.full_board_anim = message.anim
+		if message.anim then
+			gui.set(gui.get_node("zoom-in"), "color.w", 0)
+		else
+			gui.set(gui.get_node("zoom-in"), "color.w", 1)
+		end
 	end
 end
 
@@ -856,15 +889,11 @@ function on_input(self, action_id, action)
 		gui.set(gui.get_node("lightbulb-click"), "color.w", 0)
 	end
 
-	if (l_data.size_nums[1][l_data.diff] > 16 or l_data.size_nums[2][l_data.diff] > 16) then --zoom
+	if (l_data.size_nums[1][l_data.diff] > 16 or l_data.size_nums[2][l_data.diff] > 16) and not self.full_board_anim then --zoom
 		if gui.get(gui.get_node("zoom-in"), "color.w") == 0 then
 			gui.set(gui.get_node("zoom-in"), "color.w", 1)
 		elseif action.pressed and action_id == hash("touch") and gui.pick_node(gui.get_node("zoom-in-hit"), action.x, action.y) then
-			msg.post("/anims#anims", "disable")
-			msg.post(".", "disable")
-			msg.post("/gui-zoom#zoom", "enable")
-			msg.post("/gui#door", "zoom", {zoom = true})
-			msg.post("/zoom#minefinder", "zoom", {zoom = true})
+			zoom_in(self)
 		end
 	elseif gui.get(gui.get_node("zoom-in"), "color.w") ~= 0 and (l_data.size_nums[1][l_data.diff] <= 16 or l_data.size_nums[2][l_data.diff] <= 16) then
 		gui.set(gui.get_node("zoom-in"), "color.w", 0)

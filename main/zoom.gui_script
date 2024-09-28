@@ -1,12 +1,41 @@
+local function zoom_out(self)
+	msg.post("/gui#minefinder", "enable")
+	msg.post("/gui#minefinder", "set_props", {seconds = self.seconds, minutes = self.minutes, ticking = self.ticking})
+	msg.post("/gui#minefinder", "set_flags", {num = self.flag_count})
+	msg.post(".", "disable")
+	msg.post("/gui#door", "zoom", {zoom = false})
+	msg.post("/zoom#minefinder", "zoom", {zoom = false})
+end
+
 function init(self)
+	self.seconds = 0
+	self.seconds_storage = -1
+	self.minutes = 0
+	self.ticking = false
 	gui.set_render_order(2)
 	msg.post(".", "acquire_input_focus")
 end
 
 function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	if self.ticking then
+		self.seconds = self.seconds + dt
+	elseif gui.get_text(gui.get_node("timer")) ~= hash("-:--") and self.seconds == 0 and self.minutes == 0 then
+		gui.set_text(gui.get_node("timer"), "-:--")
+	end
+	if self.seconds > 60 then
+		self.minutes = self.minutes + 1
+		self.seconds = self.seconds - 60
+	end
+	if math.floor(self.seconds) ~= math.floor(self.seconds_storage) and self.ticking then
+		local seconds_txt = ""
+		if self.seconds < 10 then
+			seconds_txt = "0" .. math.floor(self.seconds)
+		else
+			seconds_txt = "" .. math.floor(self.seconds)
+		end
+		gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
+		self.seconds_storage = self.seconds
+	end
 end
 
 function on_message(self, message_id, message, sender)
@@ -15,15 +44,38 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("edit_arrows") then
 		gui.set(gui.get_node("arrow-"..message.dir.."-bot"), "color.w", message.alpha)
 		gui.set(gui.get_node("arrow-"..message.dir.."-top"), "color.w", message.alpha)
+	elseif message_id == hash("zoom_click") then
+		zoom_out(self)
+	elseif message_id == hash("set_props") then
+		self.seconds = message.seconds
+		self.ticking = message.ticking
+		self.minutes = message.minutes
+		gui.set_text(gui.get_node("total-mines"), message.mines)
+		local seconds_txt = ""
+		if self.seconds < 10 then
+			seconds_txt = "0" .. math.floor(self.seconds)
+		else
+			seconds_txt = "" .. math.floor(self.seconds)
+		end
+		gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
+		gui.set_text(gui.get_node("highscore"), message.highscore)
+		self.seconds_storage = self.seconds
+	elseif message_id == hash("set_flags") then
+		self.flag_count = message.num
+		gui.set_text(gui.get_node("flags-left"), message.num)
+		if message.num < 0 and gui.get_color(gui.get_node("flags-left")) == vmath.vector4(1, 1, 1, 1) then
+			gui.set_color(gui.get_node("flags-left"), vmath.vector4((217/255), (87/255), (99/255), 1))
+		elseif message.num >= 0 and gui.get_color(gui.get_node("flags-left")) == vmath.vector4(0.6, 0, 0, 1) then
+			gui.set_color(gui.get_node("flags-left"), vmath.vector4(1, 1, 1, 1))
+		end
+	elseif message_id == hash("set_ticking") then
+		self.ticking = message.ticking
 	end
 end
 
 function on_input(self, action_id, action)
-	if action.pressed and action_id == hash("touch") and gui.pick_node(gui.get_node("zoom-out-hit"), action.x, action.y) then
-		msg.post("/gui#minefinder", "enable")
-		msg.post(".", "disable")
-		msg.post("/gui#door", "zoom", {zoom = false})
-		msg.post("/zoom#minefinder", "zoom", {zoom = false})
+	if action.pressed and action_id == hash("touch") and gui.pick_node(gui.get_node("zoom-out-hit"), action.x, action.y) then -- zoom
+		zoom_out(self)
 	end
 
 	if gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) then --quit game

@@ -621,7 +621,7 @@ animations {
 animations {
   id: "tileflip-9-dark-mini"
   images {
-    image: "/assets/tileflip/dark-mini/tileflip-8-dark-mini.png"
+    image: "/assets/tileflip/dark-mini/tileflip-9-dark-mini.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_ONCE_FORWARD

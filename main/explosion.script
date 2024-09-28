@@ -1,5 +1,6 @@
 go.property("wick", false)
 go.property("mini", 0)
+go.property("final", 1)
 
 function init(self)
 	self.mini_txt = ""

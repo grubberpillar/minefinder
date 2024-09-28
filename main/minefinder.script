@@ -90,6 +90,13 @@ local function show_block(self, row, col)
 					show_block(self, row+r, col+c)
 				else
 					tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", col+c+1, row+r+1, 16)
+					if self.zoomed then 
+						local colref = col+c-(self.col_offS+self.zoom_offS.c)
+						local rowref = row+r-(self.row_offS+self.row_size-16+self.zoom_offS.r)
+						if colref > 1 and colref < 29 and rowref > 1 and rowref < 18 then 
+							tilemap.set_tile("/zoom#board-zoom", "layer1", colref, rowref, 16)
+						end
+					end
 				end
 			end
 		end
@@ -120,13 +127,6 @@ local function put_food(self)
 	end
 end
 
-local function shuffleInPlace(t)
-	for i = #t, 2, -1 do
-		local j = math.random(i)
-		t[i], t[j] = t[j], t[i]
-	end
-end
-
 local function count_t_flips(self)
 	local count = 0
 	for i,k in ipairs(self.instances) do
@@ -141,6 +141,7 @@ local function count_t_flips(self)
 end
 
 local function update_zoom_board(self, zoomout)
+	msg.post(".", "purge_instances")
 	local tile
 	for r = 2, 17 do
 		for c = 2, 28 do
@@ -359,6 +360,17 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("reset") then --checkpoint
 		if not l_data.snake then
 			if self.resettable then
+				if self.tile_clicked ~= nil then
+					tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", self.col_clicked+1, self.row_clicked+1, self.tile_clicked)
+					if self.zoomed then
+						local colref = self.col_clicked-(self.col_offS+self.zoom_offS.c)
+						local rowref = self.row_clicked-(self.row_offS+self.row_size-16+self.zoom_offS.r)
+						tilemap.set_tile("/zoom#board-zoom", "layer1", colref, rowref, self.tile_clicked)
+					end
+					self.tile_clicked = nil
+					self.row_clicked = nil
+					self.col_clicked = nil
+				end
 				if self.game_started then
 					msg.post(".", "purge_instances")
 				end
@@ -404,11 +416,22 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 	elseif message_id == hash("purge_instances") then
-		while self.instances[1] do
+		local spared_instances = {}
+		while #self.instances > #spared_instances do
 			for i, k in ipairs(self.instances) do
-				msg.post(k[1], "kill")
-				table.remove(self.instances, i)
+				if not (self.spare and self.spare == k[2]) then
+					msg.post(k[1], "kill")
+					table.remove(self.instances, i)
+				else
+					table.insert(spared_instances, table.remove(self.instances, i))
+				end
 			end
+		end
+		for i, k in ipairs(spared_instances) do
+			table.insert(self.instances, spared_instances[i])
+		end
+		if self.spare then
+			self.spare = nil
 		end
 	elseif message_id == hash("set_anims") then
 		if message.anims == false then
@@ -522,9 +545,7 @@ function on_message(self, message_id, message, sender)
 		self.zoom_offS = {r = 0, c = 0}
 		update_zoom_board(self, not message.zoom)
 		if message.zoom then
-			-- self.mini_txt = "-zoom"
 			self.tile_size = 8
-			-- self.mini_offS = 0
 			sprite.set_constant("/zoom#smileys", "tint", vmath.vector4(1, 1, 1, 0))
 			sprite.set_constant("/diff-selected", "tint", vmath.vector4(1, 1, 1, 0))
 			sprite.set_constant("/diff-selected-temp", "tint", vmath.vector4(1, 1, 1, 0))
@@ -543,15 +564,12 @@ function on_message(self, message_id, message, sender)
 				msg.post("/gui-zoom#zoom", "edit_arrows", {dir = "e", alpha = 0})
 			end
 		else
-			-- self.mini_txt = "-mini"
-			-- self.mini_offS = 1
 			self.tile_size = 4
 			sprite.set_constant("/zoom#smileys", "tint", vmath.vector4(1, 1, 1, 1))
 			sprite.set_constant("/diff-selected", "tint", vmath.vector4(1, 1, 1, 1))
 			sprite.set_constant("/diff-selected-temp", "tint", vmath.vector4(1, 1, 1, 1))
 			sprite.set_constant("/light-switch", "tint", vmath.vector4(1, 1, 1, 1))
 			sprite.set_constant("/anim-switch", "tint", vmath.vector4(1, 1, 1, 1))
-
 		end
 	elseif message_id == hash("arrow_press") then
 		if message.dir == "n" then
@@ -591,29 +609,32 @@ function on_input(self, action_id, action)
 			end
 		end	
 		
-		if (action_id == hash("touch") or action_id == hash("select") or (action_id == hash("select-key") and not self.shifting)) and action.pressed and self.playing and not l_data.unsaved and not self.editing_dimensions and (not self.watch_t_flips or count_t_flips(self) == 0) then
-			-- local moveRow = math.floor(mouse_y/48) --gives the mouse tile for strictly 8x8 tiles
-			-- local moveCol = math.floor(mouse_x/48)
+		if (action_id == hash("touch") or action_id == hash("select") or (action_id == hash("select-key") and not self.shifting)) and action.pressed and self.playing and not self.editing_dimensions and (not self.watch_t_flips or count_t_flips(self) == 0) then
+			local moveRow = math.floor(mouse_y/48) --gives the mouse tile for strictly 8x8 tiles
+			local moveCol = math.floor(mouse_x/48)
 			local moveRow_t = math.floor(mouse_y/(6*self.tile_size)) --gives the mouse tile for varying game tiles
 			local moveCol_t = math.floor(mouse_x/(6*self.tile_size))
 			if self.zoomed then
 				moveRow_t = moveRow_t+1+self.row_offS+self.row_size-16+self.zoom_offS.r
 				moveCol_t = moveCol_t+1+self.col_offS+self.zoom_offS.c
 			end
-			if (moveRow_t < self.row_size+1+self.mini_offS+self.row_offS and moveCol_t < self.col_size+1+self.mini_offS+self.col_offS and moveRow_t > self.row_offS+self.mini_offS and moveCol_t > self.col_offS+self.mini_offS) then -- or (self.zoomed and moveCol_t > 1 and moveCol_t < 28 and moveRow_t > 1 and moveRow_t < 17) 
+			if (not self.zoomed and moveRow_t < self.row_size+1+self.mini_offS+self.row_offS and moveCol_t < self.col_size+1+self.mini_offS+self.col_offS and moveRow_t > self.row_offS+self.mini_offS and moveCol_t > self.col_offS+self.mini_offS) or (self.zoomed and moveCol > 0 and moveCol < 28 and moveRow > 0 and moveRow < 17) then  
 				if not self.tile_clicked then
 					self.tile_clicked = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1)
 				end
 				self.row_clicked = moveRow_t
 				self.col_clicked = moveCol_t
 				tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, 16)
+				if self.zoomed then
+					tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, 16)
+				end
 			-- 	print(moveRow_t+1, moveCol_t+1)
 			end
 		end
 		
 		if self.tile_clicked and (action_id == hash("touch") or action_id == hash("select") or (action_id == hash("select-key") and not self.shifting)) and action.released and self.playing then
-			-- local moveRow = math.floor(mouse_y/48)
-			-- local moveCol = math.floor(mouse_x/48)
+			local moveRow = math.floor(mouse_y/48)
+			local moveCol = math.floor(mouse_x/48)
 			local moveRow_t = math.floor(mouse_y/(6*self.tile_size))
 			local moveCol_t = math.floor(mouse_x/(6*self.tile_size))
 			if self.zoomed then
@@ -622,7 +643,7 @@ function on_input(self, action_id, action)
 			end
 			-- print(11-moveRow .. ", " .. moveCol)
 
-			if (moveRow_t < self.row_size+1+self.mini_offS+self.row_offS and moveCol_t < self.col_size+1+self.mini_offS+self.col_offS and moveRow_t > self.row_offS+self.mini_offS and moveCol_t > self.col_offS+self.mini_offS) then -- or (self.zoomed and moveCol_t > 1 and moveCol_t < 28 and moveRow_t > 1 and moveRow_t < 17) 
+			if (not self.zoomed and moveRow_t < self.row_size+1+self.mini_offS+self.row_offS and moveCol_t < self.col_size+1+self.mini_offS+self.col_offS and moveRow_t > self.row_offS+self.mini_offS and moveCol_t > self.col_offS+self.mini_offS) or (self.zoomed and moveCol > 0 and moveCol < 28 and moveRow > 0 and moveRow < 17) then   
 				if not self.board[1] then --first move
 					self.game_started = true
 					self.board = {}
@@ -653,8 +674,8 @@ function on_input(self, action_id, action)
 						end
 					end
 
-					shuffleInPlace(mine_list)
-					shuffleInPlace(center_mines)
+					shuffle(mine_list)
+					shuffle(center_mines)
 
 					
 					local count = 1
@@ -688,41 +709,75 @@ function on_input(self, action_id, action)
 						show_block(self, moveRow_t, moveCol_t)
 					else
 						tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
+						if self.zoomed then
+							tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
+						end
 					end
 					self.flashing = true
 					self.timer = 0.1
-					msg.post("/gui#minefinder", "set_ticking", {ticking = true})
+					if self.zoomed then
+						msg.post("/gui-zoom#zoom", "set_ticking", {ticking = true})
+					else
+						msg.post("/gui#minefinder", "set_ticking", {ticking = true})
+					end
 					
 				else --NOT first move
 					if self.tile_clicked == 13 then -- remove flag
 						tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, 11)
+						if self.zoomed then
+							tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, 11)
+						end
 						if self.anims["flag_remove"] then
 							local props = {type = 2, theme_id = theme_to_id(self.theme)}
-							local id = factory.create("#flag-factory", vmath.vector3(moveCol_t*6*self.tile_size+self.tile_size*3, moveRow_t*6*self.tile_size+self.tile_size*3, 0.5), nil, props)
+							local id
+							if not self.zoomed then
+								id = factory.create("#flag-factory", vmath.vector3(moveCol_t*6*self.tile_size+self.tile_size*3, moveRow_t*6*self.tile_size+self.tile_size*3, 0.5), nil, props)
+							else
+								id = factory.create("#flag-factory", vmath.vector3(moveCol*6*self.tile_size+self.tile_size*3, moveRow*6*self.tile_size+self.tile_size*3, 0.65), nil, props)
+							end
 							msg.post("/zoom#minefinder", "add_url", {hash = msg.url(nil, id, nil), type = "flag-2"})
 						end
 					elseif (action_id == hash("select") or (action_id == hash("select-key") and not self.shifting) or (action_id == hash("touch") and self.shifting)) and self.tile_clicked == 11 then -- place flag
 						tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, 13)
+						if self.zoomed then
+							tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, 13)
+						end
 						if self.anims["flag_place"] then
-							local props = {type = 1-self.mini_offS, theme_id = theme_to_id(self.theme)}
-							local id = factory.create("#flag-factory", vmath.vector3(moveCol_t*(6*self.tile_size)+3*self.tile_size, moveRow_t*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+							local props
+							local id
+							if not self.zoomed then
+								props = {type = 1-self.mini_offS, theme_id = theme_to_id(self.theme)}
+								id = factory.create("#flag-factory", vmath.vector3(moveCol_t*(6*self.tile_size)+3*self.tile_size, moveRow_t*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+							else
+								props = {type = 1, theme_id = theme_to_id(self.theme)}
+								id = factory.create("#flag-factory", vmath.vector3(moveCol*(6*self.tile_size)+3*self.tile_size, moveRow*(6*self.tile_size)+3*self.tile_size, 0.65), nil, props)
+							end
 							msg.post("/zoom#minefinder", "add_url", {hash = msg.url(nil, id, nil), type = "flag-1"})
 						end
-					elseif self.tile_clicked > 10 then -- reveal block
-						if self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS] == 1 then -- flip tile
+					elseif self.tile_clicked > 10 then-- flip tile
+						if self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS] == 1 then -- reveal block
 							show_block(self, moveRow_t, moveCol_t)
 							self.flashing = true
 							self.timer = 0.1
-							
 						elseif self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS] == 12 then -- flip mine
+							msg.post("/gui#minefinder", "full_board_anim", {anim = true})
+							if self.zoomed then
+								msg.post("/gui-zoom#zoom", "set_ticking", {ticking = false})
+								msg.post("/gui-zoom#zoom", "zoom_click")
+								self.spare = "boom"
+								self.tile_size = 4
+							else
+								msg.post("/gui#minefinder", "set_ticking", {ticking = false})
+							end
 							tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
-							msg.post("/gui#minefinder", "set_ticking", {ticking = false})
 							-- print("you lose!")
 							self.playing = false
 							if self.anims["explosion"] then
 								local props = {wick = true, mini = self.mini_offS}
 								local id = factory.create("#explosion-factory", vmath.vector3(moveCol_t*(6*self.tile_size)+3*self.tile_size, moveRow_t*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post("/zoom#minefinder", "add_url", {hash = msg.url(nil, id, nil), type = "boom"})
+								self.full_board_anim = true
+								print("boom1 @ "..moveRow_t..", "..moveCol_t)
 							end
 							
 							self.mine_locs = {}
@@ -743,10 +798,15 @@ function on_input(self, action_id, action)
 							self.mine_i = 1
 						else -- digging a tile
 							tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
-							
+							if self.zoomed then
+								tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
+							end
 						end
 					else
 						tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
+						if self.zoomed then
+							tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
+						end
 					end
 				end -- end of not first move
 				
@@ -765,12 +825,23 @@ function on_input(self, action_id, action)
 					end
 				end
 
-				msg.post("/gui#minefinder", "set_flags", {num = self.num_mines-flag_count})
-
+				if not self.zoomed then
+					msg.post("/gui#minefinder", "set_flags", {num = self.num_mines-flag_count})
+				else
+					msg.post("/gui-zoom#zoom", "set_flags", {num = self.num_mines-flag_count})
+				end
+					
 				if won_game then
+					if self.zoomed then
+						msg.post("/gui-zoom#zoom", "set_ticking", {ticking = false})
+						msg.post("/gui-zoom#zoom", "zoom_click")
+						self.tile_size = 4
+						self.spare = "flag-1"
+					else
+						msg.post("/gui#minefinder", "set_ticking", {ticking = false})
+					end
 					-- print("you win!")
 					self.playing = false
-					msg.post("/gui#minefinder", "set_ticking", {ticking = false})
 					msg.post("/gui#minefinder", "set_hs")
 					self.win_flag_timer = 0
 					self.correct_flags = {}
@@ -784,6 +855,10 @@ function on_input(self, action_id, action)
 									local props = {type = 1-self.mini_offS, theme_id = theme_to_id(self.theme)}
 									local id = factory.create("#flag-factory", vmath.vector3(c*(6*self.tile_size)+3*self.tile_size, r*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 									msg.post("/zoom#minefinder", "add_url", {hash = msg.url(nil, id, nil), type = "flag-1"})
+									if not self.full_board_anim then
+										self.full_board_anim = true
+										msg.post("/gui#minefinder", "full_board_anim", {anim = true})
+									end
 								end
 							end
 							if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1, r+1) == 13 then
@@ -869,19 +944,11 @@ function on_input(self, action_id, action)
 			end
 		end
 
-		if action.pressed and action_id == hash("select-key") and self.shifting and (l_data.size_nums[1][l_data.diff] > 16 or l_data.size_nums[2][l_data.diff] > 16) then
+		if action.pressed and action_id == hash("select-key") and self.shifting and (l_data.size_nums[1][l_data.diff] > 16 or l_data.size_nums[2][l_data.diff] > 16) and not self.full_board_anim and (not self.watch_t_flips or count_t_flips(self) == 0) then
 			if self.zoomed then
-				msg.post("/gui#minefinder", "enable")
-				msg.post("/gui-zoom#zoom", "disable")
-				msg.post("/gui#door", "zoom", {zoom = false})
-				msg.post(".", "zoom", {zoom = false})
-				
+				msg.post("/gui-zoom#zoom", "zoom_click")
 			else
-				msg.post("/anims#anims", "disable")
-				msg.post("/gui#minefinder", "disable")
-				msg.post("/gui-zoom#zoom", "enable")
-				msg.post("/gui#door", "zoom", {zoom = true})
-				msg.post(".", "zoom", {zoom = true})
+				msg.post("/gui#minefinder", "zoom_click")
 			end
 		end
 	else
@@ -912,6 +979,11 @@ function on_input(self, action_id, action)
 	end
 	if self.row_clicked and (self.row_clicked ~= moveRow_t or self.col_clicked ~= moveCol_t) then --reset tile when mouse moved off
 		tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", self.col_clicked+1, self.row_clicked+1, self.tile_clicked)
+		if self.zoomed then
+			local colref = self.col_clicked-(self.col_offS+self.zoom_offS.c)
+			local rowref = self.row_clicked-(self.row_offS+self.row_size-16+self.zoom_offS.r)
+			tilemap.set_tile("/zoom#board-zoom", "layer1", colref, rowref, self.tile_clicked)
+		end
 		self.tile_clicked = nil
 		self.row_clicked = nil
 		self.col_clicked = nil
@@ -967,7 +1039,7 @@ function on_input(self, action_id, action)
 			go.set("/brighten", "position", vmath.vector3(20, 12, -0.5))
 			self.tile_lit = false
 		end
-		if moveCol > 17 and (self.hard_select or self.large_select or self.mini_select) then
+		if moveCol > 17 and (self.hard_select or self.large_select or self.mini_select) and not self.zoomed then
 			sprite.play_flipbook("/selection", "selection-2")
 			self.hard_select = false
 			self.large_select = false
@@ -1038,9 +1110,7 @@ function on_input(self, action_id, action)
 	
 
 	if action_id == hash("debug") and action.pressed then
-		local rowref = moveRow_t-(self.row_offS+self.row_size-16+self.zoom_offS.r)
-		local colref = moveCol_t-(self.col_offS+self.zoom_offS.c)
-		print("[zoom] | row: "..rowref.."; col: "..colref)
+		print("[zoom] | row: "..(moveRow+1).."; col: "..moveCol+1)
 	end
 
 	if action_id == hash("debug2") and action.pressed then
@@ -1057,6 +1127,11 @@ end
 
 function update(self, dt) --checkpoint
 	if not l_data.snake then
+		if self.full_board_anim and #self.instances == 0 then
+			self.full_board_anim = false
+			msg.post("/gui#minefinder", "full_board_anim", {anim = false})
+		end
+		
 		-- print(self.timer, self.board[1], #self.to_flip)
 		if self.timer and (self.board[1] or #self.to_flip > 0) then
 			while (self.timer <= 0 or (self.anims["timer"] == false and not self.flashing) or self.anim_skip == true) and (self.flashing or (self.mine_locs and self.mine_i <= #self.mine_locs) or #self.to_flip > 0) do
@@ -1070,7 +1145,7 @@ function update(self, dt) --checkpoint
 								if self.zoomed then 
 									local colref = c+1-(self.zoom_offS.c)
 									local rowref = r+1-(self.row_size-16+self.zoom_offS.r)
-									if colref > 1 and colref < 18 and rowref > 1 and rowref < 28 then 
+									if colref > 1 and colref < 29 and rowref > 1 and rowref < 18 then 
 										tilemap.set_tile("/zoom#board-zoom", "layer1", colref, rowref, self.board[r][c])
 									end
 								end
@@ -1081,10 +1156,18 @@ function update(self, dt) --checkpoint
 				elseif #self.to_flip > 0 then
 					if self.anims["tileflip"] then
 						if #self.to_flip == 1 then
+							if not self.full_board_anim then
+								self.full_board_anim = true
+								msg.post("/gui#minefinder", "full_board_anim", {anim = true})
+							end
 							local props = {final = 1, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
 							local id = factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*(6*self.tile_size)+3*self.tile_size, self.to_flip[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 							msg.post("/zoom#minefinder", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 						else
+							if not self.full_board_anim then
+								self.full_board_anim = true
+								msg.post("/gui#minefinder", "full_board_anim", {anim = true})
+							end
 							local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
 							local id = factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*(6*self.tile_size)+3*self.tile_size, self.to_flip[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 							msg.post("/zoom#minefinder", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
@@ -1104,6 +1187,10 @@ function update(self, dt) --checkpoint
 				else
 					local mineRow = self.mine_locs[self.mine_i][1]
 					local mineCol = self.mine_locs[self.mine_i][2]
+					if not self.full_board_anim then
+						self.full_board_anim = true
+						msg.post("/gui#minefinder", "full_board_anim", {anim = true})
+					end
 					if self.mine_locs[self.mine_i][3] then
 						if self.anims["flag_correct"] then
 							local props = {type = 3, theme_id = theme_to_id(self.theme)}
@@ -1177,6 +1264,10 @@ function update(self, dt) --checkpoint
 						local props = {type = 3, theme_id = theme_to_id(self.theme)}
 						local id = factory.create("#flag-factory", vmath.vector3(self.correct_flags[1][2]*(6*self.tile_size)+3*self.tile_size, self.correct_flags[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 						msg.post("/zoom#minefinder", "add_url", {hash = msg.url(nil, id, nil), type = "flag-3"})
+						if not self.full_board_anim then
+							self.full_board_anim = true
+							msg.post("/gui#minefinder", "full_board_anim", {anim = true})
+						end
 						if self.anims["timer"] then
 							self.win_flag_timer = 0.05
 						end

@@ -24,18 +24,21 @@ X x out
 	- large vs mini tiles diagram lol
 
 
+- fix lose animation
+- fix no-delay lose animation
+- remove select hider on some gui nodes
+- reset during wrong flags
+- zoom timer
+- click anims on setting custom
+* rapid board switching on custom
+* click full screen button (not shortcut) while board is switching
 X switch to custom does not reset if the board is the same
 X check for win on frame 1
 X change more anims text animation
-- fix lose animation
 X lose and win at the same time on a pre-won board
-- fix no-delay lose animation
 X dig/flag and move off tile keeps it white
 X turning anims off doesn't turn off gui animation
 X "01" text box (remove the zero)
 X changing custom setting to the same settings should not reset the board
 X clicking the board while setting the difficulty
 X clicking stars while editing board size
-* rapid board switching on custom
-- remove select hider on some gui nodes
-- reset during wrong flags
