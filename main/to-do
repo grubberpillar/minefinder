@@ -5,18 +5,19 @@ X custom level
 X custom level auto-mines
 * custom level hs/presets
 X custom level hs depends on board
-- zoom board
+X zoom board
 - sounds
 X set difficulty polish
 X flash between themes
 - startup screen
 X x out
 - saving
-- midnight
+X midnight
 - ++
 - settings
 	- profanity
 	- sound
+	- scroll sensitity
 	- click tile to dig around
 	- startup screen
 	- reset game files
@@ -28,10 +29,10 @@ X x out
 - fix no-delay lose animation
 - remove select hider on some gui nodes
 - reset during wrong flags
-- zoom timer
-- click anims on setting custom
+X click anims on setting custom
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
+X zoom timer
 X switch to custom does not reset if the board is the same
 X check for win on frame 1
 X change more anims text animation

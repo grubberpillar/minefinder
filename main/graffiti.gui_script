@@ -1,7 +1,6 @@
 function init(self)
-	gui.set_render_order(1)
+	gui.set_render_order(3)
 end
 
 function on_message(self, message_id, message, sender)
 end
-

@@ -12,23 +12,12 @@ local function hide_door_things(self)
 end
 
 function init(self)
-	gui.set_render_order(3)
+	gui.set_render_order(2)
 	self.door_found = false
 	self.door_state = "closed"
 	self.key_is_there = true 
 	self.gui_anims = true
-end
-
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	self.more_anims = false
 end
 
 function on_message(self, message_id, message, sender)
@@ -49,7 +38,9 @@ function on_message(self, message_id, message, sender)
 			gui.set(gui.get_node("key"), "color.w", 0)
 		elseif (l_data.diff == 5 and l_data.diff_temp == nil) or l_data.diff_temp == 5 then
 			gui.set(gui.get_node("key"), "color.w", 1)
-		end			
+		end
+	elseif message_id == hash("more_anims?") then
+		self.more_anims = message.anims
 	end
 end
 
@@ -72,7 +63,7 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if l_data.diff == 5 and self.key_is_there and self.door_state ~= "gone" then --key text
+	if l_data.diff == 5 and not self.more_anims and self.key_is_there and self.door_state ~= "gone" then --key text
 		if gui.pick_node(gui.get_node("key-hit"), action.x, action.y) then
 			if action_id == hash("touch") and action.pressed then
 				gui.set_color(gui.get_node("key"), vmath.vector4((251/255), (242/255), (54/255), 1))

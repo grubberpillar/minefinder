@@ -1,10 +1,20 @@
+local l_data = require "main.leveldata"
+
 local function zoom_out(self)
 	msg.post("/gui#minefinder", "enable")
-	msg.post("/gui#minefinder", "set_props", {seconds = self.seconds, minutes = self.minutes, ticking = self.ticking})
+	msg.post("/gui#minefinder", "set_props", {seconds = self.seconds, minutes = self.minutes, ticking = self.ticking, highscore = self.hs})
 	msg.post("/gui#minefinder", "set_flags", {num = self.flag_count})
 	msg.post(".", "disable")
 	msg.post("/gui#door", "zoom", {zoom = false})
 	msg.post("/zoom#minefinder", "zoom", {zoom = false})
+end
+
+local function set_corner(self, dirV, dirH)
+	if gui.get(gui.get_node("board_border-"..dirV), "color.w") == 1 and gui.get(gui.get_node("board_border-"..dirH), "color.w") == 1 then
+		gui.set(gui.get_node("board_border-"..dirV..dirH), "color.w", 1)
+	else
+		gui.set(gui.get_node("board_border-"..dirV..dirH), "color.w", 0)
+	end
 end
 
 function init(self)
@@ -12,8 +22,10 @@ function init(self)
 	self.seconds_storage = -1
 	self.minutes = 0
 	self.ticking = false
-	gui.set_render_order(2)
+	gui.set_render_order(1)
 	msg.post(".", "acquire_input_focus")
+	self.diff_memory = 3
+	self.diff_colors = {vmath.vector4((55/255), (148/255), (110/255), 1), vmath.vector4((153/255), (229/255), (80/255), 1), vmath.vector4((251/255), (242/255), (54/255), 1), vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((172/255), (50/255), (50/255), 1), vmath.vector4((118/255), (66/255), (138/255), 1)}
 end
 
 function update(self, dt)
@@ -41,9 +53,69 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("enable") then
 		msg.post("/gui#door", "enable")
+		self.hs = nil
 	elseif message_id == hash("edit_arrows") then
 		gui.set(gui.get_node("arrow-"..message.dir.."-bot"), "color.w", message.alpha)
 		gui.set(gui.get_node("arrow-"..message.dir.."-top"), "color.w", message.alpha)
+		gui.set(gui.get_node("board_border-"..message.dir), "color.w", 1-message.alpha)
+		
+		if l_data.size_nums[1][l_data.diff] < 16 and gui.get(gui.get_node("board_border-s"), "color.w") ~= 0 or gui.get(gui.get_node("board_border-n"), "color.w") ~= 0 then
+			gui.set(gui.get_node("board_border-s"), "color.w", 0)
+			if l_data.size_nums[1][l_data.diff] ~= 15 and gui.get(gui.get_node("board_border-n"), "color.w") ~= 0 then
+				gui.set(gui.get_node("board_border-n"), "color.w", 0)
+			end
+		end
+		if l_data.size_nums[2][l_data.diff] < 27 and (gui.get(gui.get_node("board_border-w"), "color.w") ~= 0 or gui.get(gui.get_node("board_border-e"), "color.w") ~= 0) then
+			gui.set(gui.get_node("board_border-w"), "color.w", 0)
+			if l_data.size_nums[2][l_data.diff] ~= 26 and gui.get(gui.get_node("board_border-e"), "color.w") ~= 0 then
+				gui.set(gui.get_node("board_border-e"), "color.w", 0)
+			end
+		end
+
+		if l_data.size_nums[1][l_data.diff] < 17 then
+			if gui.get(gui.get_node("board_border-e"), "size.y") ~= l_data.size_nums[1][l_data.diff]*48 then
+				if l_data.size_nums[1][l_data.diff]%2 == 1 then
+					gui.set(gui.get_node("board_border-e"), "position.y", 456)
+					gui.set(gui.get_node("board_border-w"), "position.y", 456)
+				else
+					gui.set(gui.get_node("board_border-e"), "position.y", 432)
+					gui.set(gui.get_node("board_border-w"), "position.y", 432)
+				end
+				gui.set(gui.get_node("board_border-e"), "size.y", l_data.size_nums[1][l_data.diff]*48)
+				gui.set(gui.get_node("board_border-w"), "size.y", l_data.size_nums[1][l_data.diff]*48)
+			end
+		elseif gui.get(gui.get_node("board_border-e"), "size.y") ~= 768 then
+			gui.set(gui.get_node("board_border-e"), "position.y", 432)
+			gui.set(gui.get_node("board_border-w"), "position.y", 432)
+			gui.set(gui.get_node("board_border-e"), "size.y", 768)
+			gui.set(gui.get_node("board_border-w"), "size.y", 768)
+		end
+
+		if l_data.size_nums[2][l_data.diff] < 28 then
+			if gui.get(gui.get_node("board_border-n"), "size.x") ~= l_data.size_nums[2][l_data.diff]*48 then
+				if l_data.size_nums[2][l_data.diff]%2 == 0 then
+					gui.set(gui.get_node("board_border-n"), "position.x", 720)
+					gui.set(gui.get_node("board_border-s"), "position.x", 720)
+				else
+					gui.set(gui.get_node("board_border-n"), "position.x", 696)
+					gui.set(gui.get_node("board_border-s"), "position.x", 696)
+				end
+				gui.set(gui.get_node("board_border-n"), "size.x", l_data.size_nums[2][l_data.diff]*48)
+				gui.set(gui.get_node("board_border-s"), "size.x", l_data.size_nums[2][l_data.diff]*48)
+			end
+		elseif gui.get(gui.get_node("board_border-n"), "size.x") ~= 1296 then
+			gui.set(gui.get_node("board_border-n"), "position.x", 696)
+			gui.set(gui.get_node("board_border-s"), "position.x", 696)
+			gui.set(gui.get_node("board_border-n"), "size.x", 1296)
+			gui.set(gui.get_node("board_border-s"), "size.x", 1296)
+		end
+		
+
+		set_corner(self, "n", "e")
+		set_corner(self, "n", "w")
+		set_corner(self, "s", "e")
+		set_corner(self, "s", "w")
+		
 	elseif message_id == hash("zoom_click") then
 		zoom_out(self)
 	elseif message_id == hash("set_props") then
@@ -58,8 +130,24 @@ function on_message(self, message_id, message, sender)
 			seconds_txt = "" .. math.floor(self.seconds)
 		end
 		gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
-		gui.set_text(gui.get_node("highscore"), message.highscore)
-		self.seconds_storage = self.seconds
+		self.seconds_storage = self.seconds-1
+
+		if message.highscore then
+			local minutes_txt = ""..math.floor(message.highscore/60)
+			local seconds_txt = ""..math.floor(message.highscore%60)
+			if tonumber(seconds_txt) < 10 then
+				seconds_txt = "0" .. seconds_txt
+			end
+			
+			gui.set_text(gui.get_node("highscore"), minutes_txt .. ":".. seconds_txt)
+		else
+			gui.set_text(gui.get_node("highscore"), "-:--")
+		end
+
+		if message.diff ~= self.diff_memory then
+			self.diff_memory = message.diff
+			gui.set_color(gui.get_node("trophy-mod-C"), self.diff_colors[self.diff_memory])
+		end
 	elseif message_id == hash("set_flags") then
 		self.flag_count = message.num
 		gui.set_text(gui.get_node("flags-left"), message.num)
@@ -70,24 +158,34 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == hash("set_ticking") then
 		self.ticking = message.ticking
+		if self.ticking then
+			self.seconds_storage = self.seconds-1
+		end
+	elseif message_id == hash("set_hs") then
+		self.hs = math.floor(self.seconds + self.minutes*60)
+	elseif message_id == hash("midnight_thm") then
+		local color
+		if not message.theme and gui.get(gui.get_node("board_border-n"), "color.x") ~= 142 then
+			color = vmath.vector4((142/255), (149/255), (219/255), 1)
+		else
+			color = vmath.vector4((63/255), (63/255), (116/255), 1)
+		end
+		if gui.get(gui.get_node("board_border-n"), "color.x") ~= color.x then
+			gui.set_color(gui.get_node("board_border-n"), color)
+			gui.set_color(gui.get_node("board_border-e"), color)
+			gui.set_color(gui.get_node("board_border-s"), color)
+			gui.set_color(gui.get_node("board_border-w"), color)
+			gui.set_color(gui.get_node("board_border-ne"), color)
+			gui.set_color(gui.get_node("board_border-se"), color)
+			gui.set_color(gui.get_node("board_border-sw"), color)
+			gui.set_color(gui.get_node("board_border-nw"), color)
+		end
 	end
 end
 
 function on_input(self, action_id, action)
 	if action.pressed and action_id == hash("touch") and gui.pick_node(gui.get_node("zoom-out-hit"), action.x, action.y) then -- zoom
 		zoom_out(self)
-	end
-
-	if gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) then --quit game
-		if action_id == hash("touch") and action.pressed then
-			gui.play_flipbook(gui.get_node("quit-x"), "red-x-lit")
-			gui.set(gui.get_node("quit-underline"), "color.w", 0)
-			sys.exit(0)
-		elseif gui.get(gui.get_node("quit-underline"), "color.w") == 0 then
-			gui.set(gui.get_node("quit-underline"), "color.w", 1)
-		end
-	elseif gui.get(gui.get_node("quit-underline"), "color.w") ~= 0 then
-		gui.set(gui.get_node("quit-underline"), "color.w", 0)
 	end
 
 	local dir = {"n", "e", "s", "w"}
@@ -99,10 +197,8 @@ function on_input(self, action_id, action)
 			elseif action.released and action_id == hash("touch") then
 				gui.set(gui.get_node("arrow-"..dir[i].."-top"), "color.w", 1)
 				gui.set_color(gui.get_node("arrow-"..dir[i].."-bot"), vmath.vector4((175/255), (175/255), (0/255), 1))
-				gui.set(gui.get_node("arrow-"..dir[i].."-bot"), "color.w", 0)
-				gui.set(gui.get_node("arrow-"..dir[i].."-top"), "color.w", 0)
-				gui.set(gui.get_node("arrow-"..dir[(i+1)%4+1].."-bot"), "color.w", 1)
-				gui.set(gui.get_node("arrow-"..dir[(i+1)%4+1].."-top"), "color.w", 1)
+				msg.post(".", "edit_arrows", {dir = dir[i], alpha = 0})
+				msg.post(".", "edit_arrows", {dir = dir[(i+1)%4+1], alpha = 1})
 				msg.post("/zoom#minefinder", "arrow_press", {dir = dir[i]})
 			elseif gui.get(gui.get_node("arrow-"..dir[i].."-top"), "color.w") ~= 0 and gui.get_color(gui.get_node("arrow-"..dir[i].."-top")) ~= vmath.vector4(1, 1, (215/255), 1) then
 				gui.set_color(gui.get_node("arrow-"..dir[i].."-top"), vmath.vector4(1, 1, (215/255), 1))
