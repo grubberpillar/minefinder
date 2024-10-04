@@ -1,29 +1,65 @@
+local function bool_to_num(bool)
+	if bool then
+		return 1
+	else
+		return 2
+	end
+end
+
+local function bool_to_word(bool)
+	if bool then
+		return "on"
+	else
+		return "off"
+	end
+end
+
 function init(self)
 	gui.set_render_order(5)
 	msg.post(".", "acquire_input_focus")
 	self.viewing_setttings = false
+	self.viewing_credits = false
+	
 	self.nodes = {}
 	self.nodes.settings_nodes = gui.get_node("settings-nodes")
 	gui.set(self.nodes.settings_nodes, "color.w", 0)
 	self.nodes.settings_hit = gui.get_node("settings-hit")
 	self.nodes.settings_top = gui.get_node("settings-top")
 	self.nodes.settings_bot = gui.get_node("settings-bot")
+	self.nodes.credits_hit = gui.get_node("credits-hit")
+	self.nodes.credits_top = gui.get_node("credits-top")
+	self.nodes.credits_bot = gui.get_node("credits-bot")
+	self.nodes.credits_nodes = gui.get_node("credits-nodes")
+	self.nodes.credits_door = gui.get_node("credits-door")
+	self.nodes.credits_door_hit = gui.get_node("credits-door-hit")
+	self.switches = {"tutorial", "profanity", "scroll"}
+	self.switch_on = {false,false,true}
+	self.hover_node = nil
+	self.settings_txt_color = {{vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((105/255), (106/255), (106/255), 1)}, {vmath.vector4((238/255), (146/255), 0, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}, {vmath.vector4((63/255), (63/255), (116/255), 1), vmath.vector4(1, 1, (215/255), 1)}}
 end
 
 function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-	if gui.pick_node(self.nodes.settings_hit, action.x, action.y) then -- 
-		if action_id == hash("touch") and action.pressed then --click
+	if gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not self.viewing_credits then -- 
+		if action.pressed and action_id == hash("touch") then --click
 			gui.set(self.nodes.settings_top, "position.y", 0)
-		elseif action_id == hash("touch") and action.released then --release
-			self.viewing_setttings = not self.viewing_setttings
-			if self.viewing_setttings then
+		elseif action.released and action_id == hash("touch") then --release
+			if not self.viewing_setttings then
 				gui.set(self.nodes.settings_nodes, "color.w", 1)
+				msg.post("/zoom#minefinder", "release_input_focus")
+				msg.post("/gui#minefinder", "release_input_focus")
+				msg.post("/gui-zoom#zoom", "release_input_focus")
+				msg.post("/anims#anims", "release_input_focus")
 			else
 				gui.set(self.nodes.settings_nodes, "color.w", 0)
+				msg.post("/zoom#minefinder", "acquire_input_focus")
+				msg.post("/gui#minefinder", "acquire_input_focus")
+				msg.post("/gui-zoom#zoom", "acquire_input_focus")
+				msg.post("/anims#anims", "acquire_input_focus")
 			end
+			self.viewing_setttings = not self.viewing_setttings
 			gui.set(self.nodes.settings_top, "position.y", 1)
 		elseif gui.get(self.nodes.settings_bot, "color.x") ~= 234 then --hover
 			gui.set_color(self.nodes.settings_bot, vmath.vector4((234/255), (172/255), (75/255), 1))
@@ -31,6 +67,15 @@ function on_input(self, action_id, action)
 	elseif gui.get(self.nodes.settings_bot, "color.x") ~= 223 then -- reset
 		gui.set_color(self.nodes.settings_bot, vmath.vector4((223/255), (113/255), (38/255), 1))
 		gui.set(self.nodes.settings_top, "position.y", 1)
+	end
+
+	if action.pressed and self.viewing_setttings and action_id == hash("touch") and not self.viewing_credits and not gui.pick_node(gui.get_node("settings"), action.x, action.y) and not gui.pick_node(self.nodes.settings_hit, action.x, action.y) then
+		gui.set(self.nodes.settings_nodes, "color.w", 0)
+		msg.post("/zoom#minefinder", "acquire_input_focus")
+		msg.post("/gui#minefinder", "acquire_input_focus")
+		msg.post("/gui-zoom#zoom", "acquire_input_focus")
+		msg.post("/anims#anims", "acquire_input_focus")
+		self.viewing_setttings = false
 	end
 
 	if gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) then --quit game
@@ -43,5 +88,72 @@ function on_input(self, action_id, action)
 		end
 	elseif gui.get(gui.get_node("quit-underline"), "color.w") ~= 0 then
 		gui.set(gui.get_node("quit-underline"), "color.w", 0)
+	end
+
+	if self.viewing_setttings and not self.viewing_credits then 
+		if gui.pick_node(self.nodes.credits_hit, action.x, action.y) then --credits button
+			if action_id == hash("touch") and action.pressed then --click
+				gui.set(self.nodes.credits_top, "position.y", -6)
+			elseif action_id == hash("touch") and action.released then --release
+				self.viewing_credits = true
+				gui.set(self.nodes.credits_nodes, "color.w", 1)
+				gui.set(self.nodes.credits_top, "position.y", 0)
+			elseif gui.get(self.nodes.credits_bot, "color.x") ~= 238 then --hover
+				gui.set_color(self.nodes.credits_bot, vmath.vector4((238/255), (195/255), (89/255), 1))
+			end
+		elseif gui.get(self.nodes.credits_bot, "color.x") ~= 89 then -- reset
+			gui.set_color(self.nodes.credits_bot, vmath.vector4((89/255), (86/255), (82/255), 1))
+			gui.set(self.nodes.credits_top, "position.y", 0)
+		end
+
+		local found_node = false
+		for i = 1,3 do
+			if gui.pick_node(gui.get_node(self.switches[i].."-hit"), action.x, action.y) then
+				found_node = true
+				if self.hover_node ~= i then
+					if self.hover_node then
+						gui.set_color(gui.get_node(self.switches[self.hover_node].."-txt"), self.settings_txt_color[1][bool_to_num(self.switch_on[self.hover_node])])
+					end
+					self.hover_node = i
+					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[2][bool_to_num(self.switch_on[i])])
+				end
+				if action.pressed and action_id == hash("touch") then
+					self.node_clicked = i
+					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[3][bool_to_num(self.switch_on[i])])
+					gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-lit-"..bool_to_word(self.switch_on[i]))
+				elseif action.released and action_id == hash("touch") and self.node_clicked == i then
+					self.switch_on[i] = not self.switch_on[i]
+					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[2][bool_to_num(self.switch_on[i])])
+					gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-"..bool_to_word(self.switch_on[i]))
+				end
+				if self.node_clicked and self.node_clicked ~= i then
+					gui.set_color(gui.get_node(self.switches[self.node_clicked].."-txt"), self.settings_txt_color[1][bool_to_num(self.switch_on[self.node_clicked])])
+					gui.play_flipbook(gui.get_node(self.switches[self.node_clicked].."-light"), "small-light-"..bool_to_word(self.switch_on[self.node_clicked]))
+				end
+			end
+		end
+		if not found_node then
+			if self.hover_node then
+				gui.set_color(gui.get_node(self.switches[self.hover_node].."-txt"), self.settings_txt_color[1][bool_to_num(self.switch_on[self.hover_node])])
+				self.hover_node = nil
+			end
+			if self.node_clicked then
+				gui.play_flipbook(gui.get_node(self.switches[self.node_clicked].."-light"), "small-light-"..bool_to_word(self.switch_on[self.node_clicked]))
+				self.node_clicked = nil
+			end
+		end
+	end
+
+	if self.viewing_credits and gui.pick_node(self.nodes.credits_door_hit, action.x, action.y) then
+		if action.pressed and action_id == hash("touch") then
+			self.viewing_credits = false
+			gui.set(self.nodes.credits_nodes, "color.w", 0)
+		elseif not self.credits_door_hover then
+			gui.play_flipbook(self.nodes.credits_door, "credits-door-open")
+			self.credits_door_hover = true
+		end
+	elseif self.credits_door_hover then 
+		self.credits_door_hover = false
+		gui.play_flipbook(self.nodes.credits_door, "credits-door-closed")
 	end
 end

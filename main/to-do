@@ -29,6 +29,7 @@ X midnight
 - fix no-delay lose animation
 - remove select hider on some gui nodes
 - reset during wrong flags
+- top zoom border not showing??
 X click anims on setting custom
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
