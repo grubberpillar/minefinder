@@ -58,8 +58,8 @@ function on_message(self, message_id, message, sender)
 		gui.set(gui.get_node("arrow-"..message.dir.."-bot"), "color.w", message.alpha)
 		gui.set(gui.get_node("arrow-"..message.dir.."-top"), "color.w", message.alpha)
 		gui.set(gui.get_node("board_border-"..message.dir), "color.w", 1-message.alpha)
-		
-		if l_data.size_nums[1][l_data.diff] < 16 and gui.get(gui.get_node("board_border-s"), "color.w") ~= 0 or gui.get(gui.get_node("board_border-n"), "color.w") ~= 0 then
+
+		if l_data.size_nums[1][l_data.diff] < 16 and (gui.get(gui.get_node("board_border-s"), "color.w") ~= 0 or gui.get(gui.get_node("board_border-n"), "color.w") ~= 0) then
 			gui.set(gui.get_node("board_border-s"), "color.w", 0)
 			if l_data.size_nums[1][l_data.diff] ~= 15 and gui.get(gui.get_node("board_border-n"), "color.w") ~= 0 then
 				gui.set(gui.get_node("board_border-n"), "color.w", 0)

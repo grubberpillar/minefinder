@@ -42,7 +42,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -100,7 +100,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -395,11 +395,12 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "40 TOTAL"
+  text: "40 TOTAL\n"
+  ""
   font: "pixel-font"
   id: "total-mines"
   xanchor: XANCHOR_NONE
@@ -409,21 +410,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -519,11 +520,12 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "40 LEFT"
+  text: "40 LEFT\n"
+  ""
   font: "pixel-font"
   id: "flags-left"
   xanchor: XANCHOR_NONE
@@ -533,21 +535,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -643,11 +645,12 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "-:--"
+  text: "-:--\n"
+  ""
   font: "pixel-font"
   id: "timer"
   xanchor: XANCHOR_NONE
@@ -657,21 +660,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -767,7 +770,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
@@ -781,21 +784,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -913,7 +916,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
   custom_type: 0
@@ -972,7 +975,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
   custom_type: 0
@@ -1009,7 +1012,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -1067,7 +1070,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -1076,7 +1079,7 @@ nodes {
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
-  adjust_mode: ADJUST_MODE_STRETCH
+  adjust_mode: ADJUST_MODE_FIT
   parent: "more-box"
   layer: ""
   inherit_alpha: false
@@ -1126,7 +1129,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -1135,7 +1138,7 @@ nodes {
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
-  adjust_mode: ADJUST_MODE_STRETCH
+  adjust_mode: ADJUST_MODE_FIT
   parent: "more-box"
   layer: ""
   inherit_alpha: false
@@ -1160,7 +1163,7 @@ nodes {
   position {
     x: 0.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   rotation {
@@ -1185,7 +1188,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -1194,7 +1197,7 @@ nodes {
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
-  adjust_mode: ADJUST_MODE_STRETCH
+  adjust_mode: ADJUST_MODE_FIT
   parent: "more-box"
   layer: ""
   inherit_alpha: false
@@ -1244,7 +1247,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -1253,7 +1256,7 @@ nodes {
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
-  adjust_mode: ADJUST_MODE_STRETCH
+  adjust_mode: ADJUST_MODE_FIT
   parent: "more-box"
   layer: ""
   inherit_alpha: false
@@ -1278,7 +1281,7 @@ nodes {
   position {
     x: 0.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   rotation {
@@ -1303,7 +1306,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -1312,7 +1315,7 @@ nodes {
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
-  adjust_mode: ADJUST_MODE_STRETCH
+  adjust_mode: ADJUST_MODE_FIT
   parent: "more-box"
   layer: ""
   inherit_alpha: false
@@ -1362,7 +1365,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
@@ -1376,21 +1379,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -1604,7 +1607,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -1662,11 +1665,12 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "-:--"
+  text: "-:--\n"
+  ""
   font: "pixel-font"
   id: "highscore"
   xanchor: XANCHOR_NONE
@@ -1676,21 +1680,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -2021,11 +2025,12 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "-NORMAL-"
+  text: "-NORMAL-\n"
+  ""
   font: "pixel-font"
   id: "diff-header"
   xanchor: XANCHOR_NONE
@@ -2035,21 +2040,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -2087,11 +2092,12 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "[fill this in]"
+  text: "[fill this in]\n"
+  ""
   font: "pixel-font"
   id: "diff-description"
   xanchor: XANCHOR_NONE
@@ -2101,21 +2107,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -2153,7 +2159,7 @@ nodes {
     x: 0.349
     y: 0.337
     z: 0.322
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -2211,7 +2217,7 @@ nodes {
     x: 0.349
     y: 0.337
     z: 0.322
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -2270,7 +2276,7 @@ nodes {
     x: 0.349
     y: 0.337
     z: 0.322
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -2326,10 +2332,10 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.949
-    y: 0.949
-    z: 0.949
-    w: 0.0
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -2387,7 +2393,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -2445,7 +2451,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
@@ -2459,21 +2465,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -2511,7 +2517,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
@@ -2525,21 +2531,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -2577,7 +2583,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
@@ -2591,21 +2597,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -3873,7 +3879,7 @@ nodes {
     x: 0.133
     y: 0.125
     z: 0.204
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
@@ -3888,22 +3894,22 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   parent: "post-it"
   layer: ""
   inherit_alpha: true
-  alpha: 0.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  alpha: 1.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0

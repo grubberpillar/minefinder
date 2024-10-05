@@ -17,19 +17,23 @@ X midnight
 - settings
 	- profanity
 	- sound
-	- scroll sensitity
-	- click tile to dig around
+	- scrolling
+	X scroll sensitity
+	* click tile to dig around
 	- startup screen
-	- reset game files
+	* reset game files
 	- controls
-	- large vs mini tiles diagram lol
+	* large vs mini tiles diagram lol
+- OPTIMIZE THIS SHIT
 
 
 - fix lose animation
 - fix no-delay lose animation
 - remove select hider on some gui nodes
 - reset during wrong flags
-- top zoom border not showing??
+- graffiti not on top of quit x
+- click and drag to click (light get, corner, light)
+X top zoom border not showing??
 X click anims on setting custom
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching

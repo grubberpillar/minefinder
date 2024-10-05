@@ -232,7 +232,7 @@ end
 
 local function window_callback(self, event, data)
 	if event == window.WINDOW_EVENT_RESIZED then
-		self.screen_size.x, self.screen_size.y = data.width, data.height
+		l_data.screen_size.x, l_data.screen_size.y = data.width, data.height
 	end
 end
 
@@ -251,9 +251,9 @@ go.property("midnight_theme_mini", resource.tile_source("/main/minefinder-mini-m
 
 function init(self)
 	window.set_listener(window_callback)
-	self.screen_size = {x = nil, y = nil}
-	self.screen_ratio = {x = 1392, y = 864}
-	self.screen_size.x, self.screen_size.y = window.get_size()
+	l_data.screen_size = {x = nil, y = nil}
+	l_data.screen_ratio = {x = 1392, y = 864}
+	l_data.screen_size.x, l_data.screen_size.y = window.get_size()
 	
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 	go.set("/anims", "position", vmath.vector3()) -- un-offset anims gui (offset for readability in main.collection)
@@ -283,7 +283,6 @@ function init(self)
 	self.instances = {}
 	self.watch_t_flips = false
 	self.zoom_offS = {r = 0, c = 0}
-	self.scroll_sensitivity = 1
 	self.scrollnum = 0
 	
 	go.set("/diff-selected", "position", vmath.vector3((19 + l_data.diff)*8+4, 8*8+4, 0.7))
@@ -674,13 +673,13 @@ end
 --|_|  |_| \___|  |_|      \___/     |_|
 
 function on_input(self, action_id, action)
-	local zoom = math.min(self.screen_size.x / self.screen_ratio.x, self.screen_size.y / self.screen_ratio.y)
-	local projected_width = self.screen_size.x / zoom
-	local projected_height = self.screen_size.y / zoom
-	local xoffset = -(projected_width - self.screen_ratio.x) / 2
-	local yoffset = -(projected_height - self.screen_ratio.y) / 2
-	local mouse_x = (action.x / self.screen_ratio.x) * projected_width + xoffset
-	local mouse_y = (action.y / self.screen_ratio.y) * projected_height + yoffset
+	local zoom = math.min(l_data.screen_size.x / l_data.screen_ratio.x, l_data.screen_size.y / l_data.screen_ratio.y)
+	local projected_width = l_data.screen_size.x / zoom
+	local projected_height = l_data.screen_size.y / zoom
+	local xoffset = -(projected_width - l_data.screen_ratio.x) / 2
+	local yoffset = -(projected_height - l_data.screen_ratio.y) / 2
+	local mouse_x = (action.x / l_data.screen_ratio.x) * projected_width + xoffset
+	local mouse_y = (action.y / l_data.screen_ratio.y) * projected_height + yoffset
 	
 	if not l_data.snake then
 		if action_id == hash("shift") then
@@ -726,7 +725,7 @@ function on_input(self, action_id, action)
 			-- print(11-moveRow .. ", " .. moveCol)
 
 			if (not self.zoomed and moveRow_t < self.row_size+1+self.mini_offS+self.row_offS and moveCol_t < self.col_size+1+self.mini_offS+self.col_offS and moveRow_t > self.row_offS+self.mini_offS and moveCol_t > self.col_offS+self.mini_offS) or (self.zoomed and moveCol > 0 and moveCol < 28 and moveRow > 0 and moveRow < 17 and (self.row_size > 15 or (moveRow < 17-(16-self.row_size)/2 and moveRow > (16-self.row_size)/2+self.row_size%2)) and (self.col_size > 26 or (moveCol < 28-(27-self.col_size)/2 and moveCol > (27-self.col_size)/2+(self.col_size+1)%2))) then  
-								if not self.board[1] then --first move
+				if not self.board[1] then --first move
 					self.game_started = true
 					self.board = {}
 					for i = 1, self.row_size do
@@ -982,15 +981,15 @@ function on_input(self, action_id, action)
 
 		if (action_id == hash("scroll-up") or action_id == hash("scroll-down") and action.value == 1) and self.zoomed and moveCol > 0 and moveCol < 28 and moveRow > 0 and moveRow < 17 then
 			self.scrollnum = self.scrollnum%60+1
-			if self.scrollnum%self.scroll_sensitivity == 0 then
+			if self.scrollnum%(6-l_data.settings.scroll_slider) == 0 then
 				if action_id == hash("scroll-up") and not self.shifting then
 					arrow_key_nav(self, "u", true)
 				elseif action_id== hash("scroll-down") and not self.shifting then
 					arrow_key_nav(self, "d", true)
 				elseif action_id == hash("scroll-up") and self.shifting then
-					arrow_key_nav(self, "r", true)
-				elseif action_id== hash("scroll-down") and self.shifting then
 					arrow_key_nav(self, "l", true)
+				elseif action_id== hash("scroll-down") and self.shifting then
+					arrow_key_nav(self, "r", true)
 				end
 			end
 		end
@@ -1161,8 +1160,7 @@ function on_input(self, action_id, action)
 	
 
 	if action_id == hash("debug") and action.pressed then
-		self.scroll_sensitivity = self.scroll_sensitivity%5+1
-		print("scroll speed: "..(6-self.scroll_sensitivity))
+		--debug
 	end
 
 	if action_id == hash("debug2") and action.pressed then

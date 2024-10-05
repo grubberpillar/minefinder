@@ -1,3 +1,5 @@
+local l_data = require "main.leveldata"
+
 local function bool_to_num(bool)
 	if bool then
 		return 1
@@ -32,50 +34,68 @@ function init(self)
 	self.nodes.credits_nodes = gui.get_node("credits-nodes")
 	self.nodes.credits_door = gui.get_node("credits-door")
 	self.nodes.credits_door_hit = gui.get_node("credits-door-hit")
+	self.nodes.sfx_ring = gui.get_node("sfx-ring")
+	self.nodes.sfx_ring_hit = gui.get_node("sfx-ring-hit")
+	self.nodes.scroll_ring = gui.get_node("scroll-ring")
+	self.nodes.scroll_ring_hit = gui.get_node("scroll-ring-hit")
 	self.switches = {"tutorial", "profanity", "scroll"}
 	self.switch_on = {false,false,true}
 	self.hover_node = nil
 	self.settings_txt_color = {{vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((105/255), (106/255), (106/255), 1)}, {vmath.vector4((238/255), (146/255), 0, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}, {vmath.vector4((63/255), (63/255), (116/255), 1), vmath.vector4(1, 1, (215/255), 1)}}
+	self.e_timer = nil
 end
 
-function on_message(self, message_id, message, sender)
+function update(self, dt)
+	if self.e_timer then
+		if self.e_timer <= 0 then
+			local rand = math.random(0, 7)
+			gui.play_flipbook(gui.get_node("broken-e"), "broken-e-"..rand)
+			self.e_timer = 4
+		else
+			self.e_timer = self.e_timer - dt
+		end
+	end
 end
 
 function on_input(self, action_id, action)
-	if gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not self.viewing_credits then -- 
+	if gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not self.viewing_credits then --settings
 		if action.pressed and action_id == hash("touch") then --click
 			gui.set(self.nodes.settings_top, "position.y", 0)
-		elseif action.released and action_id == hash("touch") then --release
+		elseif action.released and action_id == hash("touch") and gui.get(self.nodes.settings_top, "position.y") == 0 then --release
 			if not self.viewing_setttings then
 				gui.set(self.nodes.settings_nodes, "color.w", 1)
 				msg.post("/zoom#minefinder", "release_input_focus")
 				msg.post("/gui#minefinder", "release_input_focus")
 				msg.post("/gui-zoom#zoom", "release_input_focus")
 				msg.post("/anims#anims", "release_input_focus")
+				gui.play_flipbook(gui.get_node("broken-e"), "broken-e-0")
+				self.e_timer = 2
 			else
 				gui.set(self.nodes.settings_nodes, "color.w", 0)
 				msg.post("/zoom#minefinder", "acquire_input_focus")
 				msg.post("/gui#minefinder", "acquire_input_focus")
 				msg.post("/gui-zoom#zoom", "acquire_input_focus")
 				msg.post("/anims#anims", "acquire_input_focus")
+				self.e_timer = nil
 			end
 			self.viewing_setttings = not self.viewing_setttings
 			gui.set(self.nodes.settings_top, "position.y", 1)
-		elseif gui.get(self.nodes.settings_bot, "color.x") ~= 234 then --hover
+		elseif gui.get(self.nodes.settings_bot, "color.x") ~= (234/255) then --hover
 			gui.set_color(self.nodes.settings_bot, vmath.vector4((234/255), (172/255), (75/255), 1))
 		end
-	elseif gui.get(self.nodes.settings_bot, "color.x") ~= 223 then -- reset
+	elseif gui.get(self.nodes.settings_bot, "color.x") ~= (223/255) then -- reset
 		gui.set_color(self.nodes.settings_bot, vmath.vector4((223/255), (113/255), (38/255), 1))
 		gui.set(self.nodes.settings_top, "position.y", 1)
 	end
 
-	if action.pressed and self.viewing_setttings and action_id == hash("touch") and not self.viewing_credits and not gui.pick_node(gui.get_node("settings"), action.x, action.y) and not gui.pick_node(self.nodes.settings_hit, action.x, action.y) then
+	if action.pressed and self.viewing_setttings and action_id == hash("touch") and not self.viewing_credits and not gui.pick_node(gui.get_node("settings"), action.x, action.y) and not gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) then
 		gui.set(self.nodes.settings_nodes, "color.w", 0)
 		msg.post("/zoom#minefinder", "acquire_input_focus")
 		msg.post("/gui#minefinder", "acquire_input_focus")
 		msg.post("/gui-zoom#zoom", "acquire_input_focus")
 		msg.post("/anims#anims", "acquire_input_focus")
 		self.viewing_setttings = false
+		self.e_timer = nil
 	end
 
 	if gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) then --quit game
@@ -91,24 +111,24 @@ function on_input(self, action_id, action)
 	end
 
 	if self.viewing_setttings and not self.viewing_credits then 
-		if gui.pick_node(self.nodes.credits_hit, action.x, action.y) then --credits button
+		if not self.scroll_sliding and not self.sfx_sliding and gui.pick_node(self.nodes.credits_hit, action.x, action.y) then --credits button
 			if action_id == hash("touch") and action.pressed then --click
 				gui.set(self.nodes.credits_top, "position.y", -6)
-			elseif action_id == hash("touch") and action.released then --release
+			elseif action_id == hash("touch") and action.released and gui.get(self.nodes.credits_top, "position.y") == -6 then --release
 				self.viewing_credits = true
 				gui.set(self.nodes.credits_nodes, "color.w", 1)
 				gui.set(self.nodes.credits_top, "position.y", 0)
-			elseif gui.get(self.nodes.credits_bot, "color.x") ~= 238 then --hover
+			elseif gui.get(self.nodes.credits_bot, "color.x") ~= (238/255) then --hover
 				gui.set_color(self.nodes.credits_bot, vmath.vector4((238/255), (195/255), (89/255), 1))
 			end
-		elseif gui.get(self.nodes.credits_bot, "color.x") ~= 89 then -- reset
+		elseif gui.get(self.nodes.credits_bot, "color.x") ~= (89/255) then -- reset
 			gui.set_color(self.nodes.credits_bot, vmath.vector4((89/255), (86/255), (82/255), 1))
 			gui.set(self.nodes.credits_top, "position.y", 0)
 		end
 
 		local found_node = false
 		for i = 1,3 do
-			if gui.pick_node(gui.get_node(self.switches[i].."-hit"), action.x, action.y) then
+			if not self.scroll_sliding and not self.sfx_sliding and gui.pick_node(gui.get_node(self.switches[i].."-hit"), action.x, action.y) then
 				found_node = true
 				if self.hover_node ~= i then
 					if self.hover_node then
@@ -123,6 +143,7 @@ function on_input(self, action_id, action)
 					gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-lit-"..bool_to_word(self.switch_on[i]))
 				elseif action.released and action_id == hash("touch") and self.node_clicked == i then
 					self.switch_on[i] = not self.switch_on[i]
+					l_data.settings[self.switches[i]] = self.switch_on[i]
 					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[2][bool_to_num(self.switch_on[i])])
 					gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-"..bool_to_word(self.switch_on[i]))
 				end
@@ -142,9 +163,122 @@ function on_input(self, action_id, action)
 				self.node_clicked = nil
 			end
 		end
+
+		if self.scroll_sliding then --scroll slider movement code
+			local mouse_x
+			if l_data.screen_ratio.x ~= 1 then
+				local zoom = math.min(l_data.screen_size.x / l_data.screen_ratio.x, l_data.screen_size.y / l_data.screen_ratio.y)
+				local projected_width = l_data.screen_size.x / zoom
+				local xoffset = -(projected_width - l_data.screen_ratio.x) / 2
+				mouse_x = (action.x / l_data.screen_ratio.x) * projected_width + xoffset
+			else
+				mouse_x = action.x
+			end
+			local node_select = math.floor((mouse_x+24-693)/48)
+
+			if node_select < 5 and node_select > -1 and (node_select+1) ~= l_data.settings.scroll_slider then
+				gui.set(self.nodes.scroll_ring, "position.x", node_select*48-6)
+				gui.set(self.nodes.scroll_ring_hit, "position.x", node_select*48+3)
+				l_data.settings.scroll_slider = node_select+1
+				for i = 1,5 do
+					if i <= l_data.settings.scroll_slider then
+						gui.set_color(gui.get_node("scroll-node-"..(i)), vmath.vector4((223/255), (113/255), (38/255), 1))
+						if i > 1 then
+							gui.set_color(gui.get_node("scroll-bar-"..(i)), vmath.vector4((238/255), (195/255), (89/255), 1))
+						end
+					else
+						gui.set_color(gui.get_node("scroll-node-"..(i)), vmath.vector4((89/255), (86/255), (82/255), 1))
+						gui.set_color(gui.get_node("scroll-bar-"..(i)), vmath.vector4((105/255), (106/255), (106/255), 1))
+					end
+				end
+			end
+
+			if action.released and action_id == hash("touch") then
+				gui.set_color(self.nodes.scroll_ring, vmath.vector4((183/255), (146/255), (61/255), 1))
+				self.scroll_sliding = false
+			end
+		end
+		
+		if gui.pick_node(self.nodes.scroll_ring_hit, action.x, action.y) then --scroll slider ring grab
+			if action.pressed and action_id == hash("touch") then
+				gui.set_color(self.nodes.scroll_ring, vmath.vector4(1, 1, (215/255), 1))
+				self.scroll_sliding = true
+			elseif gui.get(self.nodes.scroll_ring, "color.x") ~= (183/255) and gui.get(self.nodes.scroll_ring, "color.x") ~= 1 then
+				gui.set_color(self.nodes.scroll_ring, vmath.vector4((183/255), (146/255), (61/255), 1))
+			end
+		elseif gui.get(self.nodes.scroll_ring, "color") == vmath.vector4((183/255), (146/255), (61/255), 1) then
+			gui.set_color(self.nodes.scroll_ring, vmath.vector4((128/255), (95/255), (22/255), 1))
+		end
+		
+		if self.sfx_sliding then --sfx slider movement code
+			local mouse_x
+			if l_data.screen_ratio.x ~= 1 then
+				local zoom = math.min(l_data.screen_size.x / l_data.screen_ratio.x, l_data.screen_size.y / l_data.screen_ratio.y)
+				local projected_width = l_data.screen_size.x / zoom
+				local xoffset = -(projected_width - l_data.screen_ratio.x) / 2
+				mouse_x = (action.x / l_data.screen_ratio.x) * projected_width + xoffset
+			else
+				mouse_x = action.x
+			end
+			local node_select = math.floor((mouse_x+24-669)/48)
+
+			if node_select < 6 and node_select > -1 and node_select ~= l_data.settings.sfx_slider then
+				gui.set(self.nodes.sfx_ring, "position.x", node_select*48-6)
+				gui.set(self.nodes.sfx_ring_hit, "position.x", node_select*48+3)
+				l_data.settings.sfx_slider = node_select
+				for i = 0,5 do
+					if i <= l_data.settings.sfx_slider then
+						gui.set_color(gui.get_node("sfx-node-"..(i)), vmath.vector4((223/255), (113/255), (38/255), 1))
+						if i > 0 then
+							gui.set_color(gui.get_node("sfx-bar-"..(i)), vmath.vector4((238/255), (195/255), (89/255), 1))
+						end
+					else
+						gui.set_color(gui.get_node("sfx-node-"..(i)), vmath.vector4((89/255), (86/255), (82/255), 1))
+						gui.set_color(gui.get_node("sfx-bar-"..(i)), vmath.vector4((105/255), (106/255), (106/255), 1))
+					end
+				end
+
+
+				local sfx_icon_color
+				if l_data.settings.sfx_slider == 0 then
+					sfx_icon_color = 0
+				elseif l_data.settings.sfx_slider == 1 then 
+					sfx_icon_color = 1
+				elseif l_data.settings.sfx_slider < 4 then 
+					sfx_icon_color = 2
+				else
+					sfx_icon_color = 3
+				end
+
+				for i = 1,3 do
+					if i <= sfx_icon_color then
+						gui.set_color(gui.get_node("sfx-icon-"..i), vmath.vector4((223/255), (113/255), (38/255), 1))
+					else
+						gui.set_color(gui.get_node("sfx-icon-"..i), vmath.vector4((89/255), (86/255), (82/255), 1))
+					end
+				end
+			end
+
+			if action.released and action_id == hash("touch") then
+				gui.set_color(self.nodes.sfx_ring, vmath.vector4((183/255), (146/255), (61/255), 1))
+				self.sfx_sliding = false
+			end
+		end
+		
+		if gui.pick_node(self.nodes.sfx_ring_hit, action.x, action.y) then --sfx slider ring grab
+			if action.pressed and action_id == hash("touch") then
+				gui.set_color(self.nodes.sfx_ring, vmath.vector4(1, 1, (215/255), 1))
+				self.sfx_sliding = true
+			elseif gui.get(self.nodes.sfx_ring, "color.x") ~= (183/255) and gui.get(self.nodes.sfx_ring, "color.x") ~= 1 then
+				gui.set_color(self.nodes.sfx_ring, vmath.vector4((183/255), (146/255), (61/255), 1))
+			end
+		elseif gui.get(self.nodes.sfx_ring, "color") == vmath.vector4((183/255), (146/255), (61/255), 1) then
+			gui.set_color(self.nodes.sfx_ring, vmath.vector4((128/255), (95/255), (22/255), 1))
+		end
+
 	end
 
-	if self.viewing_credits and gui.pick_node(self.nodes.credits_door_hit, action.x, action.y) then
+	if self.viewing_credits and gui.pick_node(self.nodes.credits_door_hit, action.x, action.y) then -- exit credits
 		if action.pressed and action_id == hash("touch") then
 			self.viewing_credits = false
 			gui.set(self.nodes.credits_nodes, "color.w", 0)
@@ -155,5 +289,9 @@ function on_input(self, action_id, action)
 	elseif self.credits_door_hover then 
 		self.credits_door_hover = false
 		gui.play_flipbook(self.nodes.credits_door, "credits-door-closed")
+	end
+
+	if action_id == hash("debug") and action.pressed then
+		print(l_data.settings.sfx_slider)
 	end
 end

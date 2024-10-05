@@ -1036,11 +1036,12 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "40"
+  text: "40\n"
+  ""
   font: "pixel-font"
   id: "total-mines"
   xanchor: XANCHOR_NONE
@@ -1050,21 +1051,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -1160,11 +1161,12 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "40"
+  text: "40\n"
+  ""
   font: "pixel-font"
   id: "flags-left"
   xanchor: XANCHOR_NONE
@@ -1174,21 +1176,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -1284,11 +1286,12 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "-:--"
+  text: "-:--\n"
+  ""
   font: "pixel-font"
   id: "timer"
   xanchor: XANCHOR_NONE
@@ -1298,21 +1301,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
@@ -1643,7 +1646,7 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
@@ -1658,21 +1661,21 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   layer: ""
   inherit_alpha: true
   alpha: 1.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0

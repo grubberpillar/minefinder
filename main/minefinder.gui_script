@@ -630,7 +630,7 @@ function on_input(self, action_id, action)
 		end
 		if action_id == hash("touch") and action.pressed and gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
 			gui.set_color(node.get.theme_sel_light, vmath.vector4(1, 1, 1, 1))
-		elseif action_id == hash("touch") and action.released then
+		elseif action_id == hash("touch") and action.released and gui.get(node.get.theme_sel_light, "color.w") == 1 then
 			if gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
 				gui.set_color(node.get.theme_sel_light, vmath.vector4(0, 0, 0, 0))
 			end
