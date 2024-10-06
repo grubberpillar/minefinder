@@ -1180,12 +1180,12 @@ function on_input(self, action_id, action)
 	
 
 	if action_id == hash("debug") and action.pressed then
-		local a = in_snake(self, self.snake_segments[1].x, self.snake_segments[1].y)
-		local b = in_snake(self, self.snake_segments[2].x, self.snake_segments[2].y)
-		local c = in_snake(self, self.snake_segments[3].x, self.snake_segments[3].y)
-		print(a)
-		print(b)
-		print(c)
+		-- local a = in_snake(self, self.snake_segments[1].x, self.snake_segments[1].y)
+		-- local b = in_snake(self, self.snake_segments[2].x, self.snake_segments[2].y)
+		-- local c = in_snake(self, self.snake_segments[3].x, self.snake_segments[3].y)
+		-- print(a)
+		-- print(b)
+		-- print(c)
 	end
 
 	if action_id == hash("debug2") and action.pressed then

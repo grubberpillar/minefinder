@@ -176,8 +176,8 @@ local function deselect_txt(self)
 	l_data.highscore[l_data.diff] = l_data.custom_hs_list[l_data.size_nums[1][6]][l_data.size_nums[2][6]][l_data.mine_nums[6]+1]
 	
 	if l_data.highscore[l_data.diff] then
-		local seconds = ""..math.floor(l_data.highscore[l_data.diff]%60)
-		local minutes = ""..math.floor(l_data.highscore[l_data.diff]/60)
+		local seconds = math.floor(l_data.highscore[l_data.diff]%60)
+		local minutes = math.floor(l_data.highscore[l_data.diff]/60)
 		local hours = 0
 		if minutes >= 100 then
 			hours = math.floor(minutes/60)
@@ -368,8 +368,11 @@ function on_message(self, message_id, message)
 		self.mine_count = message.mines
 		gui.set_text(gui.get_node("total-mines"), message.mines.." TOTAL")
 	elseif message_id == hash("reset") then
-		self.seconds = 55
-		self.minutes = 95
+		-- self.seconds = 55
+		-- self.minutes = 34
+		-- self.hours = 2
+		self.seconds = 0
+		self.minutes = 0
 		self.hours = 0
 		self.seconds_storage = -1
 		self.minutes_storage = -1
@@ -450,8 +453,8 @@ function on_message(self, message_id, message)
 
 
 		if l_data.highscore[diffic] then
-			local seconds = ""..math.floor(l_data.highscore[l_data.diff]%60)
-			local minutes = ""..math.floor(l_data.highscore[l_data.diff]/60)
+			local seconds = math.floor(l_data.highscore[diffic]%60)
+			local minutes = math.floor(l_data.highscore[diffic]/60)
 			local hours = 0
 			if minutes >= 100 then
 				hours = math.floor(minutes/60)
@@ -586,13 +589,29 @@ function on_message(self, message_id, message)
 		self.minutes = message.minutes
 		self.hours = message.hours
 		local seconds_txt = ""
-		if self.seconds < 10 then
-			seconds_txt = "0" .. math.floor(self.seconds)
+		if self.hours < 1 then
+			local seconds_txt
+			if self.seconds < 10 then
+				seconds_txt = "0" .. math.floor(self.seconds)
+			else
+				seconds_txt = "" .. math.floor(self.seconds)
+			end
+			gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
+			self.seconds_storage = self.seconds
 		else
-			seconds_txt = "" .. math.floor(self.seconds)
+			local minutes_txt
+			if self.minutes < 10 then
+				minutes_txt = "0" .. math.floor(self.minutes)
+			else
+				minutes_txt = "" .. math.floor(self.minutes)
+			end
+			local m_txt = "m"
+			if self.hours >= 10 then
+				m_txt = ""
+			end			
+			gui.set_text(gui.get_node("timer"), self.hours.."h"..minutes_txt..m_txt)
+			self.minutes_storage = self.minutes
 		end
-		gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
-		self.seconds_storage = self.seconds-1
 		if message.highscore then
 			msg.post(".", "set_hs")
 		end
@@ -983,6 +1002,8 @@ function on_input(self, action_id, action)
 		gui.set(gui.get_node("zoom-in"), "color.w", 0)
 	end
 	if (action_id == hash("debug")) and action.pressed then
-		--debug
+		for i = 1,5 do
+			print(l_data.highscore[i])
+		end
 	end
 end

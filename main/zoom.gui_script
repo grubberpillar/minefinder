@@ -2,7 +2,7 @@ local l_data = require "main.leveldata"
 
 local function zoom_out(self)
 	msg.post("/gui#minefinder", "enable")
-	msg.post("/gui#minefinder", "set_props", {seconds = self.seconds, minutes = self.minutes, ticking = self.ticking, highscore = self.hs})
+	msg.post("/gui#minefinder", "set_props", {seconds = self.seconds, minutes = self.minutes, hours = self.hours, ticking = self.ticking, highscore = self.hs})
 	msg.post("/gui#minefinder", "set_flags", {num = self.flag_count})
 	msg.post(".", "disable")
 	msg.post("/gui#door", "zoom", {zoom = false})
@@ -19,8 +19,10 @@ end
 
 function init(self)
 	self.seconds = 0
-	self.seconds_storage = -1
 	self.minutes = 0
+	self.hours = 0
+	self.seconds_storage = -1
+	self.minutes_storage = -1
 	self.ticking = false
 	gui.set_render_order(1)
 	msg.post(".", "acquire_input_focus")
@@ -34,19 +36,40 @@ function update(self, dt)
 	elseif gui.get_text(gui.get_node("timer")) ~= hash("-:--") and self.seconds == 0 and self.minutes == 0 then
 		gui.set_text(gui.get_node("timer"), "-:--")
 	end
-	if self.seconds > 60 then
+	if self.seconds >= 60 then
 		self.minutes = self.minutes + 1
 		self.seconds = self.seconds - 60
 	end
-	if math.floor(self.seconds) ~= math.floor(self.seconds_storage) and self.ticking then
-		local seconds_txt = ""
-		if self.seconds < 10 then
-			seconds_txt = "0" .. math.floor(self.seconds)
-		else
-			seconds_txt = "" .. math.floor(self.seconds)
+	if (self.hours > 0 and self.minutes >= 60) or self.minutes >= 100 then
+		self.hours = self.hours + 1
+		self.minutes = self.minutes - 60
+	end
+	if self.hours < 1 then
+		if math.floor(self.seconds) ~= math.floor(self.seconds_storage) and self.ticking then
+			local seconds_txt
+			if self.seconds < 10 then
+				seconds_txt = "0" .. math.floor(self.seconds)
+			else
+				seconds_txt = "" .. math.floor(self.seconds)
+			end
+			gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
+			self.seconds_storage = self.seconds
 		end
-		gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
-		self.seconds_storage = self.seconds
+	else
+		if self.minutes ~= self.minutes_storage and self.ticking then
+			local minutes_txt
+			if self.minutes < 10 then
+				minutes_txt = "0" .. math.floor(self.minutes)
+			else
+				minutes_txt = "" .. math.floor(self.minutes)
+			end
+			local m_txt = "m"
+			if self.hours >= 10 then
+				m_txt = ""
+			end			
+			gui.set_text(gui.get_node("timer"), self.hours.."h"..minutes_txt..m_txt)
+			self.minutes_storage = self.minutes
+		end
 	end
 end
 
@@ -122,16 +145,32 @@ function on_message(self, message_id, message, sender)
 		self.seconds = message.seconds
 		self.ticking = message.ticking
 		self.minutes = message.minutes
+		self.hours = message.hours
 		gui.set_text(gui.get_node("total-mines"), message.mines)
-		local seconds_txt = ""
-		if self.seconds < 10 then
-			seconds_txt = "0" .. math.floor(self.seconds)
+		if self.hours < 1 then
+			local seconds_txt
+			if self.seconds < 10 then
+				seconds_txt = "0" .. math.floor(self.seconds)
+			else
+				seconds_txt = "" .. math.floor(self.seconds)
+			end
+			gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
+			self.seconds_storage = self.seconds
 		else
-			seconds_txt = "" .. math.floor(self.seconds)
+			local minutes_txt
+			if self.minutes < 10 then
+				minutes_txt = "0" .. math.floor(self.minutes)
+			else
+				minutes_txt = "" .. math.floor(self.minutes)
+			end
+			local m_txt = "m"
+			if self.hours >= 10 then
+				m_txt = ""
+			end			
+			gui.set_text(gui.get_node("timer"), self.hours.."h"..minutes_txt..m_txt)
+			self.minutes_storage = self.minutes
 		end
-		gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
-		self.seconds_storage = self.seconds-1
-
+		
 		if message.highscore then
 			local minutes_txt = ""..math.floor(message.highscore/60)
 			local seconds_txt = ""..math.floor(message.highscore%60)
@@ -162,7 +201,7 @@ function on_message(self, message_id, message, sender)
 			self.seconds_storage = self.seconds-1
 		end
 	elseif message_id == hash("set_hs") then
-		self.hs = math.floor(self.seconds + self.minutes*60)
+		self.hs = math.floor(self.seconds + self.minutes*60 + self.hours*3600)
 	elseif message_id == hash("midnight_thm") then
 		local color
 		if not message.theme and gui.get(gui.get_node("board_border-n"), "color.x") ~= 142 then
