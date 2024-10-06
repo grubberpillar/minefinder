@@ -75,7 +75,7 @@ local function calc_mine_ct(self)
 	elseif tile_ct < 480 then
 		mine_calc = 21354990+(6.525829-21354990)/(1+(tile_ct/1006912)^(1.61443))
 	else
-		mine_calc = 175-0.4027778*tile_ct+0.0005092593*(tile_ct^(2))
+		mine_calc = -26.17028 + 0.2123968*tile_ct + 0.0001007804*(tile_ct^(2))
 	end
 	mine_calc = round(mine_calc)
 	return mine_calc
@@ -1002,8 +1002,6 @@ function on_input(self, action_id, action)
 		gui.set(gui.get_node("zoom-in"), "color.w", 0)
 	end
 	if (action_id == hash("debug")) and action.pressed then
-		for i = 1,5 do
-			print(l_data.highscore[i])
-		end
+		--debug
 	end
 end
