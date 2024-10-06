@@ -85,7 +85,7 @@ local function zoom_in(self)
 	msg.post("/anims#anims", "disable")
 	msg.post(".", "disable")
 	msg.post("/gui-zoom#zoom", "enable")
-	msg.post("/gui-zoom#zoom", "set_props", {seconds = self.seconds, minutes = self.minutes, ticking = self.ticking, flags = self.flag_count, mines = self.mine_count, highscore = l_data.highscore[l_data.diff], diff = l_data.diff})
+	msg.post("/gui-zoom#zoom", "set_props", {seconds = self.seconds, minutes = self.minutes, hours = self.hours, ticking = self.ticking, flags = self.flag_count, mines = self.mine_count, highscore = l_data.highscore[l_data.diff], diff = l_data.diff})
 	msg.post("/gui-zoom#zoom", "set_flags", {num = self.flag_count})
 	msg.post("/gui#door", "zoom", {zoom = true})
 	msg.post("/zoom#minefinder", "zoom", {zoom = true})
@@ -368,8 +368,8 @@ function on_message(self, message_id, message)
 		self.mine_count = message.mines
 		gui.set_text(gui.get_node("total-mines"), message.mines.." TOTAL")
 	elseif message_id == hash("reset") then
-		self.seconds = 0
-		self.minutes = 0
+		self.seconds = 55
+		self.minutes = 95
 		self.hours = 0
 		self.seconds_storage = -1
 		self.minutes_storage = -1
@@ -403,6 +403,7 @@ function on_message(self, message_id, message)
 		if l_data.highscore[l_data.diff] == nil or math.floor(self.seconds + self.minutes*60 + self.hours*3600) < l_data.highscore[l_data.diff] then
 			l_data.highscore[l_data.diff] = math.floor(self.seconds + self.minutes*60 + self.hours*3600)
 			l_data.custom_hs_list[l_data.size_nums[1][l_data.diff]][l_data.size_nums[2][l_data.diff]][l_data.mine_nums[l_data.diff]+1] = l_data.highscore[l_data.diff]
+			print(l_data.highscore[l_data.diff])
 			
 			if l_data.diff == 6 then
 				for i = 1, 5 do
@@ -448,7 +449,7 @@ function on_message(self, message_id, message)
 		local description = gui.get_node("diff-description")
 
 
-		if l_data.highscore[l_data.diff] then
+		if l_data.highscore[diffic] then
 			local seconds = ""..math.floor(l_data.highscore[l_data.diff]%60)
 			local minutes = ""..math.floor(l_data.highscore[l_data.diff]/60)
 			local hours = 0
@@ -470,28 +471,14 @@ function on_message(self, message_id, message)
 			end
 
 			if hours < 1 then
-				gui.set_text(gui.get_node("highscore"), minutes_txt .. ":".. seconds_txt)
+				gui.set_text(highscore, minutes_txt .. ":".. seconds_txt)
 			else
 				local m_txt = "m"
 				if hours >= 10 then
 					m_txt = ""
 				end			
-				gui.set_text(gui.get_node("highscore"), hours_txt.."h"..minutes_txt..m_txt)
+				gui.set_text(highscore, hours_txt.."h"..minutes_txt..m_txt)
 			end
-		else
-			gui.set_text(gui.get_node("highscore"), "-:--")
-		end
-		
-		
-		if l_data.highscore[diffic] then
-			local minutes_txt = ""..math.floor(l_data.highscore[diffic]/60)
-			local seconds_txt = ""..math.floor(l_data.highscore[diffic]%60)
-			
-			if tonumber(seconds_txt) < 10 then
-				seconds_txt = "0" .. seconds_txt
-			end
-			
-			gui.set_text(highscore, minutes_txt .. ":".. seconds_txt)
 		else
 			gui.set_text(highscore, "-:--")
 		end
@@ -597,6 +584,7 @@ function on_message(self, message_id, message)
 		self.seconds = message.seconds
 		self.ticking = message.ticking
 		self.minutes = message.minutes
+		self.hours = message.hours
 		local seconds_txt = ""
 		if self.seconds < 10 then
 			seconds_txt = "0" .. math.floor(self.seconds)
@@ -604,7 +592,7 @@ function on_message(self, message_id, message)
 			seconds_txt = "" .. math.floor(self.seconds)
 		end
 		gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
-		self.seconds_storage = self.seconds
+		self.seconds_storage = self.seconds-1
 		if message.highscore then
 			msg.post(".", "set_hs")
 		end
