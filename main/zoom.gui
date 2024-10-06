@@ -1201,7 +1201,7 @@ nodes {
 }
 nodes {
   position {
-    x: 912.0
+    x: 900.0
     y: 822.0
     z: 0.0
     w: 1.0
@@ -1259,7 +1259,7 @@ nodes {
 }
 nodes {
   position {
-    x: 966.0
+    x: 948.0
     y: 822.0
     z: 0.0
     w: 1.0
@@ -1326,7 +1326,7 @@ nodes {
 }
 nodes {
   position {
-    x: 1140.0
+    x: 1122.0
     y: 840.0
     z: 0.0
     w: 1.0
@@ -1561,7 +1561,7 @@ nodes {
 }
 nodes {
   position {
-    x: 1158.0
+    x: 1140.0
     y: 822.0
     z: 0.0
     w: 1.0
@@ -1619,7 +1619,7 @@ nodes {
 }
 nodes {
   position {
-    x: 1218.0
+    x: 1194.0
     y: 822.0
     z: 0.0
     w: 1.0

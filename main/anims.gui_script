@@ -212,7 +212,7 @@ function on_input(self, action_id, action)
 	if self.se_up and gui.pick_node(self.se_hit, action.x, action.y) then -- se corner
 		if action_id == hash("touch") and action.pressed then --click
 			gui.set(self.se_top, "color.w", 0)
-		elseif action_id == hash("touch") and action.released then --release
+		elseif action_id == hash("touch") and action.released and gui.get(self.se_top, "color.w") == 0 then --release
 			if not self.checked[1] and self.checked[2] and self.checked[3] and not self.checked[4] and not self.checked[5] and self.checked[6] and not self.checked[7] and self.checked[8] and self.checked[9] and not self.checked[10] then 
 				gui.set(self.se_lit, "color.w", 0)
 				self.se_up = false
@@ -242,7 +242,7 @@ function on_input(self, action_id, action)
 	if self.cover_up and gui.pick_node(gui.get_node("light-box"), action.x, action.y) then --cancel new diff (x)
 		if action_id == hash("touch") and action.pressed then
 			gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4(1, 1, 1, 1))
-		elseif action_id == hash("touch") and action.released then
+		elseif action_id == hash("touch") and action.released and gui.get(gui.get_node("lightbulb-click"), "color.x") == 1 then
 			self.cover_up = false
 			gui.set(gui.get_node("lightbulb-click"), "color.w", 0)
 			gui.set(gui.get_node("lightbulb"), "color.w", 0)

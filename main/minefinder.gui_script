@@ -176,13 +176,35 @@ local function deselect_txt(self)
 	l_data.highscore[l_data.diff] = l_data.custom_hs_list[l_data.size_nums[1][6]][l_data.size_nums[2][6]][l_data.mine_nums[6]+1]
 	
 	if l_data.highscore[l_data.diff] then
-		local minutes_txt = ""..math.floor(l_data.highscore[l_data.diff]/60)
-		local seconds_txt = ""..math.floor(l_data.highscore[l_data.diff]%60)
-		if tonumber(seconds_txt) < 10 then
-			seconds_txt = "0" .. seconds_txt
+		local seconds = ""..math.floor(l_data.highscore[l_data.diff]%60)
+		local minutes = ""..math.floor(l_data.highscore[l_data.diff]/60)
+		local hours = 0
+		if minutes >= 100 then
+			hours = math.floor(minutes/60)
+			minutes = minutes%60
 		end
 
-		gui.set_text(gui.get_node("highscore"), minutes_txt .. ":".. seconds_txt)
+		local seconds_txt = ""..seconds
+		local minutes_txt = ""..minutes
+		local hours_txt = ""..hours
+
+		if hours < 1 then
+			if seconds < 10 then
+				seconds_txt = "0" .. seconds_txt
+			end
+		elseif minutes < 10 then
+			minutes_txt = "0"..minutes_txt
+		end
+
+		if hours < 1 then
+			gui.set_text(gui.get_node("highscore"), minutes_txt .. ":".. seconds_txt)
+		else
+			local m_txt = "m"
+			if hours >= 10 then
+				m_txt = ""
+			end			
+			gui.set_text(gui.get_node("highscore"), hours_txt.."h"..minutes_txt..m_txt)
+		end
 	else
 		gui.set_text(gui.get_node("highscore"), "-:--")
 	end
@@ -242,8 +264,10 @@ function init(self)
 	set_nodes(self)
 	self.outlines = {node.get.row_OL, node.get.col_OL, node.get.mine_OL}
 	self.seconds = 0
-	self.seconds_storage = -1
 	self.minutes = 0
+	self.hours = 0
+	self.seconds_storage = -1
+	self.minutes_storage = -1
 	self.ticking = false
 	self.anim_s_state = 9
 	self.anims_on = true
@@ -278,20 +302,42 @@ function update(self, dt)
 	elseif gui.get_text(gui.get_node("timer")) ~= hash("-:--") and self.seconds == 0 and self.minutes == 0 then
 		gui.set_text(gui.get_node("timer"), "-:--")
 	end
-	if self.seconds > 60 then
+	if self.seconds >= 60 then
 		self.minutes = self.minutes + 1
 		self.seconds = self.seconds - 60
 	end
-	if math.floor(self.seconds) ~= math.floor(self.seconds_storage) and self.ticking then
-		local seconds_txt = ""
-		if self.seconds < 10 then
-			seconds_txt = "0" .. math.floor(self.seconds)
-		else
-			seconds_txt = "" .. math.floor(self.seconds)
-		end
-		gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
-		self.seconds_storage = self.seconds
+	if (self.hours > 0 and self.minutes >= 60) or self.minutes >= 100 then
+		self.hours = self.hours + 1
+		self.minutes = self.minutes - 60
 	end
+	if self.hours < 1 then
+		if math.floor(self.seconds) ~= math.floor(self.seconds_storage) and self.ticking then
+			local seconds_txt
+			if self.seconds < 10 then
+				seconds_txt = "0" .. math.floor(self.seconds)
+			else
+				seconds_txt = "" .. math.floor(self.seconds)
+			end
+			gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
+			self.seconds_storage = self.seconds
+		end
+	else
+		if self.minutes ~= self.minutes_storage and self.ticking then
+			local minutes_txt
+			if self.minutes < 10 then
+				minutes_txt = "0" .. math.floor(self.minutes)
+			else
+				minutes_txt = "" .. math.floor(self.minutes)
+			end
+			local m_txt = "m"
+			if self.hours >= 10 then
+				m_txt = ""
+			end			
+			gui.set_text(gui.get_node("timer"), self.hours.."h"..minutes_txt..m_txt)
+			self.minutes_storage = self.minutes
+		end
+	end
+		
 
 	if self.graffiti_timer then
 		if self.graffiti_timer <= 0 then
@@ -323,8 +369,10 @@ function on_message(self, message_id, message)
 		gui.set_text(gui.get_node("total-mines"), message.mines.." TOTAL")
 	elseif message_id == hash("reset") then
 		self.seconds = 0
-		self.seconds_storage = -1
 		self.minutes = 0
+		self.hours = 0
+		self.seconds_storage = -1
+		self.minutes_storage = -1
 		self.ticking = false
 		msg.post(".", "set_flags", {num = message.mines})
 	elseif message_id == hash("set_flags") then
@@ -352,26 +400,40 @@ function on_message(self, message_id, message)
 	elseif message_id == hash("switch_preference") then
 		self.prefer_switch_up = message.prefer_up
 	elseif message_id == hash("set_hs") then
-		if l_data.highscore[l_data.diff] == nil or math.floor(self.seconds + self.minutes*60) < l_data.highscore[l_data.diff] then
-			l_data.highscore[l_data.diff] = math.floor(self.seconds + self.minutes*60)
+		if l_data.highscore[l_data.diff] == nil or math.floor(self.seconds + self.minutes*60 + self.hours*3600) < l_data.highscore[l_data.diff] then
+			l_data.highscore[l_data.diff] = math.floor(self.seconds + self.minutes*60 + self.hours*3600)
 			l_data.custom_hs_list[l_data.size_nums[1][l_data.diff]][l_data.size_nums[2][l_data.diff]][l_data.mine_nums[l_data.diff]+1] = l_data.highscore[l_data.diff]
 			
 			if l_data.diff == 6 then
 				for i = 1, 5 do
 					if l_data.size_nums[1][6] == l_data.size_nums[1][i] and l_data.size_nums[2][6] == l_data.size_nums[2][i] and l_data.mine_nums[6] == l_data.mine_nums[i] then
-						l_data.highscore[i] = math.floor(self.seconds + self.minutes*60)
+						l_data.highscore[i] = math.floor(self.seconds + self.minutes*60 + self.hours*3600)
 						break
 					end
 				end
 			end
 
-			local seconds_txt = ""
-			if self.seconds < 10 then
-				seconds_txt = "0" .. math.floor(self.seconds)
+			if self.hours < 1 then
+				local seconds_txt
+				if self.seconds < 10 then
+					seconds_txt = "0" .. math.floor(self.seconds)
+				else
+					seconds_txt = "" .. math.floor(self.seconds)
+				end
+				gui.set_text(gui.get_node("highscore"), self.minutes .. ":".. seconds_txt)
 			else
-				seconds_txt = "" .. math.floor(self.seconds)
+				local minutes_txt
+				if self.minutes < 10 then
+					minutes_txt = "0" .. math.floor(self.minutes)
+				else
+					minutes_txt = "" .. math.floor(self.minutes)
+				end
+				local m_txt = "m"
+				if self.hours >= 10 then
+					m_txt = ""
+				end			
+				gui.set_text(gui.get_node("highscore"), self.hours.."h"..minutes_txt..m_txt)
 			end
-			gui.set_text(gui.get_node("highscore"), self.minutes .. ":".. seconds_txt)
 		end
 	elseif message_id == hash("switch_hs") then
 		local diffic = l_data.diff_temp
@@ -384,10 +446,47 @@ function on_message(self, message_id, message)
 		local highscore = gui.get_node("highscore")
 		local header = gui.get_node("diff-header")
 		local description = gui.get_node("diff-description")
+
+
+		if l_data.highscore[l_data.diff] then
+			local seconds = ""..math.floor(l_data.highscore[l_data.diff]%60)
+			local minutes = ""..math.floor(l_data.highscore[l_data.diff]/60)
+			local hours = 0
+			if minutes >= 100 then
+				hours = math.floor(minutes/60)
+				minutes = minutes%60
+			end
+
+			local seconds_txt = ""..seconds
+			local minutes_txt = ""..minutes
+			local hours_txt = ""..hours
+
+			if hours < 1 then
+				if seconds < 10 then
+					seconds_txt = "0" .. seconds_txt
+				end
+			elseif minutes < 10 then
+				minutes_txt = "0"..minutes_txt
+			end
+
+			if hours < 1 then
+				gui.set_text(gui.get_node("highscore"), minutes_txt .. ":".. seconds_txt)
+			else
+				local m_txt = "m"
+				if hours >= 10 then
+					m_txt = ""
+				end			
+				gui.set_text(gui.get_node("highscore"), hours_txt.."h"..minutes_txt..m_txt)
+			end
+		else
+			gui.set_text(gui.get_node("highscore"), "-:--")
+		end
+		
 		
 		if l_data.highscore[diffic] then
 			local minutes_txt = ""..math.floor(l_data.highscore[diffic]/60)
 			local seconds_txt = ""..math.floor(l_data.highscore[diffic]%60)
+			
 			if tonumber(seconds_txt) < 10 then
 				seconds_txt = "0" .. seconds_txt
 			end
@@ -687,6 +786,7 @@ function on_input(self, action_id, action)
 				self.key_color = vmath.vector4(1, 1, 1, 1)
 			end
 			l_data.snake = false
+			gui.set(gui.get_node("post-it"), "color.w", 0)
 			msg.post("/zoom#minefinder", "set_diff")
 			msg.post("/zoom#minefinder", "reset", {change_diff = true})
 			msg.post("/zoom#minefinder", "hide_select", {hid = false})
@@ -856,7 +956,7 @@ function on_input(self, action_id, action)
 	if self.lightbulb_there and gui.pick_node(gui.get_node("lightbulb-hit"), action.x, action.y) then --lightbulb
 		if action_id == hash("touch") and action.pressed then --click
 			gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4(1, 1, 1, 1))
-		elseif action_id == hash("touch") and action.released then --release
+		elseif action_id == hash("touch") and action.released and gui.get(gui.get_node("lightbulb-click"), "color.x") == 1 then --release
 			-- print("switch!")
 			self.light_on = not self.light_on
 			if self.light_on then

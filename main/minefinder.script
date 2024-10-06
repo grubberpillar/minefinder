@@ -118,6 +118,7 @@ local function put_food(self)
 		if self.anims["tileflip"] then
 			local props = {final = 0, tile = 12, mini = 0, tile_size = 8, theme_id = theme_to_id(self.theme), reverse = 1}
 			local id = factory.create("#flip-factory", vmath.vector3(self.food.x*48-24, self.food.y*48-24, 0.5), nil, props)
+			self.food_url = id
 			msg.post("/zoom#minefinder", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 		else
 			tilemap.set_tile("/zoom#board", "layer1", self.food.x, self.food.y, 12)
@@ -303,8 +304,8 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("setup") then
 		-- print("setup")
-		-- math.randomseed(socket.gettime())
-		math.randomseed(0)
+		math.randomseed(socket.gettime())
+		-- math.randomseed(0)
 		
 		self.board = {}
 		if not l_data.swap_board then
@@ -486,6 +487,9 @@ function on_message(self, message_id, message, sender)
 				print("nothing removed (" .. tostring(message.hash) .. ")")
 			end
 		end
+		if message.hash.path == self.food_url then
+			self.food_url = nil
+		end
 	elseif message_id == hash("purge_instances") then
 		local spared_instances = {}
 		while #self.instances > #spared_instances do
@@ -545,18 +549,34 @@ function on_message(self, message_id, message, sender)
 		msg.post(".", "flash", {tile = tilenum})
 	elseif message_id == hash("flash") then -- change theme flash
 		self.playing = false
-		
-		for r = 1, self.row_size do
-			for c = 1, self.col_size do
-				tilemap.set_tile("/zoom#flash"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS, message.tile)
+
+		if not l_data.snake then
+			for r = 1, self.row_size do
+				for c = 1, self.col_size do
+					tilemap.set_tile("/zoom#flash"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS, message.tile)
+				end
+			end
+		else
+			for r = 1, 16 do
+				for c = 1, 16 do
+					tilemap.set_tile("/zoom#flash", "layer1", c+1, r+1, message.tile)
+				end
 			end
 		end
 
 		self.flash_timer = 0.1
 	elseif message_id == hash("replace_board") then -- turn flash off
-		for r = 1, self.row_size do 
-			for c = 1, self.col_size do
-				tilemap.set_tile("/zoom#flash"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS, 20)
+		if not l_data.snake then
+			for r = 1, self.row_size do 
+				for c = 1, self.col_size do
+					tilemap.set_tile("/zoom#flash"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS, 20)
+				end
+			end
+		else
+			for r = 1, 16 do 
+				for c = 1, 16 do
+					tilemap.set_tile("/zoom#flash", "layer1", c+1, r+1, 20)
+				end
 			end
 		end
 		self.playing = true
@@ -913,7 +933,7 @@ function on_input(self, action_id, action)
 				else
 					msg.post("/gui-zoom#zoom", "set_flags", {num = self.num_mines-flag_count})
 				end
-					
+				
 				if won_game then
 					if self.zoomed then
 						msg.post("/gui-zoom#zoom", "set_ticking", {ticking = false})
@@ -1160,7 +1180,12 @@ function on_input(self, action_id, action)
 	
 
 	if action_id == hash("debug") and action.pressed then
-		--debug
+		local a = in_snake(self, self.snake_segments[1].x, self.snake_segments[1].y)
+		local b = in_snake(self, self.snake_segments[2].x, self.snake_segments[2].y)
+		local c = in_snake(self, self.snake_segments[3].x, self.snake_segments[3].y)
+		print(a)
+		print(b)
+		print(c)
 	end
 
 	if action_id == hash("debug2") and action.pressed then
@@ -1293,16 +1318,7 @@ function update(self, dt) --checkpoint
 			else 
 				self.timer = nil
 			end
-		end
-
-		if self.flash_timer then
-			if self.flash_timer <= 0 then
-				msg.post(".", "replace_board")
-			else
-				self.flash_timer = self.flash_timer - dt
-			end
-		end
-		
+		end		
 
 		if self.win_flag_timer then
 			while self.win_flag_timer <= 0 and self.correct_flags and #self.correct_flags >= 0 do
@@ -1391,10 +1407,14 @@ function update(self, dt) --checkpoint
 
 			if (tile == 3 or (newhead.x == 18 or newhead.y == 18 or newhead.x == 1 or newhead.y == 1)) and (newhead.x ~= self.snake_segments[1].x or newhead.y ~= self.snake_segments[1].y) then
 				self.snake_alive = false
-			elseif tile == 12 then
+			elseif tile == 12 or (newhead.x == self.food.x and newhead.y == self.food.y) then
 				msg.post("/gui#minefinder", "update_snake_score")
 				self.snake_score = self.snake_score + 1
 				-- self.snake_speed = self.snake_speed + 0.5
+				if self.food_url then
+					msg.post(self.food_url, "kill")
+					print("SPECOP")
+				end
 				put_food(self)
 			else
 				local tail = table.remove(self.snake_segments, 1)
@@ -1431,6 +1451,14 @@ function update(self, dt) --checkpoint
 			end
 
 			self.snake_t = 0
+		end
+	end
+
+	if self.flash_timer then
+		if self.flash_timer <= 0 then
+			msg.post(".", "replace_board")
+		else
+			self.flash_timer = self.flash_timer - dt
 		end
 	end
 end
