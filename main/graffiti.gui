@@ -912,7 +912,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "graffiti/wang?!?"
+  texture: "graffiti/wang"
   id: "wang?"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
