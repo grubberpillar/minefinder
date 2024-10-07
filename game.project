@@ -30,3 +30,6 @@ max_tile_count = 8192
 [collection]
 max_instances = 2048
 
+[windows]
+app_icon = /assets/minefinder_icon_win.ico
+

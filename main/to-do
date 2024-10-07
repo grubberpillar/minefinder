@@ -14,19 +14,22 @@ X x out
 - saving
 X midnight
 - ++
-- settings
-	- tutorial
+X settings
+	X tutorial
 	X profanity
 	X sound
 	X scrolling
 	X scroll sensitity
-	* click tile to dig around
-	- startup screen
-	* reset game files
 	X controls
+	- ++
+		- startup screen
+		- lights
+		- graffiti
+	* click tile to dig around
+	* reset game files
 	* large vs mini tiles diagram lol
 - snapshot button
-- windows icon
+X windows icon
 - OPTIMIZE THIS SHIT
 
 
