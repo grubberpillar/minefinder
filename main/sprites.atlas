@@ -251,7 +251,7 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/closed-gate.png"
+  image: "/assets/half-gate.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {

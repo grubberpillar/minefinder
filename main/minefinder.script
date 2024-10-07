@@ -999,7 +999,7 @@ function on_input(self, action_id, action)
 		local moveRow = math.floor(mouse_y/(48))
 		local moveCol = math.floor(mouse_x/(48))
 
-		if (action_id == hash("scroll-up") or action_id == hash("scroll-down") and action.value == 1) and self.zoomed and moveCol > 0 and moveCol < 28 and moveRow > 0 and moveRow < 17 then
+		if (action_id == hash("scroll-up") or action_id == hash("scroll-down") and action.value == 1) and self.zoomed and l_data.settings.scroll and moveCol > 0 and moveCol < 28 and moveRow > 0 and moveRow < 17 then
 			self.scrollnum = self.scrollnum%60+1
 			if self.scrollnum%(6-l_data.settings.scroll_slider) == 0 then
 				if action_id == hash("scroll-up") and not self.shifting then

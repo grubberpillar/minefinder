@@ -9,6 +9,24 @@ local function hide_x(self)
 	gui.set(gui.get_node("cancel-x"), "color.w", 0)
 end
 
+local function hash_is_num(action_hash)
+	for i = 0,9 do
+		if action_hash == hash(""..i) then
+			return true
+		end
+	end
+	return false
+end
+
+local function hash_to_num(action_hash)
+	for i = 0,9 do
+		if action_hash == hash(""..i) then
+			return i
+		end
+	end
+	return nil
+end
+
 local function show_retry_s(self, shown)
 	local alpha = 0
 	if shown then
@@ -919,12 +937,12 @@ function on_input(self, action_id, action)
 		end
 	end	
 	
-	if action.pressed and tonumber(string.gsub(string.gsub((""..action_id), "%[", ""), "]", "").."") and self.text_box then --typing numbers
+	if action.pressed and hash_is_num(action_id) and self.text_box then --typing numbers
 		if gui.get_color(node.get.text[self.text_box]) == vmath.vector4((172/255), (204/255), (255/255), 1) then
-			gui.set_text(node.get.text[self.text_box], string.gsub(string.gsub((""..action_id), "%[", ""), "]", "").."")
+			gui.set_text(node.get.text[self.text_box], ""..hash_to_num(action_id))
 			gui.set_color(node.get.text[self.text_box], vmath.vector4(1, 1, 1, 1))
 		elseif #(gui.get_text(node.get.text[self.text_box])) < (2+math.floor(self.text_box/3)*2) then
-			gui.set_text(node.get.text[self.text_box], gui.get_text(node.get.text[self.text_box])..string.gsub(string.gsub((""..action_id), "%[", ""), "]", "").."")
+			gui.set_text(node.get.text[self.text_box], gui.get_text(node.get.text[self.text_box])..hash_to_num(action_id))
 		end
 		
 		gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
@@ -960,7 +978,7 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if self.lightbulb_there and gui.pick_node(gui.get_node("lightbulb-hit"), action.x, action.y) then --lightbulb
+	if self.lightbulb_there and gui.pick_node(gui.get_node("lightbulb-hit"), action.x, action.y) and not self.midnight_timer then --lightbulb
 		if action_id == hash("touch") and action.pressed then --click
 			gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4(1, 1, 1, 1))
 		elseif action_id == hash("touch") and action.released and gui.get(gui.get_node("lightbulb-click"), "color.x") == 1 then --release

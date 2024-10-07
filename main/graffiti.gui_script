@@ -1,6 +1,18 @@
+local l_data = require "main.leveldata"
+
 function init(self)
 	gui.set_render_order(3)
 end
 
 function on_message(self, message_id, message, sender)
+	if message_id == hash("enable") then
+		l_data.graffiti_enabled = true
+		if l_data.settings.profanity and gui.get(gui.get_node("f-censor"), "color.w") == 1 then
+			gui.set(gui.get_node("f-censor"), "color.w", 0)
+		elseif not l_data.settings.profanity and gui.get(gui.get_node("f-censor"), "color.w") == 0 then
+			gui.set(gui.get_node("f-censor"), "color.w", 1)
+		end
+	elseif message_id == hash("disable") then
+		l_data.graffiti_enabled = false
+	end
 end
