@@ -35,8 +35,10 @@ function on_message(self, message_id, message, sender)
 		gui.set_color(gui.get_node("key"), message.color)
 	elseif message_id == hash("zoom") then
 		if message.zoom then
+			self.zoomed = true
 			gui.set(gui.get_node("key"), "color.w", 0)
 		elseif (l_data.diff == 5 and l_data.diff_temp == nil) or l_data.diff_temp == 5 then
+			self.zoomed = false
 			gui.set(gui.get_node("key"), "color.w", 1)
 		end
 	elseif message_id == hash("more_anims?") then
@@ -45,7 +47,7 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-	if self.door_state ~= "gone" and gui.pick_node(gui.get_node("door-hit-"..self.door_state), action.x, action.y) and action.pressed  then -- door
+	if self.door_state ~= "gone" and gui.pick_node(gui.get_node("door-hit-"..self.door_state), action.x, action.y) and action.pressed then -- door
 		if not self.door_found then
 			-- gui.set(gui.get_node("noah-msg"), "color.w", 1)
 			self.door_found = true
@@ -63,7 +65,7 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if l_data.diff == 5 and not self.more_anims and self.key_is_there and self.door_state ~= "gone" then --key text
+	if l_data.diff == 5 and not self.more_anims and self.key_is_there and self.door_state ~= "gone" and not self.zoomed then --key text
 		if gui.pick_node(gui.get_node("key-hit"), action.x, action.y) then
 			if action_id == hash("touch") and action.pressed then
 				gui.set_color(gui.get_node("key"), vmath.vector4((251/255), (242/255), (54/255), 1))

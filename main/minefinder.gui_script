@@ -640,6 +640,11 @@ function on_message(self, message_id, message)
 		elseif (l_data.size_nums[1][l_data.diff] > 16 or l_data.size_nums[2][l_data.diff] > 16) then
 			gui.set(gui.get_node("zoom-in"), "color.w", 1)
 		end
+	elseif message_id == hash("set_tutorial_type") then
+		gui.set(gui.get_node(""..message.show.."-tutorial"), "color.w", 1)
+		gui.set(gui.get_node(""..message.hide.."-tutorial"), "color.w", 0)
+	elseif message_id == hash("set_tutorial") then
+		gui.set(gui.get_node("tutorial"), "color.w", message.alpha)
 	end
 end
 

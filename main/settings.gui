@@ -2949,7 +2949,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "sprites/small-light-off"
+  texture: "sprites/small-light-on"
   id: "tutorial-light"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -3119,9 +3119,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.412
-    y: 0.416
-    z: 0.416
+    x: 0.875
+    y: 0.443
+    z: 0.149
     w: 1.0
   }
   type: TYPE_TEXT
@@ -7219,6 +7219,65 @@ nodes {
   alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
+  custom_type: 0
+  enabled: true
+  visible: true
+  material: ""
+}
+nodes {
+  position {
+    x: 1332.0
+    y: 252.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 342.0
+    y: 414.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  type: TYPE_BOX
+  blend_mode: BLEND_MODE_ALPHA
+  texture: ""
+  id: "control-scroll-hit"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  pivot: PIVOT_SE
+  adjust_mode: ADJUST_MODE_FIT
+  parent: "settings-nodes"
+  layer: ""
+  inherit_alpha: true
+  slice9 {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+  clipping_mode: CLIPPING_MODE_NONE
+  clipping_visible: true
+  clipping_inverted: false
+  alpha: 0.0
+  template_node_child: false
+  size_mode: SIZE_MODE_MANUAL
   custom_type: 0
   enabled: true
   visible: true
