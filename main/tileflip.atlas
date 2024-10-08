@@ -972,15 +972,15 @@ animations {
 animations {
   id: "tileflip-2-midnight"
   images {
-    image: "/assets/tileflip/tileflip-2-midnight-2.png"
+    image: "/assets/tileflip/midnight/tileflip-2-midnight-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/tileflip/tileflip-2-midnight-3.png"
+    image: "/assets/tileflip/midnight/tileflip-2-midnight-3.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/tileflip/tileflip-2-midnight-4.png"
+    image: "/assets/tileflip/midnight/tileflip-2-midnight-4.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_ONCE_FORWARD
@@ -1143,15 +1143,15 @@ animations {
 animations {
   id: "tileflip-12-midnight"
   images {
-    image: "/assets/tileflip/light/tileflip-12-light-2.png"
+    image: "/assets/tileflip/midnight/tileflip-12-midnight-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/tileflip/light/tileflip-12-light-3.png"
+    image: "/assets/tileflip/midnight/tileflip-12-midnight-3.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/tileflip/light/tileflip-12-light-4.png"
+    image: "/assets/tileflip/midnight/tileflip-12-midnight-4.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_ONCE_FORWARD
@@ -1340,7 +1340,7 @@ animations {
 animations {
   id: "tileflip-12-midnight-mini"
   images {
-    image: "/assets/tileflip/dark-mini/tileflip-12-dark-mini.png"
+    image: "/assets/tileflip/midnight-mini/tileflip-12-midnight-mini.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_ONCE_FORWARD
@@ -1460,15 +1460,15 @@ animations {
 animations {
   id: "tileflip-12-midnight-rev"
   images {
-    image: "/assets/tileflip/light/tileflip-12-backward-2.png"
+    image: "/assets/tileflip/midnight/tileflip-12-backward-midnight-2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/tileflip/light/tileflip-12-backward-3.png"
+    image: "/assets/tileflip/midnight/tileflip-12-backward-midnight-3.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/tileflip/light/tileflip-12-backward-4.png"
+    image: "/assets/tileflip/midnight/tileflip-12-backward-midnight-4.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_ONCE_BACKWARD

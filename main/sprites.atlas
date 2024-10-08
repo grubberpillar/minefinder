@@ -47,10 +47,6 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/dark-mode-icon.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
   image: "/assets/selection-large-light.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
@@ -184,10 +180,6 @@ images {
 }
 images {
   image: "/assets/light-box.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
-  image: "/assets/light-mode-icon.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
@@ -357,7 +349,11 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "explosion-boom"
+  id: "explosion-boom-old"
+  images {
+    image: "/assets/bomb/bomb-17.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
   images {
     image: "/assets/bomb/bomb-17.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -423,21 +419,69 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "explosion-fade"
+  id: "explosion-boom"
   images {
-    image: "/assets/bomb/bomb-30.png"
+    image: "/assets/bomb/bomb-17.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/bomb/bomb-31.png"
+    image: "/assets/bomb/bomb-17.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/bomb/bomb-32.png"
+    image: "/assets/bomb/bomb-18.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-19.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-20.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-25.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-18.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-19.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-20.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-25.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-18.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-33.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-34.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-35.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-36.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_ONCE_FORWARD
-  fps: 4
+  fps: 15
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -1186,7 +1230,7 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "explosion-boom-mini"
+  id: "explosion-boom-old-mini"
   images {
     image: "/assets/bomb/bomb-mini-04.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
@@ -1252,21 +1296,65 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "explosion-fade-mini"
+  id: "explosion-boom-mini"
   images {
-    image: "/assets/bomb/bomb-mini-13.png"
+    image: "/assets/bomb/bomb-mini-04.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/bomb/bomb-mini-14.png"
+    image: "/assets/bomb/bomb-mini-05.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/bomb/bomb-mini-15.png"
+    image: "/assets/bomb/bomb-mini-06.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-07.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-08.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-05.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-06.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-07.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-08.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-05.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-16.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-17.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-18.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-19.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_ONCE_FORWARD
-  fps: 4
+  fps: 15
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -2328,6 +2416,44 @@ animations {
   }
   images {
     image: "/assets/nothing.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 4
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "explosion-fade"
+  images {
+    image: "/assets/bomb/bomb-30.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-31.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-32.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 4
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "explosion-fade-mini"
+  images {
+    image: "/assets/bomb/bomb-mini-13.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-14.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/bomb/bomb-mini-15.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_ONCE_FORWARD
