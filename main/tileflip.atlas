@@ -1495,6 +1495,63 @@ animations {
   flip_horizontal: 1
   flip_vertical: 0
 }
+animations {
+  id: "tileflip-4-light-rev"
+  images {
+    image: "/assets/tileflip/light/tileflip-4-light-2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/tileflip/light/tileflip-4-light-3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/tileflip/light/tileflip-4-light-4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_BACKWARD
+  fps: 30
+  flip_horizontal: 1
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-4-dark-rev"
+  images {
+    image: "/assets/tileflip/dark/tileflip-4-dark-2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/tileflip/dark/tileflip-4-dark-3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/tileflip/dark/tileflip-4-dark-4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_BACKWARD
+  fps: 30
+  flip_horizontal: 1
+  flip_vertical: 0
+}
+animations {
+  id: "tileflip-4-midnight-rev"
+  images {
+    image: "/assets/tileflip/midnight/tileflip-4-midnight-2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/tileflip/midnight/tileflip-4-midnight-3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/tileflip/midnight/tileflip-4-midnight-4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_BACKWARD
+  fps: 30
+  flip_horizontal: 1
+  flip_vertical: 0
+}
 margin: 0
 extrude_borders: 0
 inner_padding: 0

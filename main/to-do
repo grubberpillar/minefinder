@@ -29,25 +29,34 @@ X settings
 	* reset game files
 	* large vs mini tiles diagram lol
 - snapshot button
+- global highscores
 X windows icon
 - OPTIMIZE THIS SHIT
 
 
-X fix lose animation
 - fix no-delay lose animation
-- remove select hider on some gui nodes
-- reset during wrong flags
-- graffiti not on top of quit x
-- flip 3s on snake loss??
+- set screen size on startup
+- get rid of old explosion scraps
+* rapid board switching on custom
+* click full screen button (not shortcut) while board is switching
+* skip forward button for lose?
+X remove select hider on some gui nodes
+X reset during wrong flags
+X graffiti not on top of quit x
+X flip 3s on snake loss??
+X fix lose animation
+X switch difficulty while board running on the same type !![watch for ramifications of adding always new_diff on diff == 6]!!
+X faster tick speed/subsequent bomb
 X double click light while bright
 X click and drag to click (light get, corner, light)
 X top zoom border not showing??
 X click anims on setting custom
-* rapid board switching on custom
-* click full screen button (not shortcut) while board is switching
 X zoom timer
 X switch to custom does not reset if the board is the same
 X check for win on frame 1
+X snake bugs
+	X 3 flip does not set tiles to bg color
+	? random can't find tile/remaining 2 on reset or loss
 X change more anims text animation
 X lose and win at the same time on a pre-won board
 X dig/flag and move off tile keeps it white

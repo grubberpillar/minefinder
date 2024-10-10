@@ -52,7 +52,7 @@ local function check_set(self, i, check_tbl)
 end
 
 function init(self)
-	gui.set_render_order(4)
+	gui.set_render_order(5)
 	msg.post(".", "acquire_input_focus")
 	self.anims_on = true
 	self.visible = false

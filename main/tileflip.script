@@ -1,3 +1,5 @@
+local l_data = require "main.leveldata"
+
 go.property("tile", 11)
 go.property("final", 0)
 go.property("theme_id", -1)
@@ -27,20 +29,20 @@ function init(self)
 		sprite.play_flipbook("#sprite", "tileflip-"..self.tile.."-"..self.theme..self.mini_txt)
 	end
 		
-	local tile_diff = 0
+	self.tile_diff = 0
 	if self.theme == "dark" then
-		tile_diff = 2
+		self.tile_diff = 2
 	elseif self.theme == "midnight" then
-		tile_diff = -2
+		self.tile_diff = -2
 	end
 
 	if self.removing == 1 or self.tile == 14 then
-		tile_diff = -2
+		self.tile_diff = -2
 	elseif self.removing == 2 then
-		tile_diff = 4
+		self.tile_diff = 4
 	end
 	
-	tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 16 + tile_diff)
+	tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 16 + self.tile_diff)
 	self.anim = 0
 end
 
@@ -58,8 +60,13 @@ function on_message(self, message_id, message, sender)
 			
 			self.anim = self.anim + 1
 		else
-			if self.reverse == 1 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1) ~= 4 then
+			if self.reverse == 1 and (l_data.snake_alive or self.tile ~= 3) then
 				tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, self.tile)
+				-- if not l_data.snake_alive then
+				-- 	print("tileflip end 2")
+				-- 	print(l_data.snake_alive)
+				-- 	print(self.tile)
+				-- end
 			elseif self.reverse ~= 1 then
 				tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 11)
 			end
@@ -70,8 +77,16 @@ function on_message(self, message_id, message, sender)
 			go.delete()
 		end
 	elseif message_id == hash("kill") then
-		if not (self.reverse == 1 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1) == 4) then
+		if not (self.reverse == 1 and not l_data.snake_alive) then
 			tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 11)
+			-- print("set "..((go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1)..", "..((go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1).." to 11")
+			-- print(l_data.snake_alive)
+			-- print(self.reverse)
+		elseif not l_data.snake_alive and self.tile == 12 then
+			tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", (go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1, (go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1, 12)
+			-- print("set "..((go.get_position().x-3*self.tile_size)/(6*self.tile_size)+1)..", "..((go.get_position().y-3*self.tile_size)/(6*self.tile_size)+1).." to 12")
+		else
+			-- print("voided set")
 		end
 		go.delete()
 	end

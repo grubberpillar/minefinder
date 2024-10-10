@@ -11,6 +11,10 @@ textures {
   name: "control-scroll"
   texture: "/main/control-scroll.atlas"
 }
+textures {
+  name: "graffiti"
+  texture: "/main/graffiti.atlas"
+}
 background_color {
   x: 0.0
   y: 0.0

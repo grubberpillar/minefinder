@@ -56,7 +56,7 @@ local function set_sfx_slider(self)
 end
 
 function init(self)
-	gui.set_render_order(5)
+	gui.set_render_order(3)
 	msg.post(".", "acquire_input_focus")
 	self.viewing_setttings = false
 	self.viewing_credits = false
@@ -121,6 +121,7 @@ function on_input(self, action_id, action)
 			gui.set(self.nodes.settings_top, "position.y", 0)
 		elseif action.released and action_id == hash("touch") and gui.get(self.nodes.settings_top, "position.y") == 0 then --release
 			if not self.viewing_setttings then
+				gui.set_render_order(6)
 				gui.set(self.nodes.settings_nodes, "color.w", 1)
 				msg.post("/zoom#minefinder", "release_input_focus")
 				msg.post("/gui#minefinder", "release_input_focus")
@@ -130,6 +131,7 @@ function on_input(self, action_id, action)
 				self.e_timer = 2
 			else
 				gui.set(self.nodes.settings_nodes, "color.w", 0)
+				gui.set_render_order(3)
 				msg.post("/zoom#minefinder", "acquire_input_focus")
 				msg.post("/gui#minefinder", "acquire_input_focus")
 				msg.post("/gui-zoom#zoom", "acquire_input_focus")
@@ -148,6 +150,7 @@ function on_input(self, action_id, action)
 
 	if action.pressed and self.viewing_setttings and action_id == hash("touch") and not self.viewing_credits and not gui.pick_node(gui.get_node("settings"), action.x, action.y) and not gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) and not (self.controls_visible and gui.pick_node(gui.get_node("control-scroll-hit"), action.x, action.y)) then
 		gui.set(self.nodes.settings_nodes, "color.w", 0)
+		gui.set_render_order(3)
 		msg.post("/zoom#minefinder", "acquire_input_focus")
 		msg.post("/gui#minefinder", "acquire_input_focus")
 		msg.post("/gui-zoom#zoom", "acquire_input_focus")
