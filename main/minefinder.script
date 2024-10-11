@@ -1,5 +1,33 @@
 local l_data = require "main.leveldata"
 
+local function save_game(self)
+	local filename = sys.get_save_file("sys_save_load", "leveldata")
+	local props = 
+	{highscore = l_data.highscore, 
+	custom_hs_list = l_data.custom_hs_list, 
+	diff = l_data.diff,
+	settings = l_data.settings,
+	mine_nums = l_data.mine_nums, size_nums = l_data.size_nums}
+	
+	sys.save(filename, {leveldata = props})
+end
+
+local function load_game(self)
+	local filename = sys.get_save_file("sys_save_load", "leveldata")
+	local data = sys.load(filename)
+	if data.leveldata then
+		l_data.highscore = data.leveldata.highscore
+		l_data.custom_hs_list = data.leveldata.custom_hs_list
+		l_data.diff = data.leveldata.diff
+		l_data.mine_nums = data.leveldata.mine_nums
+		l_data.size_nums = data.leveldata.size_nums
+		l_data.settings = data.leveldata.settings
+		
+		msg.post("/gui#minefinder", "load_game")
+		msg.post("/settings#settings", "load_game")
+	end
+end
+
 local function set_props(self)
 	local old_mines = self.num_mines
 	local old_row = self.row_size
@@ -253,6 +281,7 @@ go.property("dark_theme_mini", resource.tile_source("/main/minefinder-mini-dark.
 go.property("midnight_theme_mini", resource.tile_source("/main/minefinder-mini-midnight.tilesource"))
 
 function init(self)
+	load_game(self)
 	window.set_listener(window_callback)
 	l_data.screen_size = {x = nil, y = nil}
 	l_data.screen_ratio = {x = 1392, y = 864}
@@ -1185,18 +1214,8 @@ function on_input(self, action_id, action)
 	
 
 	if action_id == hash("debug") and action.pressed then
-		local mines_seen = 0
-		local tile
-		for r = 1, self.row_size do
-			for c = 1, self.col_size do
-				tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS)
-				if tile == 12 then
-					mines_seen = mines_seen + 1
-				end
-			end
-		end
-
-		print("mines: "..mines_seen)
+		save_game(self)
+		print("saved")
 	end
 
 	if action_id == hash("debug2") and action.pressed then

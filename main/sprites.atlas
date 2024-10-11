@@ -294,6 +294,18 @@ images {
   image: "/assets/nothing.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assets/set-check-lit.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/set-check4.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/retry-shadow.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "explosion-wick"
   images {
@@ -349,76 +361,6 @@ animations {
   }
   playback: PLAYBACK_ONCE_FORWARD
   fps: 5
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "explosion-boom-old"
-  images {
-    image: "/assets/bomb/bomb-17.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-17.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-18.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-19.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-20.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-25.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-18.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-19.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-20.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-25.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-18.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-27.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-28.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 15
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "explosion-flash"
-  images {
-    image: "/assets/bomb/bomb-29.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 1
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -1230,72 +1172,6 @@ animations {
   }
   playback: PLAYBACK_ONCE_FORWARD
   fps: 4
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "explosion-boom-old-mini"
-  images {
-    image: "/assets/bomb/bomb-mini-04.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-05.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-06.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-07.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-08.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-05.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-06.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-07.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-08.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-05.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-10.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-11.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 10
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "explosion-flash-mini"
-  images {
-    image: "/assets/bomb/bomb-mini-12.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 1
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -2428,44 +2304,6 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "explosion-fade"
-  images {
-    image: "/assets/bomb/bomb-30.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-31.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-32.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 4
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "explosion-fade-mini"
-  images {
-    image: "/assets/bomb/bomb-mini-13.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-14.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/bomb/bomb-mini-15.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 4
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
   id: "firework-a-white"
   images {
     image: "/assets/firework/firework-a-01.png"
@@ -2552,6 +2390,52 @@ animations {
   }
   playback: PLAYBACK_ONCE_FORWARD
   fps: 15
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "check-appear"
+  images {
+    image: "/assets/set-check1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/set-check2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/set-check3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/set-check4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 30
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "check-disappear"
+  images {
+    image: "/assets/set-check1.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/set-check2.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/set-check3.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/set-check4.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_BACKWARD
+  fps: 30
   flip_horizontal: 0
   flip_vertical: 0
 }

@@ -88,7 +88,40 @@ function init(self)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("tutorial-off") then
+	if message_id == hash("load_game") then
+		for i,k in ipairs(self.switches) do
+			if self.switch_on[i] ~= l_data.settings[k] then
+				self.switch_on[i] = l_data.settings[k]
+				gui.set_color(gui.get_node(k.."-txt"), self.settings_txt_color[1][bool_to_num(self.switch_on[i])])
+				gui.play_flipbook(gui.get_node(k.."-light"), "small-light-"..bool_to_word(self.switch_on[i]))
+				if i == 2 and l_data.graffiti_enabled then
+					msg.post("/graffiti#graffiti", "enable")
+				elseif i == 3 then
+					local scroll_thresh
+					if not l_data.settings.scroll then
+						scroll_thresh = 0
+						gui.set_color(self.nodes.scroll_ring, vmath.vector4((59/255), (59/255), (59/255), 1))
+					else
+						scroll_thresh = l_data.settings.scroll_slider
+						gui.set_color(self.nodes.scroll_ring, vmath.vector4((128/255), (95/255), (22/255), 1))
+					end
+					for j = 1,5 do
+						if j <= scroll_thresh then
+							gui.set_color(gui.get_node("scroll-node-"..(j)), vmath.vector4((223/255), (113/255), (38/255), 1))
+							if j > 1 then
+								gui.set_color(gui.get_node("scroll-bar-"..(j)), vmath.vector4((238/255), (195/255), (89/255), 1))
+							end
+						else
+							gui.set_color(gui.get_node("scroll-node-"..(j)), vmath.vector4((89/255), (86/255), (82/255), 1))
+							if j > 1 then
+								gui.set_color(gui.get_node("scroll-bar-"..(j)), vmath.vector4((105/255), (106/255), (106/255), 1))
+							end
+						end
+					end
+				end
+			end
+		end
+	elseif message_id == hash("tutorial-off") then
 		self.switch_on[1] = false
 		gui.set_color(gui.get_node("tutorial-txt"), vmath.vector4((105/255), (106/255), (106/255), 1))
 		gui.play_flipbook(gui.get_node("tutorial-light"), "small-light-off")
