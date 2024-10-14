@@ -375,6 +375,7 @@ function on_message(self, message_id, message)
 		if not l_data.settings.tutorial then
 			gui.set(gui.get_node("tutorial"), "color.w", 0)
 		end
+		self.theme = message.theme
 	elseif message_id == hash("set_ticking") then
 		self.ticking = message.ticking
 		if self.ticking then
