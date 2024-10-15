@@ -555,6 +555,9 @@ function on_message(self, message_id, message, sender)
 								if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.col_clicked+1+i, self.row_clicked+1+j) == 16 then
 									index = index+1
 									tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", self.col_clicked+1+i, self.row_clicked+1+j, self.mines_dug_around_list[index])
+									if self.zoomed then
+										tilemap.set_tile("/zoom#board-zoom", "layer1", self.col_clicked_true+1+i, self.row_clicked_true+1+j, self.mines_dug_around_list[index])
+									end
 								end
 							end
 						end
@@ -1258,6 +1261,9 @@ function on_input(self, action_id, action)
 						if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.col_clicked+1+i, self.row_clicked+1+j) == 16 then
 							index = index+1
 							tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", self.col_clicked+1+i, self.row_clicked+1+j, self.mines_dug_around_list[index])
+							if self.zoomed then
+								tilemap.set_tile("/zoom#board-zoom", "layer1", self.col_clicked_true+1+i, self.row_clicked_true+1+j, self.mines_dug_around_list[index])
+							end
 						end
 					end
 				end

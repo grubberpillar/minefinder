@@ -24,12 +24,6 @@ function on_message(self, message_id, message, sender)
 		elseif self.anim_num == 2 then
 			sprite.play_flipbook("#sprite", "explosion-boom"..self.mini_txt)
 			self.anim_num = self.anim_num + 1
-		-- elseif self.anim_num < 10 then
-		-- 	sprite.play_flipbook("#sprite", "explosion-flash"..self.mini_txt)
-		-- 	self.anim_num = self.anim_num + 1
-		-- elseif self.anim_num == 10 then
-		-- 	sprite.play_flipbook("#sprite", "explosion-fade"..self.mini_txt)
-		-- 	self.anim_num = self.anim_num + 1
 		else
 			msg.post("/zoom#minefinder", "remove_url", {hash = msg.url()})
 			go.delete()
