@@ -38,10 +38,11 @@ X windows icon
 - shift click off screen
 - fix no-delay lose animation
 - set screen size on startup
-- get rid of old explosion scraps
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
 * skip forward button for lose?
+X get rid of old explosion scraps
+X setting diff while snaking bug
 X flag and move off tile flags anyway
 X remove select hider on some gui nodes
 X reset during wrong flags

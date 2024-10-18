@@ -11,6 +11,7 @@ local function save_game(self)
 	theme = self.theme}
 	
 	sys.save(filename, {gamedata = props})
+	print("saved")
 end
 
 local function load_game(self)
@@ -64,6 +65,7 @@ local function set_props(self)
 			self.snake_set = false
 		end
 	end
+	
 	msg.post("/gui#minefinder", "set_mines", {mines = self.num_mines})
 	msg.post("/gui#minefinder", "reset", {mines = self.num_mines})
 end
@@ -1401,7 +1403,6 @@ function on_input(self, action_id, action)
 
 	if action_id == hash("debug") and action.pressed then
 		save_game(self)
-		print("saved")
 	end
 
 	if action_id == hash("debug2") and action.pressed then
