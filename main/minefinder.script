@@ -11,6 +11,7 @@ local function save_game(self)
 	theme = self.theme}
 	
 	sys.save(filename, {gamedata = props})
+	msg.post("/gui#minefinder", "done_saving")
 	print("saved")
 end
 

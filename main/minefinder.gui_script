@@ -257,8 +257,8 @@ local function set_nodes(self)
 	node.get.more_down = gui.get_node("more-box-down")
 	node.get.more_lit = gui.get_node("more-lit")
 	node.get.more_symbol = gui.get_node("more-symbol-mod")
-	-- node.get.floppy = gui.get_node("floppy")
-	-- node.get.floppy_lit = gui.get_node("floppy-lit")
+	node.get.floppy = gui.get_node("floppy")
+	node.get.floppy_lit = gui.get_node("floppy-lit")
 	node.get.set_check = gui.get_node("set-check")
 	node.get.set_check_hit = gui.get_node("set-hitbox")
 	node.get.set_check_lit = gui.get_node("set-check-lit")
@@ -487,7 +487,7 @@ function on_message(self, message_id, message)
 				gui.set_text(gui.get_node("highscore"), self.hours.."h"..minutes_txt..m_txt)
 			end
 		end
-		msg.post("/zoom#minefinder", "save_game")
+		-- msg.post("/zoom#minefinder", "save_game")
 	elseif message_id == hash("switch_hs") then
 		local diffic = l_data.diff_temp
 		local temporary = true
@@ -674,6 +674,8 @@ function on_message(self, message_id, message)
 		gui.set(gui.get_node(""..message.hide.."-tutorial"), "color.w", 0)
 	elseif message_id == hash("set_tutorial") then
 		gui.set(gui.get_node("tutorial"), "color.w", message.alpha)
+	elseif message_id == hash("done_saving") then
+		gui.play_flipbook(node.get.floppy, "floppy-check")
 	end
 end
 
@@ -834,41 +836,6 @@ function on_input(self, action_id, action)
 		end
 	end
 
--- 	if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 then -- floppy disk click
--- 		if action_id == hash("touch") and action.pressed then
--- 			gui.set_color(node.get.floppy_lit, vmath.vector4(1, 1, 1, 1))
--- 		elseif action_id == hash("touch") and action.released then
--- 			if l_data.diff_temp == 6 then
--- 				gui.set_color(node.get.row_OL, vmath.vector4((34/255), (32/255), (52/255), 1))
--- 				gui.set_color(node.get.col_OL, vmath.vector4((34/255), (32/255), (52/255), 1))
--- 				gui.set_color(node.get.mine_OL, vmath.vector4((34/255), (32/255), (52/255), 1))
--- 			end
--- 			gui.set(node.get.floppy_lit, "color.w", 0)
--- 			gui.set(node.get.floppy, "color.w", 0)
--- 			if self.gui_anims then
--- 				gui.play_flipbook(node.get.cancel_x, "x-disappear", hide_x)
--- 			else
--- 				gui.set(node.get.cancel_x, "color.w", 0)
--- 			end
--- 			set_diff_details_blue(self, false)
--- 			if l_data.diff_temp == 5 and self.key_is_there then
--- 				msg.post("/gui#door", "key_color", {color = vmath.vector4(1, 1, 1, 1)})
--- 				self.key_color = vmath.vector4(1, 1, 1, 1)
--- 			end
--- 			l_data.snake = false
--- 			gui.set(gui.get_node("post-it"), "color.w", 0)
--- 			msg.post("/zoom#minefinder", "set_diff")
--- 			msg.post("/zoom#minefinder", "reset", {change_diff = true})
--- 			msg.post("/zoom#minefinder", "hide_select", {hid = false})
--- 
--- 		elseif gui.get(node.get.floppy_lit, "color.w") ~= 1 then
--- 			gui.set_color(node.get.floppy_lit, vmath.vector4((91/255), (110/255), (225/255), 1))
--- 			msg.post("/zoom#minefinder", "hide_select", {hid = true})
--- 		end
--- 	elseif gui.get(node.get.floppy_lit, "color.w") ~= 0 then
--- 		gui.set(node.get.floppy_lit, "color.w", 0)
--- 		msg.post("/zoom#minefinder", "hide_select", {hid = false})
--- 	end
 	if not self.more_anims and gui.get(node.get.set_check, "color.w") == 1 and gui.pick_node(node.get.set_check_hit, action.x, action.y) then --set new diff (check)
 		if action_id == hash("touch") and action.pressed then
 			gui.set(node.get.set_check_lit, "color.w", 1)
@@ -1114,5 +1081,23 @@ function on_input(self, action_id, action)
 	end
 	if (action_id == hash("debug")) and action.pressed then
 		--debug
+	end
+
+	if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 and not l_data.saved then -- floppy disk click
+		if action_id == hash("touch") and action.pressed then
+			gui.set_color(node.get.floppy_lit, vmath.vector4(1, 1, 1, 1))
+		elseif action_id == hash("touch") and action.released then
+			gui.set(node.get.floppy_lit, "color.w", 0)
+			gui.play_flipbook(node.get.floppy, "floppy-grey")
+			l_data.saved = true
+			-- msg.post("/zoom#minefinder", "save_game")
+			-- print("saved")
+		elseif gui.get(node.get.floppy_lit, "color.w") ~= 1 then
+			gui.set_color(node.get.floppy_lit, vmath.vector4((91/255), (110/255), (225/255), 1))
+			msg.post("/zoom#minefinder", "hide_select", {hid = true})
+		end
+	elseif gui.get(node.get.floppy_lit, "color.w") ~= 0 then
+		gui.set(node.get.floppy_lit, "color.w", 0)
+		msg.post("/zoom#minefinder", "hide_select", {hid = false})
 	end
 end
