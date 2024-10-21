@@ -487,7 +487,7 @@ function on_message(self, message_id, message)
 				gui.set_text(gui.get_node("highscore"), self.hours.."h"..minutes_txt..m_txt)
 			end
 		end
-		-- msg.post("/zoom#minefinder", "save_game")
+		msg.post("/zoom#minefinder", "save_game_msg")
 	elseif message_id == hash("switch_hs") then
 		local diffic = l_data.diff_temp
 		local temporary = true
@@ -676,6 +676,7 @@ function on_message(self, message_id, message)
 		gui.set(gui.get_node("tutorial"), "color.w", message.alpha)
 	elseif message_id == hash("done_saving") then
 		gui.play_flipbook(node.get.floppy, "floppy-check")
+		gui.set_text(gui.get_node("save-title"), "SAVED")
 	end
 end
 
@@ -1089,9 +1090,9 @@ function on_input(self, action_id, action)
 		elseif action_id == hash("touch") and action.released then
 			gui.set(node.get.floppy_lit, "color.w", 0)
 			gui.play_flipbook(node.get.floppy, "floppy-grey")
+			gui.set_text(gui.get_node("save-title"), "...")
 			l_data.saved = true
-			-- msg.post("/zoom#minefinder", "save_game")
-			-- print("saved")
+			msg.post("/zoom#minefinder", "save_game_msg")
 		elseif gui.get(node.get.floppy_lit, "color.w") ~= 1 then
 			gui.set_color(node.get.floppy_lit, vmath.vector4((91/255), (110/255), (225/255), 1))
 			msg.post("/zoom#minefinder", "hide_select", {hid = true})

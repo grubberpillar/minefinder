@@ -829,6 +829,8 @@ function on_message(self, message_id, message, sender)
 			self.zoom_offS.c = 0
 		end
 		update_zoom_board(self)
+	elseif message_id == hash("save_game_msg") then
+		save_game(self)
 	end
 end
 
