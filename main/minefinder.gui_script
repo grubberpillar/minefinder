@@ -315,7 +315,6 @@ function init(self)
 	self.text_box = nil
 	self.diff_colors = {vmath.vector4((55/255), (148/255), (110/255), 1), vmath.vector4((153/255), (229/255), (80/255), 1), vmath.vector4((251/255), (242/255), (54/255), 1), vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((172/255), (50/255), (50/255), 1), vmath.vector4((118/255), (66/255), (138/255), 1)}
 	self.mines_calced = true
-	self.key_is_there = true
 	self.key_color = vmath.vector4(0, 0, 0, 0)
 	self.light_on = false
 	self.editing_dimensions = false
@@ -402,6 +401,26 @@ function on_message(self, message_id, message)
 			gui.set(gui.get_node("tutorial"), "color.w", 0)
 		end
 		self.theme = message.theme
+		sprite.play_flipbook("/anim-switch", "switch-"..message.anims_on)
+		self.gui_anims = message.anims[8]
+		msg.post("/gui#door", "gui_anims", {on = message.anims[8]})
+		self.anim_s_state = message.anims_on
+		if message.anims_on == 1 then
+			self.anims_on = true
+		else
+			self.anims_on = false
+		end
+
+		if l_data.door_state == "gone" then
+			gui.set(gui.get_node("lightbulb"), "color.w", 1)
+			self.lightbulb_there = true
+		end
+
+		if message.theme == "midnight" then
+			self.light_on = true
+			gui.play_flipbook(gui.get_node("lightbulb"), "lightbulb-lit")
+			msg.post("/graffiti#graffiti", "enable")
+		end
 	elseif message_id == hash("set_ticking") then
 		self.ticking = message.ticking
 		if self.ticking then
@@ -542,7 +561,7 @@ function on_message(self, message_id, message)
 		gui.set_text(node.get.col_ct, l_data.size_nums[2][diffic])
 		gui.set_text(node.get.mine_ct, l_data.mine_nums[diffic])
 
-		if diffic == 5 and self.key_is_there then
+		if diffic == 5 and l_data.key_is_there then
 			if temporary then
 				msg.post("/gui#door", "key_color", {color = vmath.vector4((203/255), (219/255), (252/255), 1)})
 				self.key_color = vmath.vector4((203/255), (219/255), (252/255), 1)
@@ -626,8 +645,6 @@ function on_message(self, message_id, message)
 			l_data.s_hs = score
 			gui.set_text(gui.get_node("flags-left"), score)
 		end
-	elseif message_id == hash("key_gotten") then
-		self.key_is_there = false
 	elseif message_id == hash("zoom_click") then
 		zoom_in(self)
 	elseif message_id == hash("set_props") then
@@ -674,9 +691,18 @@ function on_message(self, message_id, message)
 		gui.set(gui.get_node(""..message.hide.."-tutorial"), "color.w", 0)
 	elseif message_id == hash("set_tutorial") then
 		gui.set(gui.get_node("tutorial"), "color.w", message.alpha)
+	elseif message_id == hash("start_saving") then
+		l_data.saved = nil
+		gui.play_flipbook(node.get.floppy, "floppy-grey")
+		gui.set_text(gui.get_node("save-title"), "...")
 	elseif message_id == hash("done_saving") then
+		l_data.saved = true
 		gui.play_flipbook(node.get.floppy, "floppy-check")
 		gui.set_text(gui.get_node("save-title"), "SAVED")
+	elseif message_id == hash("unsaved") then
+		gui.play_flipbook(node.get.floppy, "floppy")
+		gui.set_text(gui.get_node("save-title"), "SAVE")
+		l_data.saved = false
 	end
 end
 
@@ -700,8 +726,8 @@ function on_input(self, action_id, action)
 	end
 
 	if gui.pick_node(node.get.more_box, action.x, action.y) then -- more anims button
-		if gui.get(node.get.more_lit, "color.w") ~= 0.2 then
-			gui.set(node.get.more_lit, "color.w", 0.2)
+		if gui.get_color(node.get.more_lit) ~= vmath.vector4(0, 0, 0, 0.2) then
+			gui.set_color(node.get.more_lit, vmath.vector4(0, 0, 0, 0.2))
 			msg.post("/zoom#minefinder", "hide_select", {hid = true})
 		end
 		if action_id == hash("touch") and action.pressed and gui.get_color(node.get.more_down) ~= vmath.vector4(1, 1, 1, 1) then
@@ -782,7 +808,7 @@ function on_input(self, action_id, action)
 				msg.post("/gui#door", "gui_anims", {on = true})
 			end
 			-- self.anims_on = not self.anims_on
-			msg.post("/anims#anims", "switch-clicked", {setting = self.anims_on})
+			msg.post("/anims#anims", "switch_clicked", {setting = self.anims_on})
 		end
 	else
 		if gui.get_color(node.get.anim_sel_bg) ~= vmath.vector4(0, 0, 0, 0) then
@@ -856,7 +882,7 @@ function on_input(self, action_id, action)
 				gui.set(node.get.cancel_x, "color.w", 0)
 			end
 			set_diff_details_blue(self, false)
-			if l_data.diff_temp == 5 and self.key_is_there then
+			if l_data.diff_temp == 5 and l_data.key_is_there then
 				msg.post("/gui#door", "key_color", {color = vmath.vector4(1, 1, 1, 1)})
 				self.key_color = vmath.vector4(1, 1, 1, 1)
 			end
@@ -1080,19 +1106,18 @@ function on_input(self, action_id, action)
 	elseif gui.get(gui.get_node("zoom-in"), "color.w") ~= 0 and (l_data.size_nums[1][l_data.diff] <= 16 or l_data.size_nums[2][l_data.diff] <= 16) then
 		gui.set(gui.get_node("zoom-in"), "color.w", 0)
 	end
-	if (action_id == hash("debug")) and action.pressed then
-		--debug
-	end
+	-- if (action_id == hash("debug")) and action.pressed then
+	-- 	print(self.anims_on)
+	-- end
 
-	if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 and not l_data.saved then -- floppy disk click
+	if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 and l_data.saved == false then -- floppy disk click
 		if action_id == hash("touch") and action.pressed then
 			gui.set_color(node.get.floppy_lit, vmath.vector4(1, 1, 1, 1))
 		elseif action_id == hash("touch") and action.released then
 			gui.set(node.get.floppy_lit, "color.w", 0)
-			gui.play_flipbook(node.get.floppy, "floppy-grey")
-			gui.set_text(gui.get_node("save-title"), "...")
-			l_data.saved = true
+			l_data.saved = nil
 			msg.post("/zoom#minefinder", "save_game_msg")
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
 		elseif gui.get(node.get.floppy_lit, "color.w") ~= 1 then
 			gui.set_color(node.get.floppy_lit, vmath.vector4((91/255), (110/255), (225/255), 1))
 			msg.post("/zoom#minefinder", "hide_select", {hid = true})

@@ -21,11 +21,12 @@ X settings
 	X scrolling
 	X scroll sensitity
 	X controls
+	- press d to dig
+	- click tile to dig around
 	- ++
 		- startup screen
 		- lights
 		- graffiti
-	* click tile to dig around
 	* reset game files
 	* large vs mini tiles diagram lol
 - snapshot button
@@ -38,6 +39,7 @@ X windows icon
 - shift click off screen
 - fix no-delay lose animation
 - set screen size on startup
+- windows flag bug
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
 * skip forward button for lose?

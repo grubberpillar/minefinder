@@ -14,20 +14,33 @@ end
 function init(self)
 	gui.set_render_order(2)
 	self.door_found = false
-	self.door_state = "closed"
-	self.key_is_there = true 
 	self.gui_anims = true
 	self.more_anims = false
+	self.door_unlocked = false
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("lightbulb_gotten") then
-		if self.gui_anims and self.door_state == "open" then
+	if message_id == hash("load_game") then
+		if l_data.door_state ~= "closed" then
+			if l_data.door_state == "open" then
+				gui.play_flipbook(gui.get_node("secret-door"), "secret-door-"..l_data.door_state)
+			elseif l_data.door_state == "gone" then
+				hide_door_things(self)
+			end
+		end
+		if l_data.key_is_there == false then
+			gui.set(gui.get_node("key"), "color.w", 0)
+			self.door_unlocked = true
+			gui.set(gui.get_node("lock-lit"), "color.w", 0)
+			hide_lock(self)
+		end
+	elseif message_id == hash("lightbulb_gotten") then
+		if self.gui_anims and l_data.door_state == "open" then
 			gui.play_flipbook(gui.get_node("secret-door"), "door-closed", hide_door_things)
 		else
 			hide_door_things(self)
 		end
-		self.door_state = "gone"
+		l_data.door_state = "gone"
 		-- gui.set(gui.get_node("noah-msg"), "color.w", 1)
 	elseif message_id == hash("gui_anims") then
 		self.gui_anims = message.on
@@ -37,6 +50,7 @@ function on_message(self, message_id, message, sender)
 		if message.zoom then
 			self.zoomed = true
 			gui.set(gui.get_node("key"), "color.w", 0)
+			
 		elseif (l_data.diff == 5 and l_data.diff_temp == nil) or l_data.diff_temp == 5 then
 			self.zoomed = false
 			gui.set(gui.get_node("key"), "color.w", 1)
@@ -47,25 +61,25 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-	if self.door_state ~= "gone" and gui.pick_node(gui.get_node("door-hit-"..self.door_state), action.x, action.y) and action.pressed then -- door
+	if l_data.door_state ~= "gone" and gui.pick_node(gui.get_node("door-hit-"..l_data.door_state), action.x, action.y) and action.pressed then -- door
 		if not self.door_found then
 			-- gui.set(gui.get_node("noah-msg"), "color.w", 1)
 			self.door_found = true
 		end
 
-		if self.door_state == "open" then
-			self.door_state = "closed"
+		if l_data.door_state == "open" then
+			l_data.door_state = "closed"
 		else
-			self.door_state = "open"
+			l_data.door_state = "open"
 		end
 		if self.gui_anims then
-			gui.play_flipbook(gui.get_node("secret-door"), "door-"..self.door_state)
+			gui.play_flipbook(gui.get_node("secret-door"), "door-"..l_data.door_state)
 		else
-			gui.play_flipbook(gui.get_node("secret-door"), "secret-door-"..self.door_state)
+			gui.play_flipbook(gui.get_node("secret-door"), "secret-door-"..l_data.door_state)
 		end
 	end
 
-	if l_data.diff == 5 and not self.more_anims and self.key_is_there and self.door_state ~= "gone" and not self.zoomed then --key text
+	if l_data.diff == 5 and not self.more_anims and l_data.key_is_there and l_data.door_state ~= "gone" and not self.zoomed then --key text
 		if gui.pick_node(gui.get_node("key-hit"), action.x, action.y) then
 			if action_id == hash("touch") and action.pressed then
 				gui.set_color(gui.get_node("key"), vmath.vector4((251/255), (242/255), (54/255), 1))
@@ -87,18 +101,21 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if self.holding_key and self.door_state == "open" and not self.door_unlocked then --lock
+	if self.holding_key and l_data.door_state == "open" and not self.door_unlocked then --lock
 		if gui.pick_node(gui.get_node("door-hit-closed"), action.x, action.y) then 
 			if gui.get(gui.get_node("lock-lit"), "color.w") == 0 and not self.door_unlocked then
 				gui.set(gui.get_node("lock-lit"), "color.w", 1)
 			elseif action_id == hash("touch") and action.pressed then
-				self.key_is_there = false
-				msg.post("/gui#minefinder", "key_taken")
+				l_data.key_is_there = false
 				gui.set(gui.get_node("key"), "color.w", 0)
 				self.door_unlocked = true
 				-- gui.set(gui.get_node("noah-msg"), "color.w", 1)
 				gui.set(gui.get_node("lock-lit"), "color.w", 0)
-				gui.play_flipbook(gui.get_node("lock"), "unlock", hide_lock)
+				if self.gui_anims then
+					gui.play_flipbook(gui.get_node("lock"), "unlock", hide_lock)
+				else
+					hide_lock(self)
+				end
 			end
 		elseif gui.get(gui.get_node("lock-lit"), "color.w") == 1 then
 			gui.set(gui.get_node("lock-lit"), "color.w", 0)

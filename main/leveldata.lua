@@ -15,9 +15,12 @@ D.diff_temp = nil
 
 D.settings = {tutorial = true, profanity = false, scroll = true, scroll_slider = 3, sfx_slider = 4}
 
-D.snake = false
+D.saved = false
 
 D.snake = false
 D.s_hs = 0
+
+D.door_state = "closed"
+D.key_is_there = true
 
 return D

@@ -1,6 +1,7 @@
 local l_data = require "main.leveldata"
 
 local function save_game(self)
+	msg.post("/gui#minefinder", "start_saving")
 	local filename = sys.get_save_file("sys_save_load", "gamedata")
 	local props = 
 	{highscore = l_data.highscore, 
@@ -8,7 +9,9 @@ local function save_game(self)
 	diff = l_data.diff,
 	settings = l_data.settings,
 	mine_nums = l_data.mine_nums, size_nums = l_data.size_nums, 
-	theme = self.theme}
+	theme = self.theme, 
+	anims = self.anims, 
+	door_state = l_data.door_state, key_is_there = l_data.key_is_there}
 	
 	sys.save(filename, {gamedata = props})
 	msg.post("/gui#minefinder", "done_saving")
@@ -25,12 +28,31 @@ local function load_game(self)
 		l_data.mine_nums = data.gamedata.mine_nums
 		l_data.size_nums = data.gamedata.size_nums
 		l_data.settings = data.gamedata.settings
+		l_data.door_state = data.gamedata.door_state
+		l_data.key_is_there = data.gamedata.key_is_there
 		self.theme = data.gamedata.theme
+		self.anims = data.gamedata.anims
+		
+		local num_anims_on = 1
+		local stripped_anims = {}
+		for i = 1, 10 do
+			if self.anims[self.anim_vars[i]] then
+				if i < 9 then
+					num_anims_on = num_anims_on + 1
+				end
+				stripped_anims[i] = true
+			else
+				stripped_anims[i] = false
+			end
+		end
+		
 
 		msg.post(".", "set_theme", {theme = data.gamedata.theme, startup = true})
 		
-		msg.post("/gui#minefinder", "load_game", {theme = self.theme})
+		msg.post("/gui#minefinder", "load_game", {theme = self.theme, anims_on = num_anims_on, anims = stripped_anims})
+		msg.post("/anims#anims", "load_game", {anims = stripped_anims})
 		msg.post("/settings#settings", "load_game")
+		msg.post("/gui#door", "load_game")
 		msg.post("/gui#minefinder", "switch_hs")
 	end
 end
@@ -352,6 +374,11 @@ end
 local function window_callback(self, event, data)
 	if event == window.WINDOW_EVENT_RESIZED then
 		l_data.screen_size.x, l_data.screen_size.y = data.width, data.height
+		local zoom = math.min(l_data.screen_size.x / l_data.screen_ratio.x, l_data.screen_size.y / l_data.screen_ratio.y)
+		l_data.projected_width = l_data.screen_size.x / zoom
+		l_data.projected_height = l_data.screen_size.y / zoom
+		l_data.xoffset = -(l_data.projected_width - l_data.screen_ratio.x) / 2
+		l_data.yoffset = -(l_data.projected_height - l_data.screen_ratio.y) / 2
 	end
 end
 
@@ -369,23 +396,33 @@ go.property("dark_theme_mini", resource.tile_source("/main/minefinder-mini-dark.
 go.property("midnight_theme_mini", resource.tile_source("/main/minefinder-mini-midnight.tilesource"))
 
 function init(self)
+	self.anim_vars = {"flag_place", "flag_remove", "flag_correct", "flag_incorrect", "explosion", "timer", "tileflip", "ui", "flip_bg", "faster_flip"}
+
 	load_game(self)
+	msg.post("/gui#minefinder", "done_saving")
 	window.set_listener(window_callback)
 	l_data.screen_size = {x = nil, y = nil}
 	l_data.screen_ratio = {x = 1392, y = 864}
 	l_data.screen_size.x, l_data.screen_size.y = window.get_size()
+	local zoom = math.min(l_data.screen_size.x / l_data.screen_ratio.x, l_data.screen_size.y / l_data.screen_ratio.y)
+	l_data.projected_width = l_data.screen_size.x / zoom
+	l_data.projected_height = l_data.screen_size.y / zoom
+	l_data.xoffset = -(l_data.projected_width - l_data.screen_ratio.x) / 2
+	l_data.yoffset = -(l_data.projected_height - l_data.screen_ratio.y) / 2
 	
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 	go.set("/anims", "position", vmath.vector3()) -- un-offset anims gui (offset for readability in main.collection)
 	go.set("/graffiti", "position", vmath.vector3()) -- un-offset graffiti (hidden)
 	go.set("/gui-zoom", "position", vmath.vector3()) -- un-offset anims gui (offset for readability in main.collection)
-	self.anims = {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false, faster_flip = true}
-	self.anim_vars = {"flag_place", "flag_remove", "flag_correct", "flag_incorrect", "explosion", "timer", "tileflip", "ui", "flip_bg", "faster_flip"}
+	self.anims = self.anims or {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false, faster_flip = true}
+
+	self.first_setup = true
 	msg.post(".", "setup")
+	
 	self.theme = self.theme or "dark"
 	self.tilesources = {light = self.light_theme, dark = self.dark_theme, midnight = self.midnight_theme}
 	self.tilesources_mini = {light = self.light_theme_mini, dark = self.dark_theme_mini, midnight = self.midnight_theme_mini}
-	l_data.diff = 3 -- CHANGE HERE
+	l_data.diff = l_data.diff or 3 -- CHANGE HERE
 	self.tile_size = 8
 	self.hard_select = true -- basic large-corner select
 	self.mini_select = false -- tiny select for large boards
@@ -427,6 +464,9 @@ function on_message(self, message_id, message, sender)
 		
 		self.board = {}
 		if not l_data.swap_board then
+			if not self.first_setup then
+				msg.post("/gui#minefinder", "unsaved")
+			end
 			set_props(self)
 		end
 		self.row_offS = math.floor((self.board_size-self.row_size)/2)
@@ -540,6 +580,10 @@ function on_message(self, message_id, message, sender)
 				self.board_layout = nil
 			end--
 			self.new_diff = false
+		end
+
+		if self.first_setup then
+			self.first_setup = false
 		end
 	elseif message_id == hash("reset") then 
 		if not l_data.snake then
@@ -669,6 +713,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("remove_orb") then
 		self.current_orb = "done"
 	elseif message_id == hash("set_theme") then
+		msg.post("/gui#minefinder", "unsaved")
 		self.theme = message.theme
 		go.set("/zoom#board", "tile_source", self.tilesources[self.theme])
 		go.set("/zoom#board-mini", "tile_source", self.tilesources_mini[self.theme])
@@ -841,13 +886,8 @@ end
 --|_|  |_| \___|  |_|      \___/     |_|
 
 function on_input(self, action_id, action)
-	local zoom = math.min(l_data.screen_size.x / l_data.screen_ratio.x, l_data.screen_size.y / l_data.screen_ratio.y)
-	local projected_width = l_data.screen_size.x / zoom
-	local projected_height = l_data.screen_size.y / zoom
-	local xoffset = -(projected_width - l_data.screen_ratio.x) / 2
-	local yoffset = -(projected_height - l_data.screen_ratio.y) / 2
-	local mouse_x = (action.x / l_data.screen_ratio.x) * projected_width + xoffset
-	local mouse_y = (action.y / l_data.screen_ratio.y) * projected_height + yoffset
+	local mouse_x = (action.x / l_data.screen_ratio.x) * l_data.projected_width + l_data.xoffset
+	local mouse_y = (action.y / l_data.screen_ratio.y) * l_data.projected_height + l_data.yoffset
 	
 	if not l_data.snake then
 		if action_id == hash("shift") then
@@ -915,6 +955,7 @@ function on_input(self, action_id, action)
 			end
 
 			if (not self.zoomed and moveRow_t < self.row_size+1+self.mini_offS+self.row_offS and moveCol_t < self.col_size+1+self.mini_offS+self.col_offS and moveRow_t > self.row_offS+self.mini_offS and moveCol_t > self.col_offS+self.mini_offS) or (self.zoomed and moveCol > 0 and moveCol < 28 and moveRow > 0 and moveRow < 17 and (self.row_size > 15 or (moveRow < 17-(16-self.row_size)/2 and moveRow > (16-self.row_size)/2+self.row_size%2)) and (self.col_size > 26 or (moveCol < 28-(27-self.col_size)/2 and moveCol > (27-self.col_size)/2+(self.col_size+1)%2))) then  
+				msg.post("/gui#minefinder", "unsaved")
 				if not self.board[1] then --first move
 					self.game_started = true
 					self.board = {}
@@ -1404,9 +1445,9 @@ function on_input(self, action_id, action)
 	self.m_col_prev = m_col
 	
 
-	if action_id == hash("debug") and action.pressed then
-		save_game(self)
-	end
+	-- if action_id == hash("debug") and action.pressed then
+	-- 	save_game(self)
+	-- end
 
 	if action_id == hash("debug2") and action.pressed then
 		print(l_data.settings.tutorial)
