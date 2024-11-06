@@ -1,3 +1,5 @@
+local l_data = require "main.leveldata"
+
 local function hide_cover(self)
 	gui.set(gui.get_node("cover"), "color.w", 0)
 	gui.set(gui.get_node("light-box"), "color.w", 0)
@@ -105,6 +107,10 @@ function on_message(self, message_id, message, sender)
 			else
 				gui.play_flipbook(self.check_nodes[i], "uncheck12")
 			end
+		end
+		if l_data.door_state == "gone" then
+			self.se_up = false
+			gui.set(self.se_top, "color.w", 0)
 		end
 	elseif message_id == hash("disable") then
 		if self.visible then
@@ -229,7 +235,6 @@ function on_input(self, action_id, action)
 			if not self.checked[1] and self.checked[2] and self.checked[3] and not self.checked[4] and not self.checked[5] and self.checked[6] and not self.checked[7] and self.checked[8] and self.checked[9] and not self.checked[10] then 
 				gui.set(self.se_lit, "color.w", 0)
 				self.se_up = false
-				msg.post("/gui#minefinder", "corner_down")
 				gui.play_flipbook(gui.get_node("cover"), "cover-raise")
 				self.cover_up = true
 				for i = 1,10 do

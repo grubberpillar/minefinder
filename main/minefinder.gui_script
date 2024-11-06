@@ -92,7 +92,7 @@ local function zoom_in(self)
 	msg.post("/anims#anims", "disable")
 	msg.post(".", "disable")
 	msg.post("/gui-zoom#zoom", "enable")
-	msg.post("/gui-zoom#zoom", "set_props", {seconds = self.seconds, minutes = self.minutes, hours = self.hours, ticking = self.ticking, flags = self.flag_count, mines = self.mine_count, highscore = l_data.highscore[l_data.diff], diff = l_data.diff})
+	msg.post("/gui-zoom#zoom", "set_props", {flags = self.flag_count, mines = self.mine_count, highscore = l_data.highscore[l_data.diff], diff = l_data.diff})
 	msg.post("/gui-zoom#zoom", "set_flags", {num = self.flag_count})
 	msg.post("/gui#door", "zoom", {zoom = true})
 	msg.post("/zoom#minefinder", "zoom", {zoom = true})
@@ -161,13 +161,14 @@ local function deselect_txt(self)
 	if gui.get_text(node.get.text[1]) == "11" and gui.get_text(node.get.text[2]) == "23" and gui.get_text(node.get.text[3]) == "58" then
 		l_data.size_nums[1][6] = 16
 		l_data.size_nums[2][6] = 16
-		self.seconds = 0
+		l_data.seconds = 0
 		self.seconds_storage = -1
-		self.minutes = 0
-		self.ticking = false
+		l_data.minutes = 0
+		l_data.hours = 0
+		l_data.ticking = false
 		l_data.snake = true
 		gui.set(gui.get_node("post-it"), "color.w", 1)
-	elseif l_data.snake and not l_data.snake_alive then
+	elseif l_data.snake and not l_data.snake_moving then
 		l_data.size_nums[1][6] = tonumber(gui.get_text(node.get.text[1]))
 		l_data.size_nums[2][6] = tonumber(gui.get_text(node.get.text[2]))
 		gui.set(gui.get_node("post-it"), "color.w", 0)
@@ -300,12 +301,15 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	set_nodes(self)
 	self.outlines = {node.get.row_OL, node.get.col_OL, node.get.mine_OL}
-	self.seconds = 0
-	self.minutes = 0
-	self.hours = 0
+	l_data.seconds = 0
+	l_data.minutes = 0
+	l_data.hours = 0
 	self.seconds_storage = -1
 	self.minutes_storage = -1
-	self.ticking = false
+	l_data.ticking = false
+	self.save_seconds = nil
+	self.save_minutes = nil
+	self.save_hours = nil
 	self.anim_s_state = 9
 	self.anims_on = true
 	self.gui_anims = true
@@ -334,48 +338,72 @@ function init(self)
 end
 
 function update(self, dt)
-	if self.ticking then
-		self.seconds = self.seconds + dt
-	elseif gui.get_text(gui.get_node("timer")) ~= hash("-:--") and self.seconds == 0 and self.minutes == 0 then
+	if l_data.ticking then
+		l_data.seconds = l_data.seconds + dt
+	elseif gui.get_text(gui.get_node("timer")) ~= hash("-:--") and l_data.seconds == 0 and l_data.minutes == 0 then
 		gui.set_text(gui.get_node("timer"), "-:--")
 	end
-	if self.seconds >= 60 then
-		self.minutes = self.minutes + 1
-		self.seconds = self.seconds - 60
+	if l_data.seconds >= 60 then
+		l_data.minutes = l_data.minutes + 1
+		l_data.seconds = l_data.seconds - 60
 	end
-	if (self.hours > 0 and self.minutes >= 60) or self.minutes >= 100 then
-		self.hours = self.hours + 1
-		self.minutes = self.minutes - 60
+	if (l_data.hours > 0 and l_data.minutes >= 60) or l_data.minutes >= 100 then
+		l_data.hours = l_data.hours + 1
+		l_data.minutes = l_data.minutes - 60
 	end
-	if self.hours < 1 then
-		if math.floor(self.seconds) ~= math.floor(self.seconds_storage) and self.ticking then
+	if l_data.hours < 1 then
+		if math.floor(l_data.seconds) ~= math.floor(self.seconds_storage) and l_data.ticking then
 			local seconds_txt
-			if self.seconds < 10 then
-				seconds_txt = "0" .. math.floor(self.seconds)
+			if l_data.seconds < 10 then
+				seconds_txt = "0" .. math.floor(l_data.seconds)
 			else
-				seconds_txt = "" .. math.floor(self.seconds)
+				seconds_txt = "" .. math.floor(l_data.seconds)
 			end
-			gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
-			self.seconds_storage = self.seconds
+			gui.set_text(gui.get_node("timer"), l_data.minutes..":"..seconds_txt)
+			self.seconds_storage = l_data.seconds
 		end
 	else
-		if self.minutes ~= self.minutes_storage and self.ticking then
+		if l_data.minutes ~= self.minutes_storage and l_data.ticking then
 			local minutes_txt
-			if self.minutes < 10 then
-				minutes_txt = "0" .. math.floor(self.minutes)
+			if l_data.minutes < 10 then
+				minutes_txt = "0" .. math.floor(l_data.minutes)
 			else
-				minutes_txt = "" .. math.floor(self.minutes)
+				minutes_txt = "" .. math.floor(l_data.minutes)
 			end
 			local m_txt = "m"
-			if self.hours >= 10 then
+			if l_data.hours >= 10 then
 				m_txt = ""
 			end			
-			gui.set_text(gui.get_node("timer"), self.hours.."h"..minutes_txt..m_txt)
-			self.minutes_storage = self.minutes
+			gui.set_text(gui.get_node("timer"), l_data.hours.."h"..minutes_txt..m_txt)
+			self.minutes_storage = l_data.minutes
 		end
 	end
-		
 
+	if l_data.saved == false then
+		self.save_seconds = self.save_seconds + dt
+		if self.save_seconds > 60 then
+			self.save_seconds = self.save_seconds - 60
+			self.save_minutes = self.save_minutes + 1
+			if self.save_minutes >= 60 then
+				self.save_minutes = self.save_minutes - 60
+				self.save_hours = self.save_hours + 1
+			end
+			local save_txt
+			if self.save_hours < 1 then
+				save_txt = self.save_minutes.."m"
+				if self.save_minutes < 10 then
+					save_txt = "~~"..save_txt
+				end
+			else
+				save_txt = self.save_hours.."h"
+				if self.save_hours < 10 then
+					save_txt = "~~"..save_txt
+				end
+			end
+			gui.set_text(gui.get_node("last-save-time"), save_txt)
+		end
+	end
+	
 	if self.graffiti_timer then
 		if self.graffiti_timer <= 0 then
 			msg.post("/graffiti#graffiti", "enable")
@@ -422,23 +450,23 @@ function on_message(self, message_id, message)
 			msg.post("/graffiti#graffiti", "enable")
 		end
 	elseif message_id == hash("set_ticking") then
-		self.ticking = message.ticking
-		if self.ticking then
-			self.seconds_storage = self.seconds-1
+		l_data.ticking = message.ticking
+		if l_data.ticking then
+			self.seconds_storage = l_data.seconds-1
 		end
 	elseif message_id == hash("set_mines") then
 		self.mine_count = message.mines
 		gui.set_text(gui.get_node("total-mines"), message.mines.." TOTAL")
 	elseif message_id == hash("reset") then
-		-- self.seconds = 55
-		-- self.minutes = 34
-		-- self.hours = 2
-		self.seconds = 0
-		self.minutes = 0
-		self.hours = 0
+		-- l_data.seconds = 55
+		-- l_data.minutes = 34
+		-- l_data.hours = 2
+		l_data.seconds = 0
+		l_data.minutes = 0
+		l_data.hours = 0
 		self.seconds_storage = -1
 		self.minutes_storage = -1
-		self.ticking = false
+		l_data.ticking = false
 		msg.post(".", "set_flags", {num = message.mines})
 	elseif message_id == hash("set_flags") then
 		self.flag_count = message.num
@@ -465,14 +493,14 @@ function on_message(self, message_id, message)
 	elseif message_id == hash("switch_preference") then
 		self.prefer_switch_up = message.prefer_up
 	elseif message_id == hash("set_hs") then
-		if l_data.highscore[l_data.diff] == nil or math.floor(self.seconds + self.minutes*60 + self.hours*3600) < l_data.highscore[l_data.diff] then
-			l_data.highscore[l_data.diff] = math.floor(self.seconds + self.minutes*60 + self.hours*3600)
+		if l_data.highscore[l_data.diff] == nil or math.floor(l_data.seconds + l_data.minutes*60 + l_data.hours*3600) < l_data.highscore[l_data.diff] then
+			l_data.highscore[l_data.diff] = math.floor(l_data.seconds + l_data.minutes*60 + l_data.hours*3600)
 			l_data.custom_hs_list[l_data.size_nums[1][l_data.diff]][l_data.size_nums[2][l_data.diff]][l_data.mine_nums[l_data.diff]+1] = l_data.highscore[l_data.diff]
 			
 			if l_data.diff == 6 then
 				for i = 1, 5 do
 					if l_data.size_nums[1][6] == l_data.size_nums[1][i] and l_data.size_nums[2][6] == l_data.size_nums[2][i] and l_data.mine_nums[6] == l_data.mine_nums[i] then
-						l_data.highscore[i] = math.floor(self.seconds + self.minutes*60 + self.hours*3600)
+						l_data.highscore[i] = math.floor(l_data.seconds + l_data.minutes*60 + l_data.hours*3600)
 						break
 					end
 				end
@@ -484,26 +512,26 @@ function on_message(self, message_id, message)
 			gui.play_flipbook(gui.get_node("firework-2-white"), "firework-a-white")
 			gui.play_flipbook(gui.get_node("firework-2-color"), "firework-a-color")
 			
-			if self.hours < 1 then
+			if l_data.hours < 1 then
 				local seconds_txt
-				if self.seconds < 10 then
-					seconds_txt = "0" .. math.floor(self.seconds)
+				if l_data.seconds < 10 then
+					seconds_txt = "0" .. math.floor(l_data.seconds)
 				else
-					seconds_txt = "" .. math.floor(self.seconds)
+					seconds_txt = "" .. math.floor(l_data.seconds)
 				end
-				gui.set_text(gui.get_node("highscore"), self.minutes .. ":".. seconds_txt)
+				gui.set_text(gui.get_node("highscore"), l_data.minutes .. ":".. seconds_txt)
 			else
 				local minutes_txt
-				if self.minutes < 10 then
-					minutes_txt = "0" .. math.floor(self.minutes)
+				if l_data.minutes < 10 then
+					minutes_txt = "0" .. math.floor(l_data.minutes)
 				else
-					minutes_txt = "" .. math.floor(self.minutes)
+					minutes_txt = "" .. math.floor(l_data.minutes)
 				end
 				local m_txt = "m"
-				if self.hours >= 10 then
+				if l_data.hours >= 10 then
 					m_txt = ""
 				end			
-				gui.set_text(gui.get_node("highscore"), self.hours.."h"..minutes_txt..m_txt)
+				gui.set_text(gui.get_node("highscore"), l_data.hours.."h"..minutes_txt..m_txt)
 			end
 		end
 		msg.post("/zoom#minefinder", "save_game_msg")
@@ -648,33 +676,29 @@ function on_message(self, message_id, message)
 	elseif message_id == hash("zoom_click") then
 		zoom_in(self)
 	elseif message_id == hash("set_props") then
-		self.seconds = message.seconds
-		self.ticking = message.ticking
-		self.minutes = message.minutes
-		self.hours = message.hours
 		local seconds_txt = ""
-		if self.hours < 1 then
+		if l_data.hours < 1 then
 			local seconds_txt
-			if self.seconds < 10 then
-				seconds_txt = "0" .. math.floor(self.seconds)
+			if l_data.seconds < 10 then
+				seconds_txt = "0" .. math.floor(l_data.seconds)
 			else
-				seconds_txt = "" .. math.floor(self.seconds)
+				seconds_txt = "" .. math.floor(l_data.seconds)
 			end
-			gui.set_text(gui.get_node("timer"), self.minutes..":"..seconds_txt)
-			self.seconds_storage = self.seconds
+			gui.set_text(gui.get_node("timer"), l_data.minutes..":"..seconds_txt)
+			self.seconds_storage = l_data.seconds
 		else
 			local minutes_txt
-			if self.minutes < 10 then
-				minutes_txt = "0" .. math.floor(self.minutes)
+			if l_data.minutes < 10 then
+				minutes_txt = "0" .. math.floor(l_data.minutes)
 			else
-				minutes_txt = "" .. math.floor(self.minutes)
+				minutes_txt = "" .. math.floor(l_data.minutes)
 			end
 			local m_txt = "m"
-			if self.hours >= 10 then
+			if l_data.hours >= 10 then
 				m_txt = ""
 			end			
-			gui.set_text(gui.get_node("timer"), self.hours.."h"..minutes_txt..m_txt)
-			self.minutes_storage = self.minutes
+			gui.set_text(gui.get_node("timer"), l_data.hours.."h"..minutes_txt..m_txt)
+			self.minutes_storage = l_data.minutes
 		end
 		if message.highscore then
 			msg.post(".", "set_hs")
@@ -699,10 +723,20 @@ function on_message(self, message_id, message)
 		l_data.saved = true
 		gui.play_flipbook(node.get.floppy, "floppy-check")
 		gui.set_text(gui.get_node("save-title"), "SAVED")
+		gui.set_text(gui.get_node("last-save-time"), "~~--")
+		self.save_seconds = nil
+		self.save_minutes = nil
+		self.save_hours = nil
 	elseif message_id == hash("unsaved") then
-		gui.play_flipbook(node.get.floppy, "floppy")
-		gui.set_text(gui.get_node("save-title"), "SAVE")
-		l_data.saved = false
+		if l_data.saved == true then
+			gui.play_flipbook(node.get.floppy, "floppy")
+			gui.set_text(gui.get_node("save-title"), "SAVE")
+			gui.set_text(gui.get_node("last-save-time"), "~~0m")
+			l_data.saved = false
+			self.save_seconds = 0
+			self.save_minutes = 0
+			self.save_hours = 0
+		end
 	end
 end
 
@@ -948,7 +982,7 @@ function on_input(self, action_id, action)
 				end
 				msg.post("/zoom#minefinder", "hide_select", {hid = false})
 			elseif action_id == hash("touch") and action.pressed and i == self.text_box then
-				if l_data.snake_alive then
+				if l_data.snake_moving then
 					nochange(self)
 				else
 					deselect_txt(self)
@@ -958,7 +992,7 @@ function on_input(self, action_id, action)
 	end
 
 	if self.text_box and action.pressed and action_id == hash("enter") then
-		if l_data.snake_alive then
+		if l_data.snake_moving then
 			nochange(self)
 		else
 			deselect_txt(self)
@@ -992,7 +1026,7 @@ function on_input(self, action_id, action)
 
 	if action_id == hash("tab") and action.pressed and self.text_box then --tab
 		local txt_b_old = self.text_box
-		if l_data.snake_alive then
+		if l_data.snake_moving then
 			nochange(self)
 		else
 			deselect_txt(self)
@@ -1043,7 +1077,7 @@ function on_input(self, action_id, action)
 			self.text_box = 3
 			gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
 			set_stars_pos(self)
-			if l_data.snake_alive then
+			if l_data.snake_moving then
 				nochange(self)
 				gui.set(node.get.stars_lit, "position.y", 0)
 				gui.set(node.get.stars_lit, "color.w", 1)
@@ -1106,9 +1140,10 @@ function on_input(self, action_id, action)
 	elseif gui.get(gui.get_node("zoom-in"), "color.w") ~= 0 and (l_data.size_nums[1][l_data.diff] <= 16 or l_data.size_nums[2][l_data.diff] <= 16) then
 		gui.set(gui.get_node("zoom-in"), "color.w", 0)
 	end
-	-- if (action_id == hash("debug")) and action.pressed then
-	-- 	print(self.anims_on)
-	-- end
+	if (action_id == hash("debug")) and action.pressed then
+		print(l_data.ticking)
+		print(l_data.seconds)
+	end
 
 	if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 and l_data.saved == false then -- floppy disk click
 		if action_id == hash("touch") and action.pressed then

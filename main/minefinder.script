@@ -3,15 +3,36 @@ local l_data = require "main.leveldata"
 local function save_game(self)
 	msg.post("/gui#minefinder", "start_saving")
 	local filename = sys.get_save_file("sys_save_load", "gamedata")
+	local screen_data, board_data = nil, nil
+	if l_data.ticking then
+		msg.post("/gui#minefinder", "save_time")
+		screen_data, board_data = {}, {}
+		for r = 1, self.row_size do
+			table.insert(screen_data, {}) table.insert(board_data, {})
+			for c = 1, self.col_size do
+				local observed_tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS)
+				if observed_tile < 14 then
+					screen_data[r][c] = observed_tile
+				else -- if there has been an error (a tile that should not be visible is visible) -- replaced with a flag
+					screen_data[r][c] = 13
+				end
+				board_data[r][c] = self.board[r][c]
+			end
+		end
+	end
+	
 	local props = 
 	{highscore = l_data.highscore, 
+	snake_hs = l_data.s_hs, 
 	custom_hs_list = l_data.custom_hs_list, 
 	diff = l_data.diff,
 	settings = l_data.settings,
 	mine_nums = l_data.mine_nums, size_nums = l_data.size_nums, 
 	theme = self.theme, 
 	anims = self.anims, 
-	door_state = l_data.door_state, key_is_there = l_data.key_is_there}
+	door_state = l_data.door_state, key_is_there = l_data.key_is_there, 
+	screen = screen_data, board = board_data, 
+	game_secs = l_data.seconds, game_mins = l_data.minutes, game_hrs = l_data.hours, game_tick = l_data.ticking}
 	
 	sys.save(filename, {gamedata = props})
 	msg.post("/gui#minefinder", "done_saving")
@@ -23,6 +44,7 @@ local function load_game(self)
 	local data = sys.load(filename)
 	if data.gamedata then
 		l_data.highscore = data.gamedata.highscore
+		l_data.s_hs = data.gamedata.snake_hs
 		l_data.custom_hs_list = data.gamedata.custom_hs_list
 		l_data.diff = data.gamedata.diff
 		l_data.mine_nums = data.gamedata.mine_nums
@@ -32,6 +54,11 @@ local function load_game(self)
 		l_data.key_is_there = data.gamedata.key_is_there
 		self.theme = data.gamedata.theme
 		self.anims = data.gamedata.anims
+		self.saved_screen = data.gamedata.screen
+		self.saved_board = data.gamedata.board
+		self.saved_secs = data.gamedata.game_secs
+		self.saved_mins = data.gamedata.game_mins
+		self.saved_hrs = data.gamedata.game_hrs
 		
 		local num_anims_on = 1
 		local stripped_anims = {}
@@ -45,7 +72,6 @@ local function load_game(self)
 				stripped_anims[i] = false
 			end
 		end
-		
 
 		msg.post(".", "set_theme", {theme = data.gamedata.theme, startup = true})
 		
@@ -54,6 +80,7 @@ local function load_game(self)
 		msg.post("/settings#settings", "load_game")
 		msg.post("/gui#door", "load_game")
 		msg.post("/gui#minefinder", "switch_hs")
+
 	end
 end
 
@@ -90,7 +117,9 @@ local function set_props(self)
 	end
 	
 	msg.post("/gui#minefinder", "set_mines", {mines = self.num_mines})
-	msg.post("/gui#minefinder", "reset", {mines = self.num_mines})
+	if not self.saved_board then
+		msg.post("/gui#minefinder", "reset", {mines = self.num_mines})
+	end
 end
 
 local function shuffle(tbl)
@@ -318,6 +347,7 @@ local function point_in_list(point, list)
 end
 
 local function lose_game(self, mines)
+	l_data.ticking = false
 	save_game(self)
 	msg.post("/gui#minefinder", "full_board_anim", {anim = true})
 	if self.zoomed then
@@ -514,7 +544,7 @@ function on_message(self, message_id, message, sender)
 				for r = 1, 16 do
 					for c = 1, 16 do
 						if tilemap.get_tile("/zoom#board", "layer1", c+1, r+1) ~= 14 then
-							if self.anims["tileflip"] then
+							if self.anims["tileflip"] and not self.first_setup then
 								local props = {final = 0, tile = tilemap.get_tile("/zoom#board", "layer1", c+1, r+1), mini = 0, tile_size = 8, theme_id = theme_to_id(self.theme), removing = 2}
 								local id = factory.create("#flip-factory", vmath.vector3(c*48+24, r*48+24, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
@@ -527,7 +557,7 @@ function on_message(self, message_id, message, sender)
 					end
 				end
 				l_data.swap_board = true
-				if self.anims["tileflip"] then
+				if self.anims["tileflip"] and not self.first_setup then
 					self.swap_board_timer = 0.2
 				else
 					self.swap_board_timer = 0
@@ -537,7 +567,7 @@ function on_message(self, message_id, message, sender)
 				for r = 1, 32 do
 					for c = 1, 32 do
 						if tilemap.get_tile("/zoom#board-mini", "layer1", c+2, r+2) ~= 14 then
-							if self.anims["tileflip"] then
+							if self.anims["tileflip"] and not self.first_setup then
 								local props = {final = 0, tile = tilemap.get_tile("/zoom#board-mini", "layer1", c+2, r+2), mini = 1, tile_size = 4, theme_id = theme_to_id(self.theme), removing = 1}
 								local id = factory.create("#flip-factory", vmath.vector3((c+1)*24+12, (r+1)*24+12, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
@@ -550,7 +580,7 @@ function on_message(self, message_id, message, sender)
 					end
 				end
 				l_data.swap_board = true
-				if self.anims["tileflip"] then
+				if self.anims["tileflip"] and not self.first_setup then
 					self.swap_board_timer = 0.1
 				else
 					self.swap_board_timer = 0
@@ -559,7 +589,7 @@ function on_message(self, message_id, message, sender)
 				for r = 1, self.board_size do
 					for c = 1, self.board_size do
 						if self.board_layout[r][c] == 0 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 14 then
-							if self.anims["tileflip"] then
+							if self.anims["tileflip"] and not self.first_setup then
 								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), removing = 1, set_playing = 1}
 								local id = factory.create("#flip-factory", vmath.vector3((c+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, (r+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
@@ -567,7 +597,7 @@ function on_message(self, message_id, message, sender)
 								tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS, 14)
 							end
 						elseif self.board_layout[r][c] == 1 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 11 then
-							if self.anims["tileflip"] then
+							if self.anims["tileflip"] and not self.first_setup then
 								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), set_playing = 1}
 								local id = factory.create("#flip-factory", vmath.vector3((c+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, (r+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
@@ -580,6 +610,36 @@ function on_message(self, message_id, message, sender)
 				self.board_layout = nil
 			end--
 			self.new_diff = false
+		end
+
+		if self.saved_board then
+			self.game_started = true
+			self.board = {}
+			l_data.seconds = self.saved_secs
+			l_data.minutes = self.saved_mins
+			l_data.hours = self.saved_hrs
+			msg.post("/gui#minefinder", "set_ticking", {ticking = true})
+
+			local flag_count = 0
+			
+			for r = 1, self.row_size do
+				table.insert(self.board, {})
+				for c = 1, self.col_size do
+					tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS, self.saved_screen[r][c])
+					self.board[r][c] = self.saved_board[r][c]
+					if self.saved_screen[r][c] == 13 then
+						flag_count = flag_count + 1
+					end
+				end
+			end
+			msg.post("/gui#minefinder", "set_flags", {num = self.num_mines-flag_count})
+			
+			if self.row_size < 17 and self.col_size < 17 then
+				self.saved_screen = nil
+				self.saved_board = nil
+			end
+		elseif self.first_setup then
+			print("not in a game")
 		end
 
 		if self.first_setup then
@@ -649,6 +709,7 @@ function on_message(self, message_id, message, sender)
 			self.tile_size = 8
 			self.snake_set = true
 			l_data.snake_alive = false
+			l_data.snake_moving = false
 			msg.post(".", "snake_setup")
 		end
 	elseif message_id == hash("add_url") then
@@ -822,6 +883,7 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 		l_data.snake_alive = true
+		l_data.snake_moving = false
 	elseif message_id == hash("zoom") then
 		self.zoomed = message.zoom
 		if self.row_size < 16 then
@@ -1140,6 +1202,7 @@ function on_input(self, action_id, action)
 				end
 				
 				if won_game then
+					l_data.ticking = false
 					save_game(self)
 					if self.zoomed then
 						msg.post("/gui-zoom#zoom", "set_ticking", {ticking = false})
@@ -1228,6 +1291,8 @@ function on_input(self, action_id, action)
 			if self.zoomed then
 				msg.post("/gui-zoom#zoom", "zoom_click")
 			else
+				msg.post(".", "hide_select", {hid = false})
+				sprite.play_flipbook("/selection", "selection")
 				msg.post("/gui#minefinder", "zoom_click")
 			end
 		end
@@ -1243,7 +1308,7 @@ function on_input(self, action_id, action)
 		end
 		if self.snake_speed == 0 and (action_id == hash("u-arr") or action_id == hash("r-arr") or action_id == hash("d-arr")) then
 			self.snake_speed = 10.0
-			-- l_data.snake_alive = true
+			l_data.snake_moving = true
 		end
 	end
 
@@ -1611,7 +1676,7 @@ function update(self, dt) --checkpoint
 				for r = 1, self.board_size do--
 					for c = 1, self.board_size do
 						if self.board_layout[r][c] == 0 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 14 then
-							if self.anims["tileflip"] then
+							if self.anims["tileflip"] and not self.saved_board then
 								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), removing = 1}
 								local id = factory.create("#flip-factory", vmath.vector3((c+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, (r+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
@@ -1619,16 +1684,23 @@ function update(self, dt) --checkpoint
 								tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS, 14)
 							end
 						elseif self.board_layout[r][c] == 1 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 11 then
-							if self.anims["tileflip"] then
+							if self.anims["tileflip"] and not self.saved_board then
 								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
 								local id = factory.create("#flip-factory", vmath.vector3((c+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, (r+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 							else
-								tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS, 11)	
+								if not self.saved_board then
+									tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS, 11)
+								end
 							end
 						end
 					end
 				end--
+
+				if self.saved_board then
+					self.saved_screen = nil
+					self.saved_board = nil
+				end
 				self.swap_board_timer = nil
 				l_data.swap_board = false
 				self.board_layout = nil
@@ -1658,6 +1730,7 @@ function update(self, dt) --checkpoint
 
 			if (tile == 3 or (newhead.x == 18 or newhead.y == 18 or newhead.x == 1 or newhead.y == 1)) and (newhead.x ~= self.snake_segments[1].x or newhead.y ~= self.snake_segments[1].y) then
 				l_data.snake_alive = false
+				l_data.snake_moving = false
 			elseif tile == 12 or (newhead.x == self.food.x and newhead.y == self.food.y) then
 				msg.post("/gui#minefinder", "update_snake_score")
 				self.snake_score = self.snake_score + 1
@@ -1694,6 +1767,7 @@ function update(self, dt) --checkpoint
 					end
 				end
 			else
+				save_game(self)
 				msg.post(".", "purge_instances")
 				for i, s in ipairs(self.snake_segments) do
 					if i < #self.snake_segments then

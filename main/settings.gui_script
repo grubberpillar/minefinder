@@ -149,7 +149,7 @@ function update(self, dt)
 end
 
 function on_input(self, action_id, action)
-	if gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not self.viewing_credits then --settings
+	if gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not self.viewing_credits then --settings toggle
 		if action.pressed and action_id == hash("touch") then --click
 			gui.set(self.nodes.settings_top, "position.y", 0)
 		elseif action.released and action_id == hash("touch") and gui.get(self.nodes.settings_top, "position.y") == 0 then --release
@@ -236,6 +236,7 @@ function on_input(self, action_id, action)
 					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[3][bool_to_num(self.switch_on[i])])
 					gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-lit-"..bool_to_word(self.switch_on[i]))
 				elseif action.released and action_id == hash("touch") and self.node_clicked == i then
+					msg.post("/gui#minefinder", "unsaved")
 					self.switch_on[i] = not self.switch_on[i]
 					l_data.settings[self.switches[i]] = self.switch_on[i]
 

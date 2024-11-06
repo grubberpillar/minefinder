@@ -40,6 +40,7 @@ X windows icon
 - fix no-delay lose animation
 - set screen size on startup
 - windows flag bug
+- UNSAVE study
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
 * skip forward button for lose?

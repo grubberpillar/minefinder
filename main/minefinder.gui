@@ -1978,7 +1978,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "[fill this in]\n"
+  text: "classic\n"
   ""
   font: "pixel-font"
   id: "diff-description"
@@ -8402,7 +8402,7 @@ nodes {
 }
 nodes {
   position {
-    x: 1266.0
+    x: 1254.0
     y: 84.0
     z: 0.0
     w: 1.0
@@ -8433,7 +8433,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "0m"
+  text: "~~0m"
   font: "pixel-font"
   id: "last-save-time"
   xanchor: XANCHOR_NONE
