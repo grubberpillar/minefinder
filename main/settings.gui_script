@@ -192,11 +192,19 @@ function on_input(self, action_id, action)
 		self.e_timer = nil
 	end
 
-	if gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) and not self.quit_timer then --quit game
+	if gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) and not self.quit_timer and not l_data.save_quit then --quit game
 		if action_id == hash("touch") and action.pressed then
 			gui.set(gui.get_node("quit-underline"), "color.w", 0)
 			gui.play_flipbook(gui.get_node("quit-x"), "red-x-lit")
-			self.quit_timer = 0.05
+			
+			if l_data.auto_save then
+				l_data.save_quit = true
+				msg.post("/zoom#minefinder", "save_game_msg")
+			elseif l_data.saved == nil then
+				l_data.save_quit = true
+			else
+				self.quit_timer = 0.05
+			end
 		elseif gui.get(gui.get_node("quit-underline"), "color.w") == 0 then
 			gui.set(gui.get_node("quit-underline"), "color.w", 1)
 		end
@@ -487,7 +495,7 @@ function on_input(self, action_id, action)
 		gui.play_flipbook(self.nodes.credits_door, "credits-door-closed")
 	end
 
-	if action_id == hash("debug") and action.pressed then
+	-- if action_id == hash("debug") and action.pressed then
 		--debug
-	end
+	-- end
 end

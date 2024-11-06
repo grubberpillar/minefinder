@@ -16,6 +16,12 @@ D.diff_temp = nil
 D.settings = {tutorial = true, profanity = false, scroll = true, scroll_slider = 3, sfx_slider = 4}
 
 D.saved = false
+D.save_quit = false
+D.auto_save = true
+
+D.seconds = 0
+D.minutes = 0
+D.hours = 0
 
 D.snake = false
 D.s_hs = 0

@@ -301,9 +301,6 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	set_nodes(self)
 	self.outlines = {node.get.row_OL, node.get.col_OL, node.get.mine_OL}
-	l_data.seconds = 0
-	l_data.minutes = 0
-	l_data.hours = 0
 	self.seconds_storage = -1
 	self.minutes_storage = -1
 	l_data.ticking = false
@@ -727,6 +724,9 @@ function on_message(self, message_id, message)
 		self.save_seconds = nil
 		self.save_minutes = nil
 		self.save_hours = nil
+		if l_data.save_quit then
+			sys.exit(0)
+		end
 	elseif message_id == hash("unsaved") then
 		if l_data.saved == true then
 			gui.play_flipbook(node.get.floppy, "floppy")
