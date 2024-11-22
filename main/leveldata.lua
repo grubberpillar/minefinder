@@ -13,7 +13,8 @@ D.size_nums = {{8, 10, 16, 16, 24, 16}, {8, 10, 16, 30, 30, 16}}
 D.diff = 3
 D.diff_temp = nil
 
-D.settings = {tutorial = true, profanity = false, scroll = true, scroll_slider = 3, sfx_slider = 4}
+D.settings = {tutorial = true, profanity = false, autosave = true, dig_around = false, scroll = true, scroll_slider = 3, sfx_slider = 4, dig_key = true, graffiti = true, splashscreen = true, gamer_lights = true}
+D.more_settings = false
 
 D.saved = false
 D.save_quit = false

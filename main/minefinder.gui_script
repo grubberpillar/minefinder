@@ -175,6 +175,11 @@ local function deselect_txt(self)
 		l_data.snake = false
 		force_reset = true
 	end
+
+	if not l_data.more_settings and gui.get_text(node.get.text[1]) == "12" and gui.get_text(node.get.text[2]) == "24" and gui.get_text(node.get.text[3]) == "227" then
+		l_data.more_settings = true
+		msg.post("/settings#settings", "hidden-settings")
+	end
 	
 	self.text_box = nil
 	if force_reset or l_data.size_nums[1][6] ~= orig_rows or l_data.size_nums[2][6] ~= orig_cols or l_data.mine_nums[6] ~= orig_mines then
@@ -445,6 +450,21 @@ function on_message(self, message_id, message)
 			self.light_on = true
 			gui.play_flipbook(gui.get_node("lightbulb"), "lightbulb-lit")
 			msg.post("/graffiti#graffiti", "enable")
+		end
+
+		if l_data.mine_nums[6] ~= calc_mine_ct(self) then
+			if l_data.mine_nums[6] < 1000 then
+				gui.set(node.get.stars, "position.x", 1212+#(""..l_data.mine_nums[6])*30)
+				if gui.get(node.get.stars, "position.y") ~= 288 then
+					gui.set(node.get.stars, "position.y", 288)
+				end
+			else
+				gui.set(node.get.stars, "position", vmath.vector3(1290, 234, 0))
+			end
+			self.mines_calced = false
+			gui.set(node.get.stars, "color.w", 1)
+		else
+			self.mines_calced = true
 		end
 	elseif message_id == hash("set_ticking") then
 		l_data.ticking = message.ticking

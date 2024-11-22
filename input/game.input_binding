@@ -4,7 +4,7 @@ key_trigger {
 }
 key_trigger {
   input: KEY_D
-  action: "touch"
+  action: "touch-key"
 }
 key_trigger {
   input: KEY_TAB
