@@ -1032,7 +1032,7 @@ function on_input(self, action_id, action)
 				if self.zoomed then
 					tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, 16)
 				end
-				if self.tile_clicked < 11 and l_data.settings.dig_around and (action_id == hash("touch") or (action_id == hash("touch-key") and l_data.settings.dig_key)) and self.shifting then
+				if (self.shifting or (self.quick_click and self.quick_click.r == moveRow_t and self.quick_click.c == moveCol_t)) and self.tile_clicked < 11 and l_data.settings.dig_around and (action_id == hash("touch") or action_id == hash("touch-key") and l_data.settings.dig_key) then
 					self.mines_dug_around_list = {}
 					for i = -1, 1 do
 						for j = -1, 1 do
@@ -1145,6 +1145,9 @@ function on_input(self, action_id, action)
 					end
 					
 				else --NOT first move
+					self.quick_click = {r = moveRow_t, c = moveCol_t}
+					self.quick_click_timer = 0.15
+					
 					if self.tile_clicked == 13 then -- remove flag
 						tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, 11)
 						if self.zoomed then
@@ -1190,7 +1193,7 @@ function on_input(self, action_id, action)
 								tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
 							end
 						end
-					elseif ((action_id == hash("touch") or (action_id == hash("touch-key") and l_data.settings.dig_key)) and self.shifting) and self.tile_clicked < 11 then --dig tiles around tile
+					elseif ((action_id == hash("touch") or (action_id == hash("touch-key") and l_data.settings.dig_key)) and (self.shifting or (self.quick_click and self.quick_click.r == moveRow_t and self.quick_click.c == moveCol_t))) and self.tile_clicked < 11 then --dig tiles around tile
 						tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
 						if self.zoomed then
 							tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
@@ -1337,7 +1340,7 @@ function on_input(self, action_id, action)
 			end
 		end
 
-		if action.pressed and action_id == hash("select-key") and self.shifting and (l_data.size_nums[1][l_data.diff] > 16 or l_data.size_nums[2][l_data.diff] > 16) and not self.full_board_anim and (not self.watch_t_flips or count_t_flips(self) == 0) then
+		if action.pressed and action_id == hash("select-key") and self.shifting and (l_data.size_nums[1][l_data.diff] > 16 or l_data.size_nums[2][l_data.diff] > 16) and not self.full_board_anim and (not self.watch_t_flips or count_t_flips(self) == 0) and not self.tile_clicked then --fullscreen
 			if self.zoomed then
 				msg.post("/gui-zoom#zoom", "zoom_click")
 			else
@@ -1846,4 +1849,14 @@ function update(self, dt) --checkpoint
 			self.flash_timer = self.flash_timer - dt
 		end
 	end
+
+	if self.quick_click_timer then
+		if self.quick_click_timer <= 0 then
+			self.quick_click = nil
+			self.quick_click_timer = nil
+		else
+			self.quick_click_timer = self.quick_click_timer - dt
+		end
+	end
+	
 end
