@@ -79,9 +79,10 @@ function init(self)
 	self.nodes.scroll_ring = gui.get_node("scroll-ring")
 	self.nodes.scroll_ring_hit = gui.get_node("scroll-ring-hit")
 	self.switches = {"tutorial", "profanity", "autosave", "dig", "scroll", "dkey", "graffiti", "splash", "lights"}
-	self.switch_on = {true,false,true,false,true,true,true,true,false}
+	self.switch_on = {true,false,true,true,true,true,true,true,false}
 	self.hover_node = nil
-	self.settings_txt_color = {{vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((105/255), (106/255), (106/255), 1)}, {vmath.vector4((238/255), (146/255), 0, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}, {vmath.vector4((63/255), (63/255), (116/255), 1), vmath.vector4(1, 1, (215/255), 1)}}
+	self.settings_txt_color = {	{{vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((105/255), (106/255), (106/255), 1)}, {vmath.vector4((238/255), (146/255), 0, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}, {vmath.vector4((63/255), (63/255), (116/255), 1), vmath.vector4(1, 1, (215/255), 1)}},
+								{{vmath.vector4((185/255), (142/255), (219/255), 1), vmath.vector4((105/255), (106/255), (106/255), 1)}, {vmath.vector4((243/255), (210/255), 1, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}, {vmath.vector4((63/255), (63/255), (116/255), 1), vmath.vector4(1, 1, 1, 1)}}}
 	self.slider_node_color = {{vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((89/255), (86/255), (82/255), 1)}, {vmath.vector4((238/255), (146/255), 0, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}}
 	self.slider_bar_color = {{vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((89/255), (86/255), (82/255), 1)}, {vmath.vector4((238/255), (146/255), 0, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}}
 	self.e_timer = nil
@@ -92,11 +93,16 @@ function on_message(self, message_id, message, sender)
 		for i,k in ipairs(self.switches) do
 			if self.switch_on[i] ~= l_data.settings[k] then
 				self.switch_on[i] = l_data.settings[k]
-				gui.set_color(gui.get_node(k.."-txt"), self.settings_txt_color[1][bool_to_num(self.switch_on[i])])
+				gui.set_color(gui.get_node(k.."-txt"), self.settings_txt_color[3-bool_to_num(i>6)][1][bool_to_num(self.switch_on[i])])
 				if i == 3 or i == 4 then
-					gui.set_color(gui.get_node(k.."-img"), self.settings_txt_color[1][bool_to_num(self.switch_on[i])])
+					gui.set_color(gui.get_node(k.."-img"), self.settings_txt_color[3-bool_to_num(i>6)][1][bool_to_num(self.switch_on[i])])
 				end
-				gui.play_flipbook(gui.get_node(k.."-light"), "small-light-"..bool_to_word(self.switch_on[i]))
+				if i < 7 or not self.switch_on[i] then
+					gui.play_flipbook(gui.get_node(k.."-light"), "small-light-"..bool_to_word(self.switch_on[i]))
+				else
+					gui.play_flipbook(gui.get_node(k.."-light"), "small-light-"..bool_to_word(self.switch_on[i]).."-purple")
+				end
+				
 				if i == 2 and l_data.graffiti_enabled then
 					msg.post("/graffiti#graffiti", "enable")
 				elseif i == 5 then
@@ -121,6 +127,10 @@ function on_message(self, message_id, message, sender)
 							end
 						end
 					end
+				elseif i == 7 then
+					msg.post("/graffiti#graffiti", "set_graffiti", {alpha = 2-bool_to_num(l_data.settings.graffiti)})
+				elseif i == 9 then
+					msg.post("/graffiti#graffiti", "set_gamer_lights", {alpha = 2-bool_to_num(l_data.settings.gamer_lights)})
 				end
 			end
 		end
@@ -130,9 +140,12 @@ function on_message(self, message_id, message, sender)
 		gui.play_flipbook(gui.get_node("tutorial-light"), "small-light-off")
 	elseif message_id == hash("hidden-settings") then
 		gui.set(gui.get_node("hidden-settings"), "color.w", 1)
-		gui.set(gui.get_node("notif"), "color.w", 1)
-		gui.set(gui.get_node("notif-flash"), "color.w", 1)
-		self.notif_timer = 0.1
+		msg.post("/graffiti#graffiti", "outlet")
+		if not message.startup then
+			gui.set(gui.get_node("notif"), "color.w", 1)
+			gui.set(gui.get_node("notif-flash"), "color.w", 1)
+			self.notif_timer = 0.1
+		end
 	end
 end
 
@@ -204,7 +217,7 @@ function on_input(self, action_id, action)
 		gui.set(self.nodes.settings_top, "position.y", 1)
 	end
 
-	if action.pressed and self.viewing_setttings and action_id == hash("touch") and not self.viewing_credits and not gui.pick_node(gui.get_node("settings"), action.x, action.y) and not gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) and not (self.controls_visible and gui.pick_node(gui.get_node("control-scroll-hit"), action.x, action.y)) then
+	if action.pressed and self.viewing_setttings and action_id == hash("touch") and not self.viewing_credits and not gui.pick_node(gui.get_node("settings"), action.x, action.y) and not gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) and not (self.controls_visible and gui.pick_node(gui.get_node("control-scroll-hit"), action.x, action.y)) and not (l_data.more_settings and gui.pick_node(gui.get_node("hidden-settings"), action.x, action.y)) then
 		gui.set(self.nodes.settings_nodes, "color.w", 0)
 		gui.set_render_order(3)
 		msg.post("/zoom#minefinder", "acquire_input_focus")
@@ -262,24 +275,28 @@ function on_input(self, action_id, action)
 				found_node = true
 				if self.hover_node ~= i then
 					if self.hover_node then
-						gui.set_color(gui.get_node(self.switches[self.hover_node].."-txt"), self.settings_txt_color[1][bool_to_num(self.switch_on[self.hover_node])])
+						gui.set_color(gui.get_node(self.switches[self.hover_node].."-txt"), self.settings_txt_color[3-bool_to_num(self.hover_node>6)][1][bool_to_num(self.switch_on[self.hover_node])])
 						if self.hover_node == 3 or self.hover_node == 4 then
-							gui.set_color(gui.get_node(self.switches[self.hover_node].."-img"), self.settings_txt_color[1][bool_to_num(self.switch_on[self.hover_node])])
+							gui.set_color(gui.get_node(self.switches[self.hover_node].."-img"), self.settings_txt_color[3-bool_to_num(self.hover_node>6)][1][bool_to_num(self.switch_on[self.hover_node])])
 						end
 					end
 					self.hover_node = i
-					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[2][bool_to_num(self.switch_on[i])])
+					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[3-bool_to_num(i>6)][2][bool_to_num(self.switch_on[i])])
 					if i == 3 or i == 4 then
-						gui.set_color(gui.get_node(self.switches[i].."-img"), self.settings_txt_color[2][bool_to_num(self.switch_on[i])])
+						gui.set_color(gui.get_node(self.switches[i].."-img"), self.settings_txt_color[3-bool_to_num(i>6)][2][bool_to_num(self.switch_on[i])])
 					end
 				end
 				if action.pressed and action_id == hash("touch") then
 					self.node_clicked = i
-					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[3][bool_to_num(self.switch_on[i])])
+					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[3-bool_to_num(i>6)][3][bool_to_num(self.switch_on[i])])
 					if i == 3 or i == 4 then
-						gui.set_color(gui.get_node(self.switches[i].."-img"), self.settings_txt_color[3][bool_to_num(self.switch_on[i])])
+						gui.set_color(gui.get_node(self.switches[i].."-img"), self.settings_txt_color[3-bool_to_num(i>6)][3][bool_to_num(self.switch_on[i])])
 					end
-					gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-lit-"..bool_to_word(self.switch_on[i]))
+					if i < 7 or self.switch_on[i] then
+						gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-lit-"..bool_to_word(self.switch_on[i]))
+					else
+						gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-lit-"..bool_to_word(self.switch_on[i]).."-purple")
+					end
 				elseif action.released and action_id == hash("touch") and self.node_clicked == i then
 					msg.post("/gui#minefinder", "unsaved")
 					self.switch_on[i] = not self.switch_on[i]
@@ -317,32 +334,50 @@ function on_input(self, action_id, action)
 						end
 					elseif i == 6 then
 						l_data.settings.dig_key = self.switch_on[i]
+					elseif i == 7 then
+						l_data.settings.graffiti = self.switch_on[i]
+						msg.post("/graffiti#graffiti", "set_graffiti", {alpha = 2-bool_to_num(self.switch_on[i])})
+					elseif i == 9 then
+						l_data.settings.gamer_lights = self.switch_on[i]
+						msg.post("/graffiti#graffiti", "set_gamer_lights", {alpha = 2-bool_to_num(self.switch_on[i])})
 					end
-					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[2][bool_to_num(self.switch_on[i])])
+					gui.set_color(gui.get_node(self.switches[i].."-txt"), self.settings_txt_color[3-bool_to_num(i>6)][2][bool_to_num(self.switch_on[i])])
 					if i == 3 or i == 4 then
-						gui.set_color(gui.get_node(self.switches[i].."-img"), self.settings_txt_color[2][bool_to_num(self.switch_on[i])])
+						gui.set_color(gui.get_node(self.switches[i].."-img"), self.settings_txt_color[3-bool_to_num(i>6)][2][bool_to_num(self.switch_on[i])])
 					end
-					gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-"..bool_to_word(self.switch_on[i]))
+					if i < 7 or not self.switch_on[i] then
+						gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-"..bool_to_word(self.switch_on[i]))
+					else
+						gui.play_flipbook(gui.get_node(self.switches[i].."-light"), "small-light-"..bool_to_word(self.switch_on[i]).."-purple")
+					end
 				end
 				if self.node_clicked and self.node_clicked ~= i then
-					gui.set_color(gui.get_node(self.switches[self.node_clicked].."-txt"), self.settings_txt_color[1][bool_to_num(self.switch_on[self.node_clicked])])
+					gui.set_color(gui.get_node(self.switches[self.node_clicked].."-txt"), self.settings_txt_color[3-bool_to_num(self.node_clicked>6)][1][bool_to_num(self.switch_on[self.node_clicked])])
 					if self.node_clicked == 3 or self.node_clicked == 4 then
-						gui.set_color(gui.get_node(self.switches[self.node_clicked].."-img"), self.settings_txt_color[1][bool_to_num(self.switch_on[self.node_clicked])])
+						gui.set_color(gui.get_node(self.switches[self.node_clicked].."-img"), self.settings_txt_color[3-bool_to_num(self.node_clicked>6)][1][bool_to_num(self.switch_on[self.node_clicked])])
 					end
-					gui.play_flipbook(gui.get_node(self.switches[self.node_clicked].."-light"), "small-light-"..bool_to_word(self.switch_on[self.node_clicked]))
+					if i < 7 or not self.switch_on[self.node_clicked] then
+						gui.play_flipbook(gui.get_node(self.switches[self.node_clicked].."-light"), "small-light-"..bool_to_word(self.switch_on[self.node_clicked]))
+					else
+						gui.play_flipbook(gui.get_node(self.switches[self.node_clicked].."-light"), "small-light-"..bool_to_word(self.switch_on[self.node_clicked]).."-purple")
+					end
 				end
 			end
 		end
 		if not found_node then
 			if self.hover_node then
-				gui.set_color(gui.get_node(self.switches[self.hover_node].."-txt"), self.settings_txt_color[1][bool_to_num(self.switch_on[self.hover_node])])
+				gui.set_color(gui.get_node(self.switches[self.hover_node].."-txt"), self.settings_txt_color[3-bool_to_num(self.hover_node>6)][1][bool_to_num(self.switch_on[self.hover_node])])
 				if self.hover_node == 3 or self.hover_node == 4 then
-					gui.set_color(gui.get_node(self.switches[self.hover_node].."-img"), self.settings_txt_color[1][bool_to_num(self.switch_on[self.hover_node])])
+					gui.set_color(gui.get_node(self.switches[self.hover_node].."-img"), self.settings_txt_color[3-bool_to_num(self.hover_node>6)][1][bool_to_num(self.switch_on[self.hover_node])])
 				end
 				self.hover_node = nil
 			end
 			if self.node_clicked then
-				gui.play_flipbook(gui.get_node(self.switches[self.node_clicked].."-light"), "small-light-"..bool_to_word(self.switch_on[self.node_clicked]))
+				if self.node_clicked < 7 or not self.switch_on[self.node_clicked] then
+					gui.play_flipbook(gui.get_node(self.switches[self.node_clicked].."-light"), "small-light-"..bool_to_word(self.switch_on[self.node_clicked]))
+				else
+					gui.play_flipbook(gui.get_node(self.switches[self.node_clicked].."-light"), "small-light-"..bool_to_word(self.switch_on[self.node_clicked]).."-purple")
+				end
 				self.node_clicked = nil
 			end
 		end

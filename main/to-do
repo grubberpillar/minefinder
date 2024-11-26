@@ -11,9 +11,9 @@ X set difficulty polish
 X flash between themes
 - startup screen
 X x out
-- saving
+X saving
 X midnight
-- ++
+X ++
 X settings
 	X tutorial
 	X profanity
@@ -21,12 +21,13 @@ X settings
 	X scrolling
 	X scroll sensitity
 	X controls
-	- press d to dig
-	- click tile to dig around
+	X press d to dig
+	X click tile to dig around
+	X autosave
 	- ++
 		- startup screen
-		- lights
-		- graffiti
+		X lights
+		X graffiti
 	* reset game files
 	* large vs mini tiles diagram lol
 - snapshot button
@@ -38,12 +39,12 @@ X windows icon
 - zoom while clicking
 - shift click off screen
 - fix no-delay lose animation
-- set screen size on startup
 - windows flag bug
 - UNSAVE study
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
 * skip forward button for lose?
+X set screen size on startup
 X get rid of old explosion scraps
 X setting diff while snaking bug
 X flag and move off tile flags anyway

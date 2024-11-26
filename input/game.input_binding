@@ -98,6 +98,14 @@ key_trigger {
   input: KEY_LALT
   action: "debug2"
 }
+key_trigger {
+  input: KEY_EQUALS
+  action: "plus"
+}
+key_trigger {
+  input: KEY_MINUS
+  action: "minus"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "touch"

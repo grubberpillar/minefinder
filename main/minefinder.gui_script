@@ -82,7 +82,7 @@ local function calc_mine_ct(self)
 	elseif tile_ct < 480 then
 		mine_calc = 21354990+(6.525829-21354990)/(1+(tile_ct/1006912)^(1.61443))
 	else
-		mine_calc = -26.17028 + 0.2123968*tile_ct + 0.0001007804*(tile_ct^(2))
+		mine_calc = 41.19814+0.00625645*tile_ct+0.0002378418*tile_ct^(2)
 	end
 	mine_calc = round(mine_calc)
 	return mine_calc
@@ -323,7 +323,7 @@ function init(self)
 	self.mines_calced = true
 	self.key_color = vmath.vector4(0, 0, 0, 0)
 	self.light_on = false
-	self.editing_dimensions = false
+	self.editing_dimensions = false 
 	msg.post("/graffiti#graffiti", "disable")
 	msg.post("/anims#anims", "disable")
 	msg.post("/gui-zoom#zoom", "disable")
@@ -987,7 +987,7 @@ function on_input(self, action_id, action)
 				end				
 				if action_id == hash("touch") and action.pressed and gui.get_color(self.outlines[i]) ~= vmath.vector4(1, 1, 1, 1) then
 					gui.set_color(self.outlines[i], vmath.vector4(1, 1, 1, 1))
-				elseif action_id == hash("touch") and action.released then
+				elseif action_id == hash("touch") and action.released and gui.get_color(self.outlines[i]) == vmath.vector4(1, 1, 1, 1) then
 					msg.post("/zoom#minefinder", "editing_dimensions", {editing = true})
 					self.editing_dimensions = true
 					self.text_box = i
@@ -1165,10 +1165,10 @@ function on_input(self, action_id, action)
 		print(l_data.seconds)
 	end
 
-	if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 and l_data.saved == false then -- floppy disk click
+	if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 and l_data.saved == false then --floppy disk click
 		if action_id == hash("touch") and action.pressed then
 			gui.set_color(node.get.floppy_lit, vmath.vector4(1, 1, 1, 1))
-		elseif action_id == hash("touch") and action.released then
+		elseif action_id == hash("touch") and action.released and gui.get_color(node.get.floppy_lit) ==  vmath.vector4(1, 1, 1, 1) then
 			gui.set(node.get.floppy_lit, "color.w", 0)
 			l_data.saved = nil
 			msg.post("/zoom#minefinder", "save_game_msg")

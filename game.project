@@ -1,5 +1,6 @@
 [bootstrap]
 main_collection = /main/main.collectionc
+render = /builtins/render/default.renderc
 
 [script]
 shared_state = 1
@@ -13,6 +14,7 @@ input_method = HiddenInputField
 
 [project]
 title = minefinder
+dependencies = 
 
 [graphics]
 default_texture_min_filter = nearest

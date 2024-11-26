@@ -29,7 +29,8 @@ local function save_game(self)
 	settings = l_data.settings, more_settings = l_data.more_settings,
 	mine_nums = l_data.mine_nums, size_nums = l_data.size_nums, 
 	theme = self.theme, 
-	anims = self.anims, 
+	anims = self.anims,
+	scale = self.screen_scale, 
 	door_state = l_data.door_state, key_is_there = l_data.key_is_there, 
 	screen = screen_data, board = board_data, 
 	game_secs = l_data.seconds, game_mins = l_data.minutes, game_hrs = l_data.hours, game_tick = l_data.ticking}
@@ -50,9 +51,10 @@ local function load_game(self)
 		l_data.mine_nums = data.gamedata.mine_nums
 		l_data.size_nums = data.gamedata.size_nums
 		l_data.settings = data.gamedata.settings
-		l_data.more_settings = false --data.gamedata.more_settings
+		l_data.more_settings = data.gamedata.more_settings
 		l_data.door_state = data.gamedata.door_state
 		l_data.key_is_there = data.gamedata.key_is_there
+		self.screen_scale = data.gamedata.scale
 		self.theme = data.gamedata.theme
 		self.anims = data.gamedata.anims
 		self.saved_screen = data.gamedata.screen
@@ -82,7 +84,7 @@ local function load_game(self)
 		msg.post("/gui#door", "load_game")
 		msg.post("/gui#minefinder", "switch_hs")
 		if l_data.more_settings then
-			msg.post("/settings#settings", "hidden-settings")
+			msg.post("/settings#settings", "hidden-settings", {startup = true})
 		end
 	end
 end
@@ -395,6 +397,14 @@ local function lose_game(self, mines)
 		self.timer = 2
 	end
 	self.mine_i = 1
+	if self.anims["timer"] == false then
+		self.force_timer = true
+		if self.mini_offS == 0 then
+			self.timer = 1.8
+		else
+			self.timer = 0.75
+		end
+	end
 	if self.flashing then
 		deflash(self)
 	end
@@ -412,6 +422,16 @@ local function window_callback(self, event, data)
 		l_data.projected_height = l_data.screen_size.y / zoom
 		l_data.xoffset = -(l_data.projected_width - l_data.screen_ratio.x) / 2
 		l_data.yoffset = -(l_data.projected_height - l_data.screen_ratio.y) / 2
+
+		local win_width, win_height = window.get_size()
+		win_width, win_height = win_width/2, win_height/2
+		if not (win_width%348 == 0 and win_height%216 == 0) then
+			if win_height < win_width then
+				self.screen_scale = math.floor(win_width/348)+0.5
+			else
+				self.screen_scale = math.floor(win_height/216)+0.5
+			end
+		end
 	end
 end
 
@@ -431,7 +451,11 @@ go.property("midnight_theme_mini", resource.tile_source("/main/minefinder-mini-m
 function init(self)
 	self.anim_vars = {"flag_place", "flag_remove", "flag_correct", "flag_incorrect", "explosion", "timer", "tileflip", "ui", "flip_bg", "faster_flip"}
 
-	-- load_game(self)
+	-- load_game(self)	
+	
+	self.screen_scale = self.screen_scale or 3
+	msg.post("@render:", "resize", { width = 1392*(self.screen_scale/4), height = 864*(self.screen_scale/4) } )
+	
 	msg.post("/gui#minefinder", "done_saving")
 	window.set_listener(window_callback)
 	l_data.screen_size = {x = nil, y = nil}
@@ -524,6 +548,7 @@ function on_message(self, message_id, message, sender)
 		self.game_started = false
 		self.zoom_offS = {r = 0, c = 0}
 		self.zoom_offS_edited = false
+		self.force_timer = false
 
 		if self.new_diff and not l_data.swap_board and not message.mines_only then
 			self.watch_t_flips = true
@@ -951,6 +976,30 @@ end
 function on_input(self, action_id, action)
 	local mouse_x = (action.x / l_data.screen_ratio.x) * l_data.projected_width + l_data.xoffset
 	local mouse_y = (action.y / l_data.screen_ratio.y) * l_data.projected_height + l_data.yoffset
+
+	if action.pressed and action_id == hash("minus") then
+		if self.screen_scale > 1 then
+			if math.floor(self.screen_scale) == self.screen_scale then
+				self.screen_scale = self.screen_scale - 1
+			elseif self.screen_scale > 6 then
+				self.screen_scale = 5
+			else
+				self.screen_scale = math.floor(self.screen_scale) 
+			end
+			msg.post("@render:", "resize", { width = 348*(self.screen_scale), height = 216*(self.screen_scale) } )
+		end
+	end
+
+	if action.pressed and action_id == hash("plus") then
+		if self.screen_scale < 5 then
+			if math.floor(self.screen_scale) == self.screen_scale then
+				self.screen_scale = self.screen_scale + 1
+			else
+				self.screen_scale = math.floor(self.screen_scale)+1
+			end
+			msg.post("@render:", "resize", { width = 348*(self.screen_scale), height = 216*(self.screen_scale) } )
+		end
+	end
 	
 	if not l_data.snake then
 		if action_id == hash("shift") then
@@ -1515,9 +1564,8 @@ function on_input(self, action_id, action)
 	-- 	save_game(self)
 	-- end
 
-	if action_id == hash("debug2") and action.pressed then
-		print(l_data.settings.tutorial)
-	end
+	-- if action_id == hash("debug2") and action.pressed then
+	-- end
 end
 
 
@@ -1525,7 +1573,7 @@ end
 -- __ __    ___     ___       ___     _____    _____
 --|  |  |  |  _ \  |    \    /   \   |_   _|  |  ___|
 --|  |  |  |  __/  |  |  |  | /_\ |    | |    |  __|
--- \___/   |_|     |____/   |_| |_|    |_|    |_____|
+-- \___/   |_|     |____/   |_|‾|_|    |_|    |_____|
 
 function update(self, dt) --checkpoint
 	if not l_data.snake then
@@ -1536,9 +1584,12 @@ function update(self, dt) --checkpoint
 		
 		-- print(self.timer, self.board[1], #self.to_flip)
 		if self.timer and (self.board[1] or #self.to_flip > 0) then
-			while (self.timer <= 0 or (self.anims["timer"] == false and not self.flashing) or self.anim_skip == true) and (self.flashing or (self.mine_locs and self.mine_i <= #self.mine_locs) or #self.to_flip > 0) do
+			while (self.timer <= 0 or (self.anims["timer"] == false and not self.flashing and not self.force_timer) or self.anim_skip == true) and (self.flashing or (self.mine_locs and self.mine_i <= #self.mine_locs) or #self.to_flip > 0) do
 				-- print("acting")
 				-- tilemap.set_tile("/zoom#board", "layer1", moveCol+1, moveRow+1, self.board[moveRow][moveCol])
+				if self.force_timer then
+					self.force_timer = false
+				end
 				if self.flashing then
 					deflash(self)
 				elseif #self.to_flip > 0 then

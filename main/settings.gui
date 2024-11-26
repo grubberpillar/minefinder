@@ -3956,7 +3956,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "sprites/small-light-off"
+  texture: "sprites/small-light-on"
   id: "dig-light"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -4328,9 +4328,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.412
-    y: 0.416
-    z: 0.416
+    x: 0.875
+    y: 0.443
+    z: 0.149
     w: 1.0
   }
   type: TYPE_TEXT
@@ -4395,9 +4395,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.412
-    y: 0.416
-    z: 0.416
+    x: 0.875
+    y: 0.443
+    z: 0.149
     w: 1.0
   }
   type: TYPE_BOX

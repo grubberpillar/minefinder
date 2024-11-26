@@ -7,13 +7,13 @@ D.header = {"-TINY-", "-EASY-", "-NORMAL-", "-HARD-", "-INSANE-", "-CUSTOM-"}
 
 D.description = {"pipsqueak mode", "OG minefinder size", "classic", "~get hard stay hard", "patience is ~~~~~~~~~~~~~~~", "~[max: 32x32]"}
 
-D.mine_nums = {10, 14, 40, 99, 179, 40}
+D.mine_nums = {10, 14, 40, 99, 169, 40}
 D.size_nums = {{8, 10, 16, 16, 24, 16}, {8, 10, 16, 30, 30, 16}}
 
 D.diff = 3
 D.diff_temp = nil
 
-D.settings = {tutorial = true, profanity = false, autosave = true, dig_around = false, scroll = true, scroll_slider = 3, sfx_slider = 4, dig_key = true, graffiti = true, splashscreen = true, gamer_lights = true}
+D.settings = {tutorial = true, profanity = false, autosave = true, dig_around = true, scroll = true, scroll_slider = 3, sfx_slider = 4, dig_key = true, graffiti = true, splashscreen = true, gamer_lights = false}
 D.more_settings = false
 
 D.saved = false
