@@ -98,6 +98,24 @@ local function zoom_in(self)
 	msg.post("/zoom#minefinder", "zoom", {zoom = true})
 end
 
+local function retry_but_on(self, action, action_id)
+	if action.pressed and (action_id == hash("touch") or action_id == hash("retry")) then
+		gui.set(node.get.retry, "position.y", -3)
+	elseif action.released and (action_id == hash("touch") or action_id == hash("retry")) and gui.get(node.get.retry, "position.y") == -3 then
+		gui.set(node.get.retry, "position.y", 3)
+		msg.post("/zoom#minefinder", "reset")
+	elseif gui.get_color(node.get.retry_lit) == vmath.vector4((63/255), (63/255), (116/255), 1) and action_id ~= hash("retry") then
+		msg.post("/zoom#minefinder", "hide_select", {hid = true})
+		gui.set_color(node.get.retry_lit, vmath.vector4((203/255), (219/255), (252/255), 1))
+	end
+end
+
+local function retry_but_off(self, action, action_id)
+	gui.set_color(node.get.retry_lit, vmath.vector4((63/255), (63/255), (116/255), 1))
+	msg.post("/zoom#minefinder", "hide_select", {hid = false})
+	gui.set(node.get.retry, "position.y", 3)
+end
+
 local function deselect_txt(self)
 	local orig_rows = l_data.size_nums[1][6]
 	local orig_cols = l_data.size_nums[2][6]
@@ -250,6 +268,8 @@ local function nochange(self)
 end
 
 local function set_nodes(self)
+	node.get.input_box_top = gui.get_node("input-box-top")
+	node.get.input_box_bot = gui.get_node("input-box-bot")
 	node.get.retry_hit = gui.get_node("retry")
 	node.get.retry = gui.get_node("retry-bg")
 	node.get.retry_lit = gui.get_node("retry-shadow")
@@ -305,6 +325,7 @@ function init(self)
 	gui.set_render_order(0)
 	msg.post(".", "acquire_input_focus")
 	set_nodes(self)
+	self.input_override = true
 	self.outlines = {node.get.row_OL, node.get.col_OL, node.get.mine_OL}
 	self.seconds_storage = -1
 	self.minutes_storage = -1
@@ -763,268 +784,373 @@ end
 
 
 function on_input(self, action_id, action)
-	if (gui.pick_node(node.get.retry_hit, action.x, action.y) and not self.more_anims) or (action_id == hash("retry")) then -- retry button
-		if action.pressed and (action_id == hash("touch") or action_id == hash("retry")) then
-			gui.set(node.get.retry, "position.y", -3)
-		elseif action.released and (action_id == hash("touch") or action_id == hash("retry")) and gui.get(node.get.retry, "position.y") == -3 then
-			gui.set(node.get.retry, "position.y", 3)
-			msg.post("/zoom#minefinder", "reset")
-		elseif gui.get_color(node.get.retry_lit) == vmath.vector4((63/255), (63/255), (116/255), 1) and action_id ~= hash("retry") then
-			msg.post("/zoom#minefinder", "hide_select", {hid = true})
-			gui.set_color(node.get.retry_lit, vmath.vector4((203/255), (219/255), (252/255), 1))
-		end
-	elseif gui.get_color(node.get.retry_lit) == vmath.vector4((203/255), (219/255), (252/255), 1) then
-		gui.set_color(node.get.retry_lit, vmath.vector4((63/255), (63/255), (116/255), 1))
-		msg.post("/zoom#minefinder", "hide_select", {hid = false})
-		gui.set(node.get.retry, "position.y", 3)
-	end
-
-	if gui.pick_node(node.get.more_box, action.x, action.y) then -- more anims button
-		if gui.get_color(node.get.more_lit) ~= vmath.vector4(0, 0, 0, 0.2) then
-			gui.set_color(node.get.more_lit, vmath.vector4(0, 0, 0, 0.2))
-			msg.post("/zoom#minefinder", "hide_select", {hid = true})
-		end
-		if action_id == hash("touch") and action.pressed and gui.get_color(node.get.more_down) ~= vmath.vector4(1, 1, 1, 1) then
-			gui.set_color(node.get.more_down, vmath.vector4(1, 1, 1, 1))
-		elseif action_id == hash("touch") and action.released and gui.get_color(node.get.more_down) ~= vmath.vector4(0, 0, 0, 0) then
-			gui.set_color(node.get.more_down, vmath.vector4(0, 0, 0, 0))
-			self.more_anims = not self.more_anims
-			msg.post("/gui#door", "more_anims?", {anims = self.more_anims})
-			msg.post("/zoom#minefinder", "more_anims", {shown = self.more_anims})
-			if self.more_anims then
-				gui.set_color(node.get.more_symbol, vmath.vector4(0, 0, 0, 0))
-				msg.post("/anims#anims", "enable")
-			else
-				gui.set_color(node.get.more_symbol, vmath.vector4(1, 1, 1, 1))
-				msg.post("/anims#anims", "disable")
+	if gui.pick_node(node.get.input_box_top, action.x, action.y) or self.input_override then -- input top half
+		if gui.pick_node(node.get.more_box, action.x, action.y) then -- more anims button
+			self.input_override = true
+			if gui.get_color(node.get.more_lit) ~= vmath.vector4(0, 0, 0, 0.2) then
+				gui.set_color(node.get.more_lit, vmath.vector4(0, 0, 0, 0.2))
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
 			end
-		end 
-	else
-		if gui.get_color(node.get.more_lit) ~= vmath.vector4(0, 0, 0, 0) then
-			gui.set_color(node.get.more_lit, vmath.vector4(0, 0, 0, 0))
-			msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			if action_id == hash("touch") and action.pressed and gui.get_color(node.get.more_down) ~= vmath.vector4(1, 1, 1, 1) then
+				gui.set_color(node.get.more_down, vmath.vector4(1, 1, 1, 1))
+			elseif action_id == hash("touch") and action.released and gui.get_color(node.get.more_down) ~= vmath.vector4(0, 0, 0, 0) then
+				gui.set_color(node.get.more_down, vmath.vector4(0, 0, 0, 0))
+				self.more_anims = not self.more_anims
+				msg.post("/gui#door", "more_anims?", {anims = self.more_anims})
+				msg.post("/zoom#minefinder", "more_anims", {shown = self.more_anims})
+				if self.more_anims then
+					gui.set_color(node.get.more_symbol, vmath.vector4(0, 0, 0, 0))
+					msg.post("/anims#anims", "enable")
+				else
+					gui.set_color(node.get.more_symbol, vmath.vector4(1, 1, 1, 1))
+					msg.post("/anims#anims", "disable")
+				end
+			end 
+		else
+			if gui.get_color(node.get.more_lit) ~= vmath.vector4(0, 0, 0, 0) then
+				gui.set_color(node.get.more_lit, vmath.vector4(0, 0, 0, 0))
+				msg.post("/zoom#minefinder", "hide_select", {hid = false})
+				self.input_override = false
+			end
+			if gui.get_color(node.get.more_down) ~= vmath.vector4(0, 0, 0, 0) then
+				gui.set_color(node.get.more_down, vmath.vector4(0, 0, 0, 0))
+				self.input_override = false
+			end
 		end
-		if gui.get_color(node.get.more_down) ~= vmath.vector4(0, 0, 0, 0) then
-			gui.set_color(node.get.more_down, vmath.vector4(0, 0, 0, 0))
-		end
-	end
 
 
-	if gui.pick_node(node.get.anim_sel, action.x, action.y) then --switch click
-		if gui.get_color(node.get.anim_sel_bg) ~= vmath.vector4(1, 1, 1, 1) then
-			msg.post("/zoom#minefinder", "hide_select", {hid = true})
-			gui.set_color(node.get.anim_sel_bg, vmath.vector4(1, 1, 1, 1))
-		end
-		if not self.editing_dimensions and action_id == hash("touch") and action.pressed and gui.get_color(node.get.anim_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
-			gui.set_color(node.get.anim_sel_light, vmath.vector4(1, 1, 1, 1))
-		elseif action_id == hash("touch") and action.released and gui.get_color(node.get.anim_sel_light) == vmath.vector4(1, 1, 1, 1) then
+		if gui.pick_node(node.get.anim_sel, action.x, action.y) then --switch click
+			self.input_override = true
+			if gui.get_color(node.get.anim_sel_bg) ~= vmath.vector4(1, 1, 1, 1) then
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
+				gui.set_color(node.get.anim_sel_bg, vmath.vector4(1, 1, 1, 1))
+			end
+			if not self.editing_dimensions and action_id == hash("touch") and action.pressed and gui.get_color(node.get.anim_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
+				gui.set_color(node.get.anim_sel_light, vmath.vector4(1, 1, 1, 1))
+			elseif action_id == hash("touch") and action.released and gui.get_color(node.get.anim_sel_light) == vmath.vector4(1, 1, 1, 1) then
+				if gui.get_color(node.get.anim_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
+					gui.set_color(node.get.anim_sel_light, vmath.vector4(0, 0, 0, 0))
+				end
+				
+				if self.anim_s_state == 9 then
+					sprite.play_flipbook("/anim-switch", "switch-off")
+					self.anim_s_state = 1
+					msg.post("/zoom#minefinder", "set_anims", {anims = false})
+					self.anims_on = false
+					self.gui_anims = false
+					msg.post("/gui#door", "gui_anims", {on = false})
+					msg.post("/zoom#minefinder", "purge_instances")
+				elseif self.anim_s_state == 1 then
+					sprite.play_flipbook("/anim-switch", "switch-on")
+					self.anim_s_state = 9
+					msg.post("/zoom#minefinder", "set_anims", {anims = true})
+					self.anims_on = true
+					self.gui_anims = true
+					msg.post("/gui#door", "gui_anims", {on = true})
+				elseif not self.prefer_switch_up then
+					self.anim_s_state = 1
+					sprite.play_flipbook("/anim-switch", "switch-1")
+					msg.post("/zoom#minefinder", "set_anims", {anims = false})
+					self.anims_on = false
+					self.gui_anims = false
+					msg.post("/gui#door", "gui_anims", {on = false})
+					msg.post("/zoom#minefinder", "purge_instances")
+				else
+					if self.anim_s_state < 2 then
+						sprite.play_flipbook("/anim-switch", "switch-on")
+					elseif self.anim_s_state < 5 then
+						sprite.play_flipbook("/anim-switch", "switch-on-mid")
+					elseif self.anim_s_state < 8 then
+						sprite.play_flipbook("/anim-switch", "switch-on-end")
+					else
+						sprite.play_flipbook("/anim-switch", "switch-9")
+					end
+					self.anim_s_state = 9
+					msg.post("/zoom#minefinder", "set_anims", {anims = true})
+					self.anims_on = true
+					self.gui_anims = true
+					msg.post("/gui#door", "gui_anims", {on = true})
+				end
+				-- self.anims_on = not self.anims_on
+				msg.post("/anims#anims", "switch_clicked", {setting = self.anims_on})
+			end
+		else
+			if gui.get_color(node.get.anim_sel_bg) ~= vmath.vector4(0, 0, 0, 0) then
+				msg.post("/zoom#minefinder", "hide_select", {hid = false})
+				gui.set_color(node.get.anim_sel_bg, vmath.vector4(0, 0, 0, 0))
+				self.input_override = false
+			end
 			if gui.get_color(node.get.anim_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
 				gui.set_color(node.get.anim_sel_light, vmath.vector4(0, 0, 0, 0))
+				self.input_override = false
 			end
-			
-			if self.anim_s_state == 9 then
-				sprite.play_flipbook("/anim-switch", "switch-off")
-				self.anim_s_state = 1
-				msg.post("/zoom#minefinder", "set_anims", {anims = false})
-				self.anims_on = false
-				self.gui_anims = false
-				msg.post("/gui#door", "gui_anims", {on = false})
-				msg.post("/zoom#minefinder", "purge_instances")
-			elseif self.anim_s_state == 1 then
-				sprite.play_flipbook("/anim-switch", "switch-on")
-				self.anim_s_state = 9
-				msg.post("/zoom#minefinder", "set_anims", {anims = true})
-				self.anims_on = true
-				self.gui_anims = true
-				msg.post("/gui#door", "gui_anims", {on = true})
-			elseif not self.prefer_switch_up then
-				self.anim_s_state = 1
-				sprite.play_flipbook("/anim-switch", "switch-1")
-				msg.post("/zoom#minefinder", "set_anims", {anims = false})
-				self.anims_on = false
-				self.gui_anims = false
-				msg.post("/gui#door", "gui_anims", {on = false})
-				msg.post("/zoom#minefinder", "purge_instances")
-			else
-				if self.anim_s_state < 2 then
-					sprite.play_flipbook("/anim-switch", "switch-on")
-				elseif self.anim_s_state < 5 then
-					sprite.play_flipbook("/anim-switch", "switch-on-mid")
-				elseif self.anim_s_state < 8 then
-					sprite.play_flipbook("/anim-switch", "switch-on-end")
-				else
-					sprite.play_flipbook("/anim-switch", "switch-9")
-				end
-				self.anim_s_state = 9
-				msg.post("/zoom#minefinder", "set_anims", {anims = true})
-				self.anims_on = true
-				self.gui_anims = true
-				msg.post("/gui#door", "gui_anims", {on = true})
-			end
-			-- self.anims_on = not self.anims_on
-			msg.post("/anims#anims", "switch_clicked", {setting = self.anims_on})
 		end
-	else
-		if gui.get_color(node.get.anim_sel_bg) ~= vmath.vector4(0, 0, 0, 0) then
-			msg.post("/zoom#minefinder", "hide_select", {hid = false})
-			gui.set_color(node.get.anim_sel_bg, vmath.vector4(0, 0, 0, 0))
-		end
-		if gui.get_color(node.get.anim_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
-			gui.set_color(node.get.anim_sel_light, vmath.vector4(0, 0, 0, 0))
-		end
-	end
 
-	if gui.pick_node(node.get.theme_sel, action.x, action.y)  and not self.more_anims then --theme switch click
-		if gui.get_color(node.get.theme_sel_bg) ~= vmath.vector4(1, 1, 1, 1) then
-			gui.set_color(node.get.theme_sel_bg, vmath.vector4(1, 1, 1, 1))
-			msg.post("/zoom#minefinder", "hide_select", {hid = true})
-		end
-		if action_id == hash("touch") and action.pressed and gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
-			gui.set_color(node.get.theme_sel_light, vmath.vector4(1, 1, 1, 1))
-		elseif action_id == hash("touch") and action.released and gui.get(node.get.theme_sel_light, "color.w") == 1 then
+		if gui.pick_node(node.get.theme_sel, action.x, action.y)  and not self.more_anims then --theme switch click
+			self.input_override = true
+			if gui.get_color(node.get.theme_sel_bg) ~= vmath.vector4(1, 1, 1, 1) then
+				gui.set_color(node.get.theme_sel_bg, vmath.vector4(1, 1, 1, 1))
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
+			end
+			if action_id == hash("touch") and action.pressed and gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
+				gui.set_color(node.get.theme_sel_light, vmath.vector4(1, 1, 1, 1))
+			elseif action_id == hash("touch") and action.released and gui.get(node.get.theme_sel_light, "color.w") == 1 then
+				if gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
+					gui.set_color(node.get.theme_sel_light, vmath.vector4(0, 0, 0, 0))
+				end
+
+				if self.theme == "dark" then
+					if self.gui_anims then
+						sprite.play_flipbook("/light-switch", "light-switch-on")
+					else
+						sprite.play_flipbook("/light-switch", "light-switch5")
+					end
+					self.theme = "light"
+					msg.post("/zoom#minefinder", "set_theme", {theme = "light"})
+				elseif self.theme == "light" then
+					if self.gui_anims then
+						sprite.play_flipbook("/light-switch", "light-switch-off")
+					else
+						sprite.play_flipbook("/light-switch", "light-switch1")
+					end
+					self.theme = "dark"
+					msg.post("/zoom#minefinder", "set_theme", {theme = "dark"})
+				elseif self.theme == "midnight" then
+					self.light_on = not self.light_on
+					midnight_switch_off(self)
+				end
+			end
+		else
+			if gui.get_color(node.get.theme_sel_bg) ~= vmath.vector4(0, 0, 0, 0) then
+				gui.set_color(node.get.theme_sel_bg, vmath.vector4(0, 0, 0, 0))
+				msg.post("/zoom#minefinder", "hide_select", {hid = false})
+				self.input_override = false
+			end
 			if gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
 				gui.set_color(node.get.theme_sel_light, vmath.vector4(0, 0, 0, 0))
+				self.input_override = false
 			end
+		end
 
-			if self.theme == "dark" then
+		if not self.more_anims and gui.get(node.get.set_check, "color.w") == 1 and gui.pick_node(node.get.set_check_hit, action.x, action.y) then --set new diff (check)
+			self.input_override = true
+			if action_id == hash("touch") and action.pressed then
+				gui.set(node.get.set_check_lit, "color.w", 1)
+			elseif action_id == hash("touch") and action.released then
+				gui.set(node.get.set_check_lit, "color.w", 0)
+				gui.set(node.get.set_check, "color.w", 0)
+
+				if l_data.diff_temp == 6 then
+					gui.set_color(node.get.row_OL, vmath.vector4((34/255), (32/255), (52/255), 1))
+					gui.set_color(node.get.col_OL, vmath.vector4((34/255), (32/255), (52/255), 1))
+					gui.set_color(node.get.mine_OL, vmath.vector4((34/255), (32/255), (52/255), 1))
+				end
+				
 				if self.gui_anims then
-					sprite.play_flipbook("/light-switch", "light-switch-on")
+					gui.play_flipbook(node.get.cancel_x, "x-disappear", hide_x)
 				else
-					sprite.play_flipbook("/light-switch", "light-switch5")
+					gui.set(node.get.cancel_x, "color.w", 0)
 				end
-				self.theme = "light"
-				msg.post("/zoom#minefinder", "set_theme", {theme = "light"})
-			elseif self.theme == "light" then
-				if self.gui_anims then
-					sprite.play_flipbook("/light-switch", "light-switch-off")
-				else
-					sprite.play_flipbook("/light-switch", "light-switch1")
+				set_diff_details_blue(self, false)
+				if l_data.diff_temp == 5 and l_data.key_is_there then
+					msg.post("/gui#door", "key_color", {color = vmath.vector4(1, 1, 1, 1)})
+					self.key_color = vmath.vector4(1, 1, 1, 1)
 				end
-				self.theme = "dark"
-				msg.post("/zoom#minefinder", "set_theme", {theme = "dark"})
-			elseif self.theme == "midnight" then
-				self.light_on = not self.light_on
-				midnight_switch_off(self)
-			end
-		end
-	else
-		if gui.get_color(node.get.theme_sel_bg) ~= vmath.vector4(0, 0, 0, 0) then
-			gui.set_color(node.get.theme_sel_bg, vmath.vector4(0, 0, 0, 0))
-			msg.post("/zoom#minefinder", "hide_select", {hid = false})
-		end
-		if gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
-			gui.set_color(node.get.theme_sel_light, vmath.vector4(0, 0, 0, 0))
-		end
-	end
-
-	if not self.more_anims and gui.get(node.get.set_check, "color.w") == 1 and gui.pick_node(node.get.set_check_hit, action.x, action.y) then --set new diff (check)
-		if action_id == hash("touch") and action.pressed then
-			gui.set(node.get.set_check_lit, "color.w", 1)
-		elseif action_id == hash("touch") and action.released then
-			gui.set(node.get.set_check_lit, "color.w", 0)
-			gui.set(node.get.set_check, "color.w", 0)
-
-			if l_data.diff_temp == 6 then
-				gui.set_color(node.get.row_OL, vmath.vector4((34/255), (32/255), (52/255), 1))
-				gui.set_color(node.get.col_OL, vmath.vector4((34/255), (32/255), (52/255), 1))
-				gui.set_color(node.get.mine_OL, vmath.vector4((34/255), (32/255), (52/255), 1))
-			end
-			
-			if self.gui_anims then
-				gui.play_flipbook(node.get.cancel_x, "x-disappear", hide_x)
-			else
-				gui.set(node.get.cancel_x, "color.w", 0)
-			end
-			set_diff_details_blue(self, false)
-			if l_data.diff_temp == 5 and l_data.key_is_there then
-				msg.post("/gui#door", "key_color", {color = vmath.vector4(1, 1, 1, 1)})
-				self.key_color = vmath.vector4(1, 1, 1, 1)
-			end
-			l_data.snake = false
-			gui.set(gui.get_node("post-it"), "color.w", 0)
-			msg.post("/zoom#minefinder", "set_diff")
-			msg.post("/zoom#minefinder", "reset", {change_diff = true})
-			msg.post("/zoom#minefinder", "hide_select", {hid = false})
-		elseif gui.get(node.get.set_check_lit, "color.w") == 0 then
-			gui.set(node.get.set_check_lit, "color.w", 0.4)
-			msg.post("/zoom#minefinder", "hide_select", {hid = true})
-		end
-	elseif gui.get(node.get.set_check_lit, "color.w") ~= 0 then
-		gui.set(node.get.set_check_lit, "color.w", 0)
-		msg.post("/zoom#minefinder", "hide_select", {hid = false})
-	end
-
-
-	if not self.more_anims and gui.get(node.get.cancel_x, "color.w") == 1 and gui.pick_node(node.get.cancel_x_hit, action.x, action.y) then --cancel new diff (x)
-		if action_id == hash("touch") and action.pressed then
-			gui.set(node.get.cancel_x_lit, "color.w", 1)
-		elseif action_id == hash("touch") and action.released then
-			gui.set(node.get.cancel_x_lit, "color.w", 0)
-			gui.set(node.get.cancel_x, "color.w", 0)
-			l_data.diff_temp = l_data.diff
-			msg.post("/zoom#minefinder", "set_diff")
-			msg.post(".", "switch_hs")
-			msg.post("/zoom#minefinder", "hide_select", {hid = false})
-		elseif gui.get(node.get.cancel_x_lit, "color.w") == 0 then
-			gui.set(node.get.cancel_x_lit, "color.w", 0.4)
-			msg.post("/zoom#minefinder", "hide_select", {hid = true})
-		end
-	elseif gui.get(node.get.cancel_x_lit, "color.w") ~= 0 then
-		gui.set(node.get.cancel_x_lit, "color.w", 0)
-		msg.post("/zoom#minefinder", "hide_select", {hid = false})
-	end
-
-	if not self.more_anims and l_data.diff == 6 and l_data.diff_temp == nil then -- custom text boxes
-		for i = 1, 3 do
-			if gui.pick_node(self.outlines[i], action.x, action.y) then 
-				if gui.get_color(self.outlines[i]) == vmath.vector4((34/255), (32/255), (52/255), 1) then
-					msg.post("/zoom#minefinder", "hide_select", {hid = true})
-					gui.set_color(self.outlines[i], vmath.vector4((63/255), (63/255), (116/255), 1))
-				end
-				if gui.get_color(self.outlines[i]) == vmath.vector4((107/255), (160/255), (255/255), 1) then
-					msg.post("/zoom#minefinder", "hide_select", {hid = true})
-					gui.set_color(self.outlines[i], vmath.vector4((203/255), (219/255), (252/255), 1))
-				end				
-				if action_id == hash("touch") and action.pressed and gui.get_color(self.outlines[i]) ~= vmath.vector4(1, 1, 1, 1) then
-					gui.set_color(self.outlines[i], vmath.vector4(1, 1, 1, 1))
-				elseif action_id == hash("touch") and action.released and gui.get_color(self.outlines[i]) == vmath.vector4(1, 1, 1, 1) then
-					msg.post("/zoom#minefinder", "editing_dimensions", {editing = true})
-					self.editing_dimensions = true
-					self.text_box = i
-					gui.set_color(self.outlines[i], vmath.vector4((203/255), (219/255), (252/255), 1))
-					gui.set_color(node.get.text[self.text_box], vmath.vector4((172/255), (204/255), (255/255), 1))
-				end
-			elseif gui.get_color(self.outlines[i]) ~= vmath.vector4((34/255), (32/255), (52/255), 1) and gui.get_color(self.outlines[i]) ~= vmath.vector4((107/255), (160/255), (255/255), 1) then
-				if i == self.text_box then
-					gui.set_color(self.outlines[i], vmath.vector4((107/255), (160/255), (255/255), 1))
-				else
-					gui.set_color(self.outlines[i], vmath.vector4((34/255), (32/255), (52/255), 1))
-				end
+				l_data.snake = false
+				gui.set(gui.get_node("post-it"), "color.w", 0)
+				msg.post("/zoom#minefinder", "set_diff")
+				msg.post("/zoom#minefinder", "reset", {change_diff = true})
 				msg.post("/zoom#minefinder", "hide_select", {hid = false})
-			elseif action_id == hash("touch") and action.pressed and i == self.text_box then
+			elseif gui.get(node.get.set_check_lit, "color.w") == 0 then
+				gui.set(node.get.set_check_lit, "color.w", 0.4)
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
+			end
+		elseif gui.get(node.get.set_check_lit, "color.w") ~= 0 then
+			gui.set(node.get.set_check_lit, "color.w", 0)
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			self.input_override = false
+		end
+
+
+		if not self.more_anims and gui.get(node.get.cancel_x, "color.w") == 1 and gui.pick_node(node.get.cancel_x_hit, action.x, action.y) then --cancel new diff (x)
+			self.input_override = true
+			if action_id == hash("touch") and action.pressed then
+				gui.set(node.get.cancel_x_lit, "color.w", 1)
+			elseif action_id == hash("touch") and action.released then
+				gui.set(node.get.cancel_x_lit, "color.w", 0)
+				gui.set(node.get.cancel_x, "color.w", 0)
+				l_data.diff_temp = l_data.diff
+				msg.post("/zoom#minefinder", "set_diff")
+				msg.post(".", "switch_hs")
+				msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			elseif gui.get(node.get.cancel_x_lit, "color.w") == 0 then
+				gui.set(node.get.cancel_x_lit, "color.w", 0.4)
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
+			end
+		elseif gui.get(node.get.cancel_x_lit, "color.w") ~= 0 then
+			gui.set(node.get.cancel_x_lit, "color.w", 0)
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			self.input_override = false
+		end
+
+		if self.lightbulb_there and gui.pick_node(gui.get_node("lightbulb-hit"), action.x, action.y) and not self.midnight_timer then --lightbulb
+			self.input_override = true
+			if action_id == hash("touch") and action.pressed then --click
+				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4(1, 1, 1, 1))
+			elseif action_id == hash("touch") and action.released and gui.get(gui.get_node("lightbulb-click"), "color.x") == 1 then --release
+				-- print("switch!")
+				self.light_on = not self.light_on
+				if self.light_on then
+					gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((142/255), (149/255), (219/255), 1))
+					if self.theme == "light" and self.gui_anims then
+						self.theme = "midnight"
+						sprite.play_flipbook("/light-switch", "light-switch-off")
+						msg.post("/zoom#minefinder", "set_theme", {theme = "dark"})
+						self.midnight_timer = 0.15
+					else
+						midnight_switch_on(self)
+					end
+				else
+					midnight_switch_off(self)
+				end
+			elseif gui.get(gui.get_node("lightbulb-click"), "color.w") == 0 then --hover
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
+				if self.light_on then
+					gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((142/255), (149/255), (219/255), 1))
+				else
+					gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((203/255), (219/255), (252/255), 1))
+				end
+			end
+		elseif gui.get(gui.get_node("lightbulb-click"), "color.w") ~= 0 then --unhover
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			gui.set(gui.get_node("lightbulb-click"), "color.w", 0)
+			self.input_override = false
+		end
+	end
+	if gui.pick_node(node.get.input_box_bot, action.x, action.y) or self.input_override then --input bottom half
+		if (gui.pick_node(node.get.retry_hit, action.x, action.y) and not self.more_anims) then -- retry button
+			self.input_override = true
+			retry_but_on(self, action, action_id)
+		elseif gui.get_color(node.get.retry_lit) == vmath.vector4((203/255), (219/255), (252/255), 1) then
+			retry_but_off(self, action, action_id)
+			self.input_override = false
+		end
+		
+		if not self.more_anims and l_data.diff == 6 and l_data.diff_temp == nil then -- custom text boxes
+			for i = 1, 3 do
+				if gui.pick_node(self.outlines[i], action.x, action.y) then 
+					self.input_override = true
+					if gui.get_color(self.outlines[i]) == vmath.vector4((34/255), (32/255), (52/255), 1) then
+						msg.post("/zoom#minefinder", "hide_select", {hid = true})
+						gui.set_color(self.outlines[i], vmath.vector4((63/255), (63/255), (116/255), 1))
+					end
+					if gui.get_color(self.outlines[i]) == vmath.vector4((107/255), (160/255), (255/255), 1) then
+						msg.post("/zoom#minefinder", "hide_select", {hid = true})
+						gui.set_color(self.outlines[i], vmath.vector4((203/255), (219/255), (252/255), 1))
+					end				
+					if action_id == hash("touch") and action.pressed and gui.get_color(self.outlines[i]) ~= vmath.vector4(1, 1, 1, 1) then
+						gui.set_color(self.outlines[i], vmath.vector4(1, 1, 1, 1))
+					elseif action_id == hash("touch") and action.released and gui.get_color(self.outlines[i]) == vmath.vector4(1, 1, 1, 1) then
+						msg.post("/zoom#minefinder", "editing_dimensions", {editing = true})
+						self.editing_dimensions = true
+						self.text_box = i
+						gui.set_color(self.outlines[i], vmath.vector4((203/255), (219/255), (252/255), 1))
+						gui.set_color(node.get.text[self.text_box], vmath.vector4((172/255), (204/255), (255/255), 1))
+					end
+				elseif gui.get_color(self.outlines[i]) ~= vmath.vector4((34/255), (32/255), (52/255), 1) and gui.get_color(self.outlines[i]) ~= vmath.vector4((107/255), (160/255), (255/255), 1) then
+					if i == self.text_box then
+						gui.set_color(self.outlines[i], vmath.vector4((107/255), (160/255), (255/255), 1))
+					else
+						gui.set_color(self.outlines[i], vmath.vector4((34/255), (32/255), (52/255), 1))
+					end
+					msg.post("/zoom#minefinder", "hide_select", {hid = false})
+					self.input_override = false
+				elseif action_id == hash("touch") and action.pressed and i == self.text_box then
+					if l_data.snake_moving then
+						nochange(self)
+					else
+						deselect_txt(self)
+					end
+				end
+			end
+		end
+		
+		if l_data.diff == 6 and not self.mines_calced and not self.more_anims and gui.pick_node(node.get.stars_hit, action.x, action.y) then -- stars
+			self.input_override = true
+			if action_id == hash("touch") and action.pressed then --click
+				gui.set(node.get.stars, "color.w", 0)
+				gui.set(node.get.stars_lit, "position.y", -1)
+			elseif action_id == hash("touch") and action.released then --release
+				-- gui.set(node.get.stars, "color.w", 1)
+				msg.post("/zoom#minefinder", "hide_select", {hid = false})
+				gui.set(node.get.stars_lit, "color.w", 0)
+				gui.set(node.get.stars_lit, "position.y", 0)
+				gui.set_text(node.get.text[3], calc_mine_ct(self))
+				self.text_box = 3
+				gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
+				set_stars_pos(self)
 				if l_data.snake_moving then
 					nochange(self)
+					gui.set(node.get.stars_lit, "position.y", 0)
+					gui.set(node.get.stars_lit, "color.w", 1)
+					gui.set(node.get.stars, "color.w", 1)
 				else
 					deselect_txt(self)
+					self.mines_calced = true
 				end
+			elseif gui.get(node.get.stars_lit, "color.w") ~= 1 then --hover
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
+				gui.set(node.get.stars_lit, "color.w", 1)
 			end
+		elseif not self.mines_calced and gui.get(node.get.stars_lit, "color.w") == 1 then -- reset
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			gui.set(node.get.stars_lit, "color.w", 0)
+			gui.set(node.get.stars_lit, "position.y", 0)
+			if gui.get(node.get.stars, "color.w") == 0 then
+				gui.set(node.get.stars, "color.w", 1)
+			end
+			self.input_override = false
+		end
+
+		if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 and l_data.saved == false then --floppy disk click
+			self.input_override = true
+			if action_id == hash("touch") and action.pressed then
+				gui.set_color(node.get.floppy_lit, vmath.vector4(1, 1, 1, 1))
+			elseif action_id == hash("touch") and action.released and gui.get_color(node.get.floppy_lit) ==  vmath.vector4(1, 1, 1, 1) then
+				gui.set(node.get.floppy_lit, "color.w", 0)
+				l_data.saved = nil
+				msg.post("/zoom#minefinder", "save_game_msg")
+				msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			elseif gui.get(node.get.floppy_lit, "color.w") ~= 1 then
+				gui.set_color(node.get.floppy_lit, vmath.vector4((91/255), (110/255), (225/255), 1))
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
+			end
+		elseif gui.get(node.get.floppy_lit, "color.w") ~= 0 then
+			gui.set(node.get.floppy_lit, "color.w", 0)
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			self.input_override = false
 		end
 	end
 
-	if self.text_box and action.pressed and action_id == hash("enter") then
+	if action_id == hash("retry") then -- retry button
+		retry_but_on(self, action, action_id)
+	elseif not self.input_override and gui.get_color(node.get.retry_lit) == vmath.vector4((203/255), (219/255), (252/255), 1) then
+		retry_but_off(self, action, action_id)
+	end
+	
+	if self.text_box and action.pressed and action_id == hash("enter") then --enter
 		if l_data.snake_moving then
 			nochange(self)
 		else
 			deselect_txt(self)
 		end
-	end
+	end 
 
-	if self.text_box and action.pressed and action_id == hash("esc") then
+	if self.text_box and action.pressed and action_id == hash("esc") then --escape
 		nochange(self)
 	end
 
-		
-	if action_id == hash("del") and action.pressed and self.text_box then
+	if action_id == hash("del") and action.pressed and self.text_box then --delete
 		if gui.get_color(node.get.text[self.text_box]) == vmath.vector4((172/255), (204/255), (255/255), 1) then
 			gui.set_text(node.get.text[self.text_box], "")
 			gui.set_color(node.get.text[self.text_box], vmath.vector4(1, 1, 1, 1))
@@ -1033,7 +1159,7 @@ function on_input(self, action_id, action)
 		else
 			gui.set_text(node.get.text[self.text_box], string.sub(gui.get_text(node.get.text[self.text_box]), 1, #gui.get_text(node.get.text[self.text_box])-1))
 		end
-		
+
 		if #(gui.get_text(node.get.text[self.text_box]))*5+3 > 7 then
 			gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
 			set_stars_pos(self)
@@ -1059,7 +1185,7 @@ function on_input(self, action_id, action)
 
 		msg.post("/zoom#minefinder", "editing_dimensions", {editing = true})
 		self.editing_dimensions = true
-		
+
 		gui.set_color(node.get.text[self.text_box], vmath.vector4((172/255), (204/255), (255/255), 1))
 		gui.set_color(self.outlines[self.text_box], vmath.vector4((107/255), (160/255), (255/255), 1))
 	end	
@@ -1079,76 +1205,9 @@ function on_input(self, action_id, action)
 		elseif #(gui.get_text(node.get.text[self.text_box])) < (2+math.floor(self.text_box/3)*2) then
 			gui.set_text(node.get.text[self.text_box], gui.get_text(node.get.text[self.text_box])..hash_to_num(action_id))
 		end
-		
+
 		gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
 		set_stars_pos(self)
-	end
-
-	if l_data.diff == 6 and not self.mines_calced and not self.more_anims and gui.pick_node(node.get.stars_hit, action.x, action.y) then -- stars
-		if action_id == hash("touch") and action.pressed then --click
-			gui.set(node.get.stars, "color.w", 0)
-			gui.set(node.get.stars_lit, "position.y", -1)
-		elseif action_id == hash("touch") and action.released then --release
-			-- gui.set(node.get.stars, "color.w", 1)
-			msg.post("/zoom#minefinder", "hide_select", {hid = false})
-			gui.set(node.get.stars_lit, "color.w", 0)
-			gui.set(node.get.stars_lit, "position.y", 0)
-			gui.set_text(node.get.text[3], calc_mine_ct(self))
-			self.text_box = 3
-			gui.set(node.get.boxes[self.text_box], "size.x", #(gui.get_text(node.get.text[self.text_box]))*5+3)
-			set_stars_pos(self)
-			if l_data.snake_moving then
-				nochange(self)
-				gui.set(node.get.stars_lit, "position.y", 0)
-				gui.set(node.get.stars_lit, "color.w", 1)
-				gui.set(node.get.stars, "color.w", 1)
-			else
-				deselect_txt(self)
-				self.mines_calced = true
-			end
-		elseif gui.get(node.get.stars_lit, "color.w") ~= 1 then --hover
-			msg.post("/zoom#minefinder", "hide_select", {hid = true})
-			gui.set(node.get.stars_lit, "color.w", 1)
-		end
-	elseif not self.mines_calced and gui.get(node.get.stars_lit, "color.w") == 1 then -- reset
-		msg.post("/zoom#minefinder", "hide_select", {hid = false})
-		gui.set(node.get.stars_lit, "color.w", 0)
-		gui.set(node.get.stars_lit, "position.y", 0)
-		if gui.get(node.get.stars, "color.w") == 0 then
-			gui.set(node.get.stars, "color.w", 1)
-		end
-	end
-
-	if self.lightbulb_there and gui.pick_node(gui.get_node("lightbulb-hit"), action.x, action.y) and not self.midnight_timer then --lightbulb
-		if action_id == hash("touch") and action.pressed then --click
-			gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4(1, 1, 1, 1))
-		elseif action_id == hash("touch") and action.released and gui.get(gui.get_node("lightbulb-click"), "color.x") == 1 then --release
-			-- print("switch!")
-			self.light_on = not self.light_on
-			if self.light_on then
-				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((142/255), (149/255), (219/255), 1))
-				if self.theme == "light" and self.gui_anims then
-					self.theme = "midnight"
-					sprite.play_flipbook("/light-switch", "light-switch-off")
-					msg.post("/zoom#minefinder", "set_theme", {theme = "dark"})
-					self.midnight_timer = 0.15
-				else
-					midnight_switch_on(self)
-				end
-			else
-				midnight_switch_off(self)
-			end
-		elseif gui.get(gui.get_node("lightbulb-click"), "color.w") == 0 then --hover
-			msg.post("/zoom#minefinder", "hide_select", {hid = true})
-			if self.light_on then
-				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((142/255), (149/255), (219/255), 1))
-			else
-				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((203/255), (219/255), (252/255), 1))
-			end
-		end
-	elseif gui.get(gui.get_node("lightbulb-click"), "color.w") ~= 0 then --unhover
-		msg.post("/zoom#minefinder", "hide_select", {hid = false})
-		gui.set(gui.get_node("lightbulb-click"), "color.w", 0)
 	end
 
 	if not self.editing_dimensions and (l_data.size_nums[1][l_data.diff] > 16 or l_data.size_nums[2][l_data.diff] > 16) and not self.full_board_anim then --zoom
@@ -1160,25 +1219,8 @@ function on_input(self, action_id, action)
 	elseif gui.get(gui.get_node("zoom-in"), "color.w") ~= 0 and (l_data.size_nums[1][l_data.diff] <= 16 or l_data.size_nums[2][l_data.diff] <= 16) then
 		gui.set(gui.get_node("zoom-in"), "color.w", 0)
 	end
+	
 	if (action_id == hash("debug")) and action.pressed then
-		print(l_data.ticking)
-		print(l_data.seconds)
-	end
-
-	if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 and l_data.saved == false then --floppy disk click
-		if action_id == hash("touch") and action.pressed then
-			gui.set_color(node.get.floppy_lit, vmath.vector4(1, 1, 1, 1))
-		elseif action_id == hash("touch") and action.released and gui.get_color(node.get.floppy_lit) ==  vmath.vector4(1, 1, 1, 1) then
-			gui.set(node.get.floppy_lit, "color.w", 0)
-			l_data.saved = nil
-			msg.post("/zoom#minefinder", "save_game_msg")
-			msg.post("/zoom#minefinder", "hide_select", {hid = false})
-		elseif gui.get(node.get.floppy_lit, "color.w") ~= 1 then
-			gui.set_color(node.get.floppy_lit, vmath.vector4((91/255), (110/255), (225/255), 1))
-			msg.post("/zoom#minefinder", "hide_select", {hid = true})
-		end
-	elseif gui.get(node.get.floppy_lit, "color.w") ~= 0 then
-		gui.set(node.get.floppy_lit, "color.w", 0)
-		msg.post("/zoom#minefinder", "hide_select", {hid = false})
+		print(self.input_override)
 	end
 end

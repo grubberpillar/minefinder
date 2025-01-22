@@ -1,0 +1,25 @@
+local l_data = require "main.leveldata"
+
+function init(self)
+	self.light_color = {235, 0, 0}
+	self.light_iter = 1
+end
+
+function update(self, dt)
+	if l_data.settings.gamer_lights then
+		self.light_color[self.light_iter] = self.light_color[self.light_iter] - 1
+		self.light_color[(self.light_iter)%3+1] = self.light_color[(self.light_iter)%3+1] + 1
+		if self.light_color[self.light_iter] == 0 then
+			self.light_iter = (self.light_iter)%3+1
+		end
+		gui.set_color(gui.get_node("lights"), vmath.vector4(((20+self.light_color[1])/255), ((20+self.light_color[2])/255), ((20+self.light_color[3])/255), 1))
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("set_gamer_lights") then
+		gui.set(gui.get_node("lights"), "color.w", message.alpha)
+	elseif message_id == hash("outlet") then
+		gui.set(gui.get_node("outlet"), "color.w", 1)
+	end
+end

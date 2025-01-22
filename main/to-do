@@ -36,14 +36,15 @@ X windows icon
 - OPTIMIZE THIS SHIT
 
 
-- zoom while clicking
-- shift click off screen
-- fix no-delay lose animation
+
 - windows flag bug
-- UNSAVE study
+* UNSAVE study
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
 * skip forward button for lose?
+X zoom while clicking
+X shift click off screen
+X fix no-delay lose animation
 X set screen size on startup
 X get rid of old explosion scraps
 X setting diff while snaking bug
