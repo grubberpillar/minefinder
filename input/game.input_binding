@@ -106,6 +106,18 @@ key_trigger {
   input: KEY_MINUS
   action: "minus"
 }
+key_trigger {
+  input: KEY_Q
+  action: "q-key"
+}
+key_trigger {
+  input: KEY_Y
+  action: "y-key"
+}
+key_trigger {
+  input: KEY_N
+  action: "n-key"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "touch"

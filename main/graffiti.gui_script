@@ -2,7 +2,7 @@ local l_data = require "main.leveldata"
 
 function init(self)
 	gui.set_render_order(4)
-	self.graffiti_name = {"flower", "f-ai", "well-blob", "numbers", "signature", "fibonacci", "spiral", "s", "dorito", "bomba", "smiley", "kilroy", "frowney", "stars", "golf", "wang?", "f-censor", "sheep"}
+	self.graffiti_name = {"flower", "f-ai", "well-blob", "numbers", "signature", "fibonacci", "spiral", "s", "dorito", "bomba", "smiley", "kilroy", "frowney", "stars", "golf", "wang?", "f-censor", "sheep", "vandal"}
 	self.censored = true
 end
 

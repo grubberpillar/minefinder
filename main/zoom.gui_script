@@ -22,7 +22,6 @@ function init(self)
 	self.minutes_storage = -1
 	l_data.ticking = false
 	gui.set_render_order(1)
-	msg.post(".", "acquire_input_focus")
 	self.diff_memory = 3
 	self.diff_colors = {vmath.vector4((55/255), (148/255), (110/255), 1), vmath.vector4((153/255), (229/255), (80/255), 1), vmath.vector4((251/255), (242/255), (54/255), 1), vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((172/255), (50/255), (50/255), 1), vmath.vector4((118/255), (66/255), (138/255), 1)}
 end

@@ -1,5 +1,7 @@
 local D = {}
 
+D.in_game = false -- tracks if the splashscreen is finished
+
 D.highscore = {}
 D.custom_hs_list = {{{}}}
 
@@ -11,7 +13,8 @@ D.mine_nums = {10, 14, 40, 99, 169, 40}
 D.size_nums = {{8, 10, 16, 16, 24, 16}, {8, 10, 16, 30, 30, 16}}
 
 D.diff = 3
-D.diff_temp = nil
+D.diff_temp = nil 
+
 
 D.settings = {tutorial = true, profanity = false, autosave = true, dig_around = true, scroll = true, scroll_slider = 3, sfx_slider = 4, dig_key = true, graffiti = true, splashscreen = true, gamer_lights = false}
 D.more_settings = false

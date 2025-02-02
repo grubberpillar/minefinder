@@ -44,6 +44,7 @@ local function load_game(self)
 	local filename = sys.get_save_file("sys_save_load", "gamedata")
 	local data = sys.load(filename)
 	if data.gamedata then
+		print("save loaded")
 		l_data.highscore = data.gamedata.highscore
 		l_data.s_hs = data.gamedata.snake_hs
 		l_data.custom_hs_list = data.gamedata.custom_hs_list
@@ -82,10 +83,13 @@ local function load_game(self)
 		msg.post("/anims#anims", "load_game", {anims = stripped_anims})
 		msg.post("/settings#settings", "load_game")
 		msg.post("/gui#door", "load_game")
+		msg.post("/gui#splashscreen", "load_game")
 		msg.post("/gui#minefinder", "switch_hs")
 		if l_data.more_settings then
 			msg.post("/settings#settings", "hidden-settings", {startup = true})
 		end
+	else
+		print("no save to load")
 	end
 end
 
@@ -504,7 +508,6 @@ function init(self)
 	go.set("/zoom#board-mini", "tile_source", self.tilesources_mini[self.theme])
 	go.set("/diff-selected-temp", "position.z", -0.7)
 	-- resource.set_texture(path, table, buffer)
-	msg.post(".", "acquire_input_focus")
 end
 
 
@@ -1034,7 +1037,6 @@ function on_input(self, action_id, action)
 				end
 				if (self.shifting or (self.quick_click and self.quick_click.r == moveRow_t and self.quick_click.c == moveCol_t)) and self.tile_clicked < 11 and l_data.settings.dig_around and (action_id == hash("touch") or action_id == hash("touch-key") and l_data.settings.dig_key) then
 					self.mines_dug_around_list = {}
-					local zoom_flash_ct = 0
 					for i = -1, 1 do
 						for j = -1, 1 do
 							if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1+i, moveRow_t+1+j) == 11 and (i ~= 0 or j ~= 0) then
@@ -1043,12 +1045,10 @@ function on_input(self, action_id, action)
 								tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1+i, moveRow_t+1+j, 16)
 								if self.zoomed and moveCol+1+i > 1 and moveCol+1+i < 29 and moveRow+1+j > 0 and moveRow+1+j < 18 then 
 									tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1+i, moveRow+1+j, 16)
-									zoom_flash_ct = zoom_flash_ct + 1
 								end
 							end
 						end
 					end
-					print(zoom_flash_ct.." targeted")
 				end
 			end
 		end
@@ -1203,7 +1203,6 @@ function on_input(self, action_id, action)
 						end
 						local dug_mine = nil
 						self.mines_dug_around = false
-						local zoom_dig_ct = 0
 						for i = -1, 1 do
 							for j = -1, 1 do
 								if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1+i, moveRow_t+1+j) == 16 then
@@ -1220,14 +1219,11 @@ function on_input(self, action_id, action)
 										tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1+i, moveRow_t+1+j, self.board[moveRow_t+j-self.row_offS-self.mini_offS][moveCol_t+i-self.col_offS-self.mini_offS])
 										if self.zoomed and moveCol+1+i > 1 and moveCol+1+i < 29 and moveRow+1+j > 0 and moveRow+1+j < 18 then
 											tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1+i, moveRow+1+j, self.board[moveRow_t+j-self.row_offS-self.mini_offS][moveCol_t+i-self.col_offS-self.mini_offS])
-											zoom_dig_ct = zoom_dig_ct + 1
 										end
 									end
 								end
 							end
 						end
-
-						print(zoom_dig_ct.." dug")
 
 						if dug_mine then
 							lose_game(self, dug_mine)
@@ -1570,11 +1566,17 @@ function on_input(self, action_id, action)
 	self.m_col_prev = m_col
 	
 
-	-- if action_id == hash("debug") and action.pressed then
-	-- 	save_game(self)
-	-- end
+	if action_id == hash("debug") and action.pressed then
+		print("minefinder debug")
+		print(l_data.settings.splashscreen)
+	end
+
+	if action_id == hash("q-key") and action.pressed and self.shifting then --file reset
+		msg.post("/gui#door", "reset_warning")
+	end
 
 	-- if action_id == hash("debug2") and action.pressed then
+		-- print("minefinder debug")
 	-- end
 end
 

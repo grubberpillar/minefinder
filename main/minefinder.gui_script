@@ -323,7 +323,6 @@ end
 
 function init(self)
 	gui.set_render_order(0)
-	msg.post(".", "acquire_input_focus")
 	set_nodes(self)
 	self.input_override = true
 	self.outlines = {node.get.row_OL, node.get.col_OL, node.get.mine_OL}
@@ -361,7 +360,7 @@ function init(self)
 end
 
 function update(self, dt)
-	if l_data.ticking then
+	if l_data.ticking and l_data.in_game then
 		l_data.seconds = l_data.seconds + dt
 	elseif gui.get_text(gui.get_node("timer")) ~= hash("-:--") and l_data.seconds == 0 and l_data.minutes == 0 then
 		gui.set_text(gui.get_node("timer"), "-:--")
@@ -1220,7 +1219,7 @@ function on_input(self, action_id, action)
 		gui.set(gui.get_node("zoom-in"), "color.w", 0)
 	end
 	
-	if (action_id == hash("debug")) and action.pressed then
-		print(self.input_override)
-	end
+	-- if (action_id == hash("debug")) and action.pressed then
+	-- 	print("minefinder gui debug")
+	-- end
 end

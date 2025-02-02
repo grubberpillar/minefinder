@@ -9,7 +9,7 @@ X zoom board
 - sounds
 X set difficulty polish
 X flash between themes
-- startup screen
+X startup screen
 X x out
 X saving
 X midnight
@@ -24,13 +24,13 @@ X settings
 	X press d to dig
 	X click tile to dig around
 	X autosave
-	- ++
-		- startup screen
+	X ++
+		X startup screen
 		X lights
 		X graffiti
-	* reset game files
 	* large vs mini tiles diagram lol
-- snapshot button
+X reset game files
+* snapshot button
 - global highscores
 X windows icon
 - OPTIMIZE THIS SHIT
@@ -38,6 +38,7 @@ X windows icon
 
 
 - windows flag bug
+* move zoomed board while shift clicking tiles remain white
 * UNSAVE study
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching

@@ -10295,7 +10295,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "sprites/small-light-on-purple"
+  texture: "sprites/small-light-off"
   id: "lights-light"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -10481,9 +10481,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.725
-    y: 0.557
-    z: 0.859
+    x: 0.412
+    y: 0.416
+    z: 0.416
     w: 1.0
   }
   type: TYPE_TEXT
