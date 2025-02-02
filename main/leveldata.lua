@@ -2,6 +2,8 @@ local D = {}
 
 D.in_game = false -- tracks if the splashscreen is finished
 
+D.os = "windows"
+
 D.highscore = {}
 D.custom_hs_list = {{{}}}
 
