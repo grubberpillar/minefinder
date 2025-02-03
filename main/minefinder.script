@@ -427,17 +427,19 @@ local function window_callback(self, event, data)
 		l_data.xoffset = -(l_data.projected_width - l_data.screen_ratio.x) / 2
 		l_data.yoffset = -(l_data.projected_height - l_data.screen_ratio.y) / 2
 
-		local win_width, win_height = window.get_size()
-		if l_data.os ~= "windows" then
-			win_width, win_height = win_width/2, win_height/2
-		end
-		if not (win_width%348 == 0 and win_height%216 == 0) then
-			if win_height < win_width then
-				self.screen_scale = math.floor(win_width/348)+0.5
-			else
-				self.screen_scale = math.floor(win_width/216)+0.5
-			end
-		end
+
+		-- local win_width, win_height = window.get_size()
+		-- print(win_width, win_height)
+		-- if not (win_width%348 == 0 and win_height%216 == 0) then
+		-- 	if win_height < win_width then
+		-- 		self.screen_scale = math.floor(win_width/348)+0.5
+		-- 	else
+		-- 		self.screen_scale = math.floor(win_width/216)+0.5
+		-- 	end
+		-- else
+		-- 	print(win_width%348)
+		-- 	print(win_height%348)
+		-- end
 	end
 end
 
@@ -504,7 +506,7 @@ function init(self)
 	self.watch_t_flips = false
 	self.zoom_offS = {r = 0, c = 0}
 	self.scrollnum = 0
-	
+		
 	go.set("/diff-selected", "position", vmath.vector3((19 + l_data.diff)*8+4, 8*8+4, 0.7))
 	go.set("/zoom#board", "tile_source", self.tilesources[self.theme])
 	go.set("/zoom#board-mini", "tile_source", self.tilesources_mini[self.theme])
@@ -981,30 +983,6 @@ end
 function on_input(self, action_id, action)
 	local mouse_x = (action.x / l_data.screen_ratio.x) * l_data.projected_width + l_data.xoffset
 	local mouse_y = (action.y / l_data.screen_ratio.y) * l_data.projected_height + l_data.yoffset
-
-	if action.pressed and action_id == hash("minus") then
-		if self.screen_scale > 1 then
-			if math.floor(self.screen_scale) == self.screen_scale then
-				self.screen_scale = self.screen_scale - 1
-			elseif self.screen_scale > 6 then
-				self.screen_scale = 5
-			else
-				self.screen_scale = math.floor(self.screen_scale) 
-			end
-			msg.post("@render:", "resize", { width = 348*(self.screen_scale), height = 216*(self.screen_scale) } )
-		end
-	end
-
-	if action.pressed and action_id == hash("plus") then
-		if self.screen_scale < 7 then
-			if math.floor(self.screen_scale) == self.screen_scale then
-				self.screen_scale = self.screen_scale + 1
-			else
-				self.screen_scale = math.floor(self.screen_scale)+1
-			end
-			msg.post("@render:", "resize", { width = 348*(self.screen_scale), height = 216*(self.screen_scale) } )
-		end
-	end
 	
 	if not l_data.snake then
 		if action_id == hash("shift") then
@@ -1566,11 +1544,72 @@ function on_input(self, action_id, action)
 
 	self.m_row_prev = m_row
 	self.m_col_prev = m_col
+
+	if action.pressed and action_id == hash("minus") then
+		if self.screen_scale > 1 then
+			if math.floor(self.screen_scale) == self.screen_scale then
+				self.screen_scale = self.screen_scale - 1
+			elseif self.screen_scale > 6 then
+				self.screen_scale = 5
+			else
+				self.screen_scale = math.floor(self.screen_scale) 
+			end
+			msg.post("@render:", "resize", { width = 348*(self.screen_scale), height = 216*(self.screen_scale) } )
+			-- local win_width, win_height = window.get_size()
+			-- print(win_width, win_height)
+			-- print(window.get_size())
+			-- print("size: "..self.screen_scale)
+			-- if l_data.os ~= "windows" then
+			-- 	-- win_width, win_height = win_width*0.75, win_height*0.75
+			-- end
+			-- if win_width ~= 348*(self.screen_scale) or win_height ~= 216*(self.screen_scale) then -- faulty resize protection
+			-- 	print("width:", win_width, "vs", 348*(self.screen_scale))
+			-- 	print("height:", win_height, "vs", 216*(self.screen_scale))
+			-- else
+			-- 	print("width:", win_width, "vs", 348*(self.screen_scale))
+			-- 	print("height:", win_height, "vs", 216*(self.screen_scale))
+			-- end
+			-- print((348*(self.screen_scale))/win_width)
+			-- print("----")
+		end
+	end
+
+	if action.pressed and action_id == hash("plus") then
+		if self.screen_scale < 7 then
+			if math.floor(self.screen_scale) == self.screen_scale then
+				self.screen_scale = self.screen_scale + 1
+			else
+				print(self.screen_scale)
+				self.screen_scale = math.floor(self.screen_scale)+1
+			end
+			if l_data.os == "mac" and self.screen_scale == 2 then
+				msg.post("@render:", "resize", { width = 348*(self.screen_scale)-1, height = 216*(self.screen_scale)-1 } )
+			end
+			msg.post("@render:", "resize", { width = 348*(self.screen_scale), height = 216*(self.screen_scale) } )
+			
+			-- local win_width, win_height = window.get_size()
+			-- print(win_width, win_height)
+			-- print(window.get_size())
+			-- print("size: "..self.screen_scale)
+			-- if l_data.os ~= "windows" then
+			-- 	-- win_width, win_height = win_width*0.75, win_height*0.75
+			-- end
+			-- if win_width ~= 348*(self.screen_scale) or win_height ~= 216*(self.screen_scale) then -- faulty resize protection
+			-- 	print("width:", win_width, "vs", 348*(self.screen_scale))
+			-- 	print("height:", win_height, "vs", 216*(self.screen_scale))
+			-- else
+			-- 	print("width:", win_width, "vs", 348*(self.screen_scale))
+			-- 	print("height:", win_height, "vs", 216*(self.screen_scale))
+			-- end
+			-- print((348*(self.screen_scale))/win_width)
+			-- print("----")
+		end
+	end
 	
 
 	if action_id == hash("debug") and action.pressed then
-		print("minefinder debug")
-		print(l_data.settings.splashscreen)
+		self.profiler_enabled = not self.profiler_enabled
+		profiler.enable_ui(self.profiler_enabled)
 	end
 
 	if action_id == hash("q-key") and action.pressed and self.shifting then --file reset
@@ -1578,7 +1617,7 @@ function on_input(self, action_id, action)
 	end
 
 	-- if action_id == hash("debug2") and action.pressed then
-		-- print("minefinder debug")
+	-- 	print("size:",window.get_size())
 	-- end
 end
 

@@ -30,7 +30,7 @@ function update(self, dt)
 		local text = gui.get_node("text")
 		local blur = gui.get_node("blur")
 		
-		if self.skip_splash or ((self.logo_loops > 1 and self.logo_frame > 18) or self.logo_loops > 2) then 
+		if self.skip_splash or ((self.logo_loops == 2 and self.logo_frame > 14) or self.logo_loops > 2) then 
 			msg.post("#", "disable")
 			msg.post("/zoom#minefinder", "acquire_input_focus")
 			msg.post("/gui#minefinder", "acquire_input_focus")
