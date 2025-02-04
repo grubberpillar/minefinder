@@ -1,5 +1,27 @@
 local l_data = require "main.leveldata"
 
+local function load_func(self, data)
+	print("save loaded")
+	l_data.highscore = data.gamedata.highscore or l_data.highscore
+	l_data.s_hs = data.gamedata.snake_hs or l_data.s_hs
+	l_data.custom_hs_list = data.gamedata.custom_hs_list or l_data.custom_hs_list
+	l_data.diff = data.gamedata.diff or l_data.diff
+	l_data.mine_nums = data.gamedata.mine_nums or l_data.mine_nums
+	l_data.size_nums = data.gamedata.size_nums or l_data.size_nums
+	l_data.settings = data.gamedata.settings or l_data.settings
+	l_data.more_settings = data.gamedata.more_settings or l_data.more_settings
+	l_data.door_state = data.gamedata.door_state or l_data.door_state
+	l_data.key_is_there = data.gamedata.key_is_there or l_data.key_is_there
+	self.screen_scale = data.gamedata.scale or 3
+	self.theme = data.gamedata.theme or "dark"
+	self.anims = data.gamedata.anims or {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false, faster_flip = true}
+	self.saved_screen = data.gamedata.screen or nil
+	self.saved_board = data.gamedata.board or nil
+	self.saved_secs = data.gamedata.game_secs or nil
+	self.saved_mins = data.gamedata.game_mins or nil
+	self.saved_hrs = data.gamedata.game_hrs or nil
+end
+
 local function save_game(self)
 	msg.post("/gui#minefinder", "start_saving")
 	local filename = sys.get_save_file("sys_save_load", "gamedata")
@@ -44,49 +66,33 @@ local function load_game(self)
 	local filename = sys.get_save_file("sys_save_load", "gamedata")
 	local data = sys.load(filename)
 	if data.gamedata then
-		print("save loaded")
-		l_data.highscore = data.gamedata.highscore
-		l_data.s_hs = data.gamedata.snake_hs
-		l_data.custom_hs_list = data.gamedata.custom_hs_list
-		l_data.diff = data.gamedata.diff
-		l_data.mine_nums = data.gamedata.mine_nums
-		l_data.size_nums = data.gamedata.size_nums
-		l_data.settings = data.gamedata.settings
-		l_data.more_settings = data.gamedata.more_settings
-		l_data.door_state = data.gamedata.door_state
-		l_data.key_is_there = data.gamedata.key_is_there
-		self.screen_scale = data.gamedata.scale
-		self.theme = data.gamedata.theme
-		self.anims = data.gamedata.anims
-		self.saved_screen = data.gamedata.screen
-		self.saved_board = data.gamedata.board
-		self.saved_secs = data.gamedata.game_secs
-		self.saved_mins = data.gamedata.game_mins
-		self.saved_hrs = data.gamedata.game_hrs
-		
-		local num_anims_on = 1
-		local stripped_anims = {}
-		for i = 1, 10 do
-			if self.anims[self.anim_vars[i]] then
-				if i < 9 then
-					num_anims_on = num_anims_on + 1
+		if pcall(load_func, self, data) then
+			local num_anims_on = 1
+			local stripped_anims = {}
+			for i = 1, 10 do
+				if self.anims[self.anim_vars[i]] then
+					if i < 9 then
+						num_anims_on = num_anims_on + 1
+					end
+					stripped_anims[i] = true
+				else
+					stripped_anims[i] = false
 				end
-				stripped_anims[i] = true
-			else
-				stripped_anims[i] = false
 			end
-		end
 
-		msg.post(".", "set_theme", {theme = data.gamedata.theme, startup = true})
-		
-		msg.post("/gui#minefinder", "load_game", {theme = self.theme, anims_on = num_anims_on, anims = stripped_anims})
-		msg.post("/anims#anims", "load_game", {anims = stripped_anims})
-		msg.post("/settings#settings", "load_game")
-		msg.post("/gui#door", "load_game")
-		msg.post("/gui#splashscreen", "load_game")
-		msg.post("/gui#minefinder", "switch_hs")
-		if l_data.more_settings then
-			msg.post("/settings#settings", "hidden-settings", {startup = true})
+			msg.post(".", "set_theme", {theme = data.gamedata.theme, startup = true})
+			
+			msg.post("/gui#minefinder", "load_game", {theme = self.theme, anims_on = num_anims_on, anims = stripped_anims})
+			msg.post("/anims#anims", "load_game", {anims = stripped_anims})
+			msg.post("/settings#settings", "load_game")
+			msg.post("/gui#door", "load_game")
+			msg.post("/gui#splashscreen", "load_game")
+			msg.post("/gui#minefinder", "switch_hs")
+			if l_data.more_settings then
+				msg.post("/settings#settings", "hidden-settings", {startup = true})
+			end
+		else
+			print("no save to load (inner)")
 		end
 	else
 		print("no save to load")
