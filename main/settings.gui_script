@@ -195,7 +195,7 @@ function on_input(self, action_id, action)
 			end
 			
 			if not self.viewing_setttings then
-				gui.set_render_order(6)
+				gui.set_render_order(7)
 				gui.set(self.nodes.settings_nodes, "color.w", 1)
 				msg.post("/zoom#minefinder", "release_input_focus")
 				msg.post("/gui#minefinder", "release_input_focus")

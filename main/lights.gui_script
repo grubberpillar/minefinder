@@ -1,6 +1,7 @@
 local l_data = require "main.leveldata"
 
 function init(self)
+	gui.set_render_order(7)
 	self.light_color = {235, 0, 0}
 	self.light_iter = 1
 end

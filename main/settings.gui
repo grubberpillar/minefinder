@@ -3010,6 +3010,7 @@ nodes {
   pivot: PIVOT_SW
   parent: "settings-nodes"
   inherit_alpha: true
+  alpha: 0.0
 }
 nodes {
   position {
