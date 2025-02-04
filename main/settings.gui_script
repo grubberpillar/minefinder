@@ -79,7 +79,7 @@ function init(self)
 	self.nodes.scroll_ring_hit = gui.get_node("scroll-ring-hit")
 	self.switches = {"tutorial", "profanity", "autosave", "dig", "scroll", "dkey", "graffiti", "splash", "lights"}
 	self.switches_true = {"tutorial", "profanity", "autosave", "dig_around", "scroll", "dig_key", "graffiti", "splashscreen", "gamer_lights"}
-	self.switch_on = {true,false,true,true,true,true,true,true,false}
+	self.switch_on = {true,false,true,true,true,true,true,true,true}
 	self.hover_node = nil
 	self.settings_txt_color = {	{{vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((105/255), (106/255), (106/255), 1)}, {vmath.vector4((238/255), (146/255), 0, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}, {vmath.vector4((63/255), (63/255), (116/255), 1), vmath.vector4(1, 1, (215/255), 1)}},
 								{{vmath.vector4((185/255), (142/255), (219/255), 1), vmath.vector4((105/255), (106/255), (106/255), 1)}, {vmath.vector4((243/255), (210/255), 1, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}, {vmath.vector4((63/255), (63/255), (116/255), 1), vmath.vector4(1, 1, 1, 1)}}}
