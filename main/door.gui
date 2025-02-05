@@ -29,7 +29,7 @@ nodes {
   scale {
     x: 6.0
     y: 6.0
-    z: 1.0E-6
+    z: 1.0
     w: 1.0
   }
   size {
@@ -39,10 +39,10 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -63,7 +63,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.0
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
   custom_type: 0
@@ -87,7 +87,7 @@ nodes {
   scale {
     x: 6.0
     y: 6.0
-    z: 1.0E-6
+    z: 1.0
     w: 1.0
   }
   size {
@@ -100,7 +100,7 @@ nodes {
     x: 0.349
     y: 0.337
     z: 0.322
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -121,7 +121,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.0
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_MANUAL
   custom_type: 0
@@ -143,9 +143,9 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0E-6
-    y: 1.0E-6
-    z: 1.0E-6
+    x: 1.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   size {
@@ -155,10 +155,10 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -180,7 +180,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.0
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
   custom_type: 0
@@ -202,9 +202,9 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0E-6
-    y: 1.0E-6
-    z: 1.0E-6
+    x: 1.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   size {
@@ -214,10 +214,10 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -263,7 +263,7 @@ nodes {
   scale {
     x: 6.0
     y: 6.0
-    z: 1.0E-6
+    z: 1.0
     w: 1.0
   }
   size {
@@ -273,10 +273,10 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -297,7 +297,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.0
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
   custom_type: 0
@@ -319,9 +319,9 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0E-6
-    y: 1.0E-6
-    z: 1.0E-6
+    x: 1.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   size {
@@ -331,10 +331,10 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -378,9 +378,9 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0E-6
-    y: 1.0E-6
-    z: 1.0E-6
+    x: 1.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   size {
@@ -390,10 +390,10 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -439,7 +439,7 @@ nodes {
   scale {
     x: 0.2343
     y: 0.2325
-    z: 1.0E-6
+    z: 1.0
     w: 1.0
   }
   size {
@@ -449,9 +449,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.0
-    y: 0.0
-    z: 0.0
+    x: 1.0
+    y: 1.0
+    z: 1.0
     w: 0.0
   }
   type: TYPE_TEXT
@@ -505,7 +505,7 @@ nodes {
   scale {
     x: 25.608194
     y: 25.806452
-    z: 1.0E-6
+    z: 1.0
     w: 1.0
   }
   size {
@@ -515,10 +515,10 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -562,9 +562,9 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0E-6
-    y: 1.0E-6
-    z: 1.0E-6
+    x: 1.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   size {
@@ -574,10 +574,10 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 0.0
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
@@ -622,7 +622,7 @@ nodes {
   scale {
     x: 0.2343
     y: 0.2325
-    z: 1.0E-6
+    z: 1.0
     w: 1.0
   }
   size {
@@ -635,7 +635,7 @@ nodes {
     x: 0.133
     y: 0.125
     z: 0.204
-    w: 0.0
+    w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
@@ -653,22 +653,22 @@ nodes {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   shadow {
     x: 1.0
     y: 1.0
     z: 1.0
-    w: 0.0
+    w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
   parent: "noah-msg"
   layer: ""
   inherit_alpha: true
-  alpha: 0.0
-  outline_alpha: 0.0
-  shadow_alpha: 0.0
+  alpha: 1.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
   template_node_child: false
   text_leading: 1.0
   text_tracking: 0.0
