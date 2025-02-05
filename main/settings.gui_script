@@ -86,6 +86,7 @@ function init(self)
 	self.slider_node_color = {{vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((89/255), (86/255), (82/255), 1)}, {vmath.vector4((238/255), (146/255), 0, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}}
 	self.slider_bar_color = {{vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((89/255), (86/255), (82/255), 1)}, {vmath.vector4((238/255), (146/255), 0, 1), vmath.vector4((132/255), (126/255), (135/255), 1)}}
 	self.e_timer = nil
+	self.scroll_mod = ""
 end
 
 function on_message(self, message_id, message, sender)
@@ -128,6 +129,12 @@ function on_message(self, message_id, message, sender)
 								gui.set_color(gui.get_node("scroll-bar-"..(j)), vmath.vector4((105/255), (106/255), (106/255), 1))
 							end
 						end
+					end
+				elseif i == 6 then
+					if self.switch_on[i] then
+						self.scroll_mod = ""
+					else
+						self.scroll_mod = "-alt"
 					end
 				elseif i == 7 then
 					msg.post("/graffiti#graffiti", "set_graffiti", {alpha = 2-bool_to_num(l_data.settings.graffiti)})
@@ -339,6 +346,14 @@ function on_input(self, action_id, action)
 						end
 					elseif i == 6 then
 						l_data.settings.dig_key = self.switch_on[i]
+						if self.switch_on[i] then
+							self.scroll_mod = ""
+						else
+							self.scroll_mod = "-alt"
+						end
+						if self.controls_visible then
+							gui.play_flipbook(gui.get_node("control-scroll"), "control-scroll-07"..self.scroll_mod)
+						end
 					elseif i == 7 then
 						l_data.settings.graffiti = self.switch_on[i]
 						msg.post("/graffiti#graffiti", "set_graffiti", {alpha = 2-bool_to_num(self.switch_on[i])})
@@ -561,11 +576,21 @@ function on_input(self, action_id, action)
 					gui.set(gui.get_node("gate-top"), "position.y", 12)
 					gui.set_color(gui.get_node("control-cover-middle"), vmath.vector4((155/255), (173/255), (183/255), 1))
 					gui.set(gui.get_node("control-scroll"), "color.w", 1)
-					gui.play_flipbook(gui.get_node("control-scroll"), "scroll-open")
+					--here
+					if l_data.gui_anims then
+						gui.play_flipbook(gui.get_node("control-scroll"), "scroll-open"..self.scroll_mod)
+					else
+						gui.play_flipbook(gui.get_node("control-scroll"), "control-scroll-07"..self.scroll_mod)
+					end
 					self.controls_visible = true
 				else
 					self.controls_visible = false
-					gui.play_flipbook(gui.get_node("control-scroll"), "scroll-close", hide_flipbook)
+					if l_data.gui_anims then
+						gui.play_flipbook(gui.get_node("control-scroll"), "scroll-close"..self.scroll_mod, hide_flipbook)
+					else
+						gui.play_flipbook(gui.get_node("control-scroll"), "control-scroll-00")
+						hide_flipbook(self)
+					end
 				end
 			elseif gui.get_color(gui.get_node("gate-top")) ~= vmath.vector4((136/255), (135/255), (134/255), 1) and gui.get(gui.get_node("gate-top"), "color.x") ~= 1 then
 				set_gate_color(vmath.vector4((136/255), (135/255), (134/255), 1))
