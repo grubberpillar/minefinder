@@ -41,6 +41,7 @@ X windows icon
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
 * skip forward button for lose?
+X fixed light render order
 X special lights switch does not turn on
 X move zoomed board while shift clicking tiles remain white
 X windows flag bug
