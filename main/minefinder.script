@@ -125,6 +125,7 @@ local function set_props(self)
 	end
 
 	if self.snake_set or (old_mines ~= self.num_mines and self.game_started) or old_row ~= self.row_size or old_col ~= self.col_size or l_data.diff == 6 then 
+		msg.post("/gui#minefinder", "stop_celebration")
 		self.new_diff = true
 		if self.snake_set then
 			self.snake_set = false

@@ -1,6 +1,6 @@
 X win animation
 X switch diff animation
-- new hs animation
+X new hs animation
 X custom level
 X custom level auto-mines
 * custom level hs/presets
@@ -36,7 +36,7 @@ X windows icon
 - OPTIMIZE THIS SHIT
 
 
-- [windows] can't click while flag anim playing??
+* [windows] can't click while flag anim playing??
 * UNSAVE study
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching

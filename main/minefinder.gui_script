@@ -27,12 +27,25 @@ local function hash_to_num(action_hash)
 	return nil
 end
 
+local function shuffle(tbl)
+	for i = #tbl, 2, -1 do
+		local j = math.random(i)
+		tbl[i], tbl[j] = tbl[j], tbl[i]
+	end
+end
+
 local function round(num)
 	local fin_num = math.floor(num)
 	if num - math.floor(num) >= 0.5 then
 		fin_num = fin_num + 1
 	end
 	return fin_num
+end
+
+local function get_firework_color(id)
+	--_									-#1-													-#2-												-#3-												-#4-												-#5-												-#6-												-#7-													-#8-												-#9-												-#10-
+	local colors = {(vmath.vector4((172/255), (50/255), (50/255), 1)), (vmath.vector4((251/255), (242/255), (54/255), 1)), (vmath.vector4((99/255), (155/255), (255/255), 1)), (vmath.vector4((95/255), (205/255), (228/255), 1)), (vmath.vector4((153/255), (229/255), (80/255), 1)), (vmath.vector4((223/255), (113/255), (38/255), 1)), (vmath.vector4((215/255), (123/255), (186/255), 1)), (vmath.vector4((217/255), (87/255), (99/255), 1)), (vmath.vector4((234/255), (167/255), (0/255), 1)), (vmath.vector4((203/255), (219/255), (252/255), 1))}
+	return colors[id]
 end
 
 local function midnight_switch_on(self)
@@ -344,6 +357,11 @@ function init(self)
 	self.key_color = vmath.vector4(0, 0, 0, 0)
 	self.light_on = false
 	self.editing_dimensions = false 
+
+	self.firework_locs = {"a", "b", "c"}
+	self.firework_ids = {1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5}
+	self.firework_colors = {1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 10}
+	
 	msg.post("/graffiti#graffiti", "disable")
 	msg.post("/anims#anims", "disable")
 	msg.post("/gui-zoom#zoom", "disable")
@@ -443,6 +461,25 @@ function update(self, dt)
 			self.midnight_timer = self.midnight_timer - dt
 		end
 	end
+	
+	if self.firework_timer then
+		if self.firework_timer >= 0.4 then
+			if self.firework_num > 9 then
+				self.firework_timer = nil
+			else
+				local location = self.firework_locs[self.firework_num%3+1]
+				local firework_id = self.firework_ids[self.firework_num+1]
+				gui.set_color(gui.get_node("firework-"..location.."-color"), get_firework_color(self.firework_colors[self.firework_num+1]))
+				gui.play_flipbook(gui.get_node("firework-"..location.."-white"), "firework-"..firework_id.."-white")
+				gui.play_flipbook(gui.get_node("firework-"..location.."-color"), "firework-"..firework_id.."-color")
+				self.firework_num = self.firework_num + 1
+				self.firework_timer = dt
+			end
+		else
+			self.firework_timer = self.firework_timer + dt
+		end
+	end
+	
 end
 
 function on_message(self, message_id, message)
@@ -482,7 +519,9 @@ function on_message(self, message_id, message)
 				gui.set(node.get.stars, "position", vmath.vector3(1290, 234, 0))
 			end
 			self.mines_calced = false
-			gui.set(node.get.stars, "color.w", 1)
+			if l_data.diff == 6 then
+				gui.set(node.get.stars, "color.w", 1)
+			end
 		else
 			self.mines_calced = true
 		end
@@ -543,11 +582,12 @@ function on_message(self, message_id, message)
 				end
 			end
 
-			gui.play_flipbook(gui.get_node("firework-1-white"), "firework-a-white")
-			gui.play_flipbook(gui.get_node("firework-1-color"), "firework-a-color")
-
-			gui.play_flipbook(gui.get_node("firework-2-white"), "firework-a-white")
-			gui.play_flipbook(gui.get_node("firework-2-color"), "firework-a-color")
+			shuffle(self.firework_locs)
+			shuffle(self.firework_ids)
+			shuffle(self.firework_colors)
+			self.firework_num = 0
+			self.firework_timer = 0
+			gui.play_flipbook(gui.get_node("exclamation"), "exclamation-flash")
 			
 			if l_data.hours < 1 then
 				local seconds_txt
@@ -776,6 +816,15 @@ function on_message(self, message_id, message)
 			self.save_seconds = 0
 			self.save_minutes = 0
 			self.save_hours = 0
+		end
+	elseif message_id == hash("stop_celebration") then
+		if self.firework_timer then
+			self.firework_timer = nil
+			gui.play_flipbook(gui.get_node("exclamation"), "nothing")
+			for i,k in ipairs(self.firework_locs) do
+				gui.play_flipbook(gui.get_node("firework-"..k.."-white"), "nothing")
+				gui.play_flipbook(gui.get_node("firework-"..k.."-color"), "nothing")
+			end
 		end
 	end
 end
