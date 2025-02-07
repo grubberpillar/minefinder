@@ -838,9 +838,9 @@ function on_input(self, action_id, action)
 				gui.set_color(node.get.more_lit, vmath.vector4(0, 0, 0, 0.2))
 				msg.post("/zoom#minefinder", "hide_select", {hid = true})
 			end
-			if action_id == hash("touch") and action.pressed and gui.get_color(node.get.more_down) ~= vmath.vector4(1, 1, 1, 1) then
+			if action.pressed and action_id == hash("touch") and gui.get_color(node.get.more_down) ~= vmath.vector4(1, 1, 1, 1) then
 				gui.set_color(node.get.more_down, vmath.vector4(1, 1, 1, 1))
-			elseif action_id == hash("touch") and action.released and gui.get_color(node.get.more_down) ~= vmath.vector4(0, 0, 0, 0) then
+			elseif action.released and action_id == hash("touch") and gui.get_color(node.get.more_down) ~= vmath.vector4(0, 0, 0, 0) then
 				gui.set_color(node.get.more_down, vmath.vector4(0, 0, 0, 0))
 				self.more_anims = not self.more_anims
 				msg.post("/gui#door", "more_anims?", {anims = self.more_anims})
@@ -874,7 +874,7 @@ function on_input(self, action_id, action)
 			end
 			if not self.editing_dimensions and action_id == hash("touch") and action.pressed and gui.get_color(node.get.anim_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
 				gui.set_color(node.get.anim_sel_light, vmath.vector4(1, 1, 1, 1))
-			elseif action_id == hash("touch") and action.released and gui.get_color(node.get.anim_sel_light) == vmath.vector4(1, 1, 1, 1) then
+			elseif action.released and action_id == hash("touch") and gui.get_color(node.get.anim_sel_light) == vmath.vector4(1, 1, 1, 1) then
 				if gui.get_color(node.get.anim_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
 					gui.set_color(node.get.anim_sel_light, vmath.vector4(0, 0, 0, 0))
 				end
@@ -939,9 +939,9 @@ function on_input(self, action_id, action)
 				gui.set_color(node.get.theme_sel_bg, vmath.vector4(1, 1, 1, 1))
 				msg.post("/zoom#minefinder", "hide_select", {hid = true})
 			end
-			if action_id == hash("touch") and action.pressed and gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
+			if action.pressed and action_id == hash("touch") and gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
 				gui.set_color(node.get.theme_sel_light, vmath.vector4(1, 1, 1, 1))
-			elseif action_id == hash("touch") and action.released and gui.get(node.get.theme_sel_light, "color.w") == 1 then
+			elseif action.released and action_id == hash("touch") and gui.get(node.get.theme_sel_light, "color.w") == 1 then
 				if gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
 					gui.set_color(node.get.theme_sel_light, vmath.vector4(0, 0, 0, 0))
 				end
@@ -981,9 +981,9 @@ function on_input(self, action_id, action)
 
 		if not self.more_anims and gui.get(node.get.set_check, "color.w") == 1 and gui.pick_node(node.get.set_check_hit, action.x, action.y) then --set new diff (check)
 			self.input_override = true
-			if action_id == hash("touch") and action.pressed then
+			if action.pressed and action_id == hash("touch") then
 				gui.set(node.get.set_check_lit, "color.w", 1)
-			elseif action_id == hash("touch") and action.released then
+			elseif action.released and action_id == hash("touch") then
 				gui.set(node.get.set_check_lit, "color.w", 0)
 				gui.set(node.get.set_check, "color.w", 0)
 
@@ -1021,9 +1021,9 @@ function on_input(self, action_id, action)
 
 		if not self.more_anims and gui.get(node.get.cancel_x, "color.w") == 1 and gui.pick_node(node.get.cancel_x_hit, action.x, action.y) then --cancel new diff (x)
 			self.input_override = true
-			if action_id == hash("touch") and action.pressed then
+			if action.pressed and action_id == hash("touch") then
 				gui.set(node.get.cancel_x_lit, "color.w", 1)
-			elseif action_id == hash("touch") and action.released then
+			elseif action.released and action_id == hash("touch") then
 				gui.set(node.get.cancel_x_lit, "color.w", 0)
 				gui.set(node.get.cancel_x, "color.w", 0)
 				l_data.diff_temp = l_data.diff
@@ -1042,9 +1042,9 @@ function on_input(self, action_id, action)
 
 		if self.lightbulb_there and gui.pick_node(gui.get_node("lightbulb-hit"), action.x, action.y) and not self.midnight_timer then --lightbulb
 			self.input_override = true
-			if action_id == hash("touch") and action.pressed then --click
+			if action.pressed and action_id == hash("touch") then --click
 				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4(1, 1, 1, 1))
-			elseif action_id == hash("touch") and action.released and gui.get(gui.get_node("lightbulb-click"), "color.x") == 1 then --release
+			elseif action.released and action_id == hash("touch") and gui.get(gui.get_node("lightbulb-click"), "color.x") == 1 then --release
 				-- print("switch!")
 				self.light_on = not self.light_on
 				if self.light_on then
@@ -1095,9 +1095,9 @@ function on_input(self, action_id, action)
 						msg.post("/zoom#minefinder", "hide_select", {hid = true})
 						gui.set_color(self.outlines[i], vmath.vector4((203/255), (219/255), (252/255), 1))
 					end				
-					if action_id == hash("touch") and action.pressed and gui.get_color(self.outlines[i]) ~= vmath.vector4(1, 1, 1, 1) then
+					if action.pressed and action_id == hash("touch") and gui.get_color(self.outlines[i]) ~= vmath.vector4(1, 1, 1, 1) then
 						gui.set_color(self.outlines[i], vmath.vector4(1, 1, 1, 1))
-					elseif action_id == hash("touch") and action.released and gui.get_color(self.outlines[i]) == vmath.vector4(1, 1, 1, 1) then
+					elseif action.released and action_id == hash("touch") and gui.get_color(self.outlines[i]) == vmath.vector4(1, 1, 1, 1) then
 						msg.post("/zoom#minefinder", "editing_dimensions", {editing = true})
 						self.editing_dimensions = true
 						self.text_box = i
@@ -1112,7 +1112,7 @@ function on_input(self, action_id, action)
 					end
 					msg.post("/zoom#minefinder", "hide_select", {hid = false})
 					self.input_override = false
-				elseif action_id == hash("touch") and action.pressed and i == self.text_box then
+				elseif action.pressed and i == self.text_box and action_id == hash("touch") then
 					if l_data.snake_moving then
 						nochange(self)
 					else
@@ -1124,10 +1124,10 @@ function on_input(self, action_id, action)
 		
 		if l_data.diff == 6 and not self.mines_calced and not self.more_anims and gui.pick_node(node.get.stars_hit, action.x, action.y) then -- stars
 			self.input_override = true
-			if action_id == hash("touch") and action.pressed then --click
+			if action.pressed and action_id == hash("touch") then --click
 				gui.set(node.get.stars, "color.w", 0)
 				gui.set(node.get.stars_lit, "position.y", -1)
-			elseif action_id == hash("touch") and action.released then --release
+			elseif action.released and action_id == hash("touch") then --release
 				-- gui.set(node.get.stars, "color.w", 1)
 				msg.post("/zoom#minefinder", "hide_select", {hid = false})
 				gui.set(node.get.stars_lit, "color.w", 0)
@@ -1161,9 +1161,9 @@ function on_input(self, action_id, action)
 
 		if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 and l_data.saved == false then --floppy disk click
 			self.input_override = true
-			if action_id == hash("touch") and action.pressed then
+			if action.pressed and action_id == hash("touch") then
 				gui.set_color(node.get.floppy_lit, vmath.vector4(1, 1, 1, 1))
-			elseif action_id == hash("touch") and action.released and gui.get_color(node.get.floppy_lit) ==  vmath.vector4(1, 1, 1, 1) then
+			elseif action.released and action_id == hash("touch") and gui.get_color(node.get.floppy_lit) ==  vmath.vector4(1, 1, 1, 1) then
 				gui.set(node.get.floppy_lit, "color.w", 0)
 				l_data.saved = nil
 				msg.post("/zoom#minefinder", "save_game_msg")
@@ -1197,7 +1197,7 @@ function on_input(self, action_id, action)
 		nochange(self)
 	end
 
-	if action_id == hash("del") and action.pressed and self.text_box then --delete
+	if action.pressed and self.text_box and action_id == hash("del") then --delete
 		if gui.get_color(node.get.text[self.text_box]) == vmath.vector4((172/255), (204/255), (255/255), 1) then
 			gui.set_text(node.get.text[self.text_box], "")
 			gui.set_color(node.get.text[self.text_box], vmath.vector4(1, 1, 1, 1))
@@ -1213,11 +1213,11 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if action_id == hash("r-arr") and action.pressed and self.text_box then --right arrow
+	if action.pressed and self.text_box and action_id == hash("r-arr") then --right arrow
 		gui.set_color(node.get.text[self.text_box], vmath.vector4(1, 1, 1, 1))
 	end
 
-	if action_id == hash("tab") and action.pressed and self.text_box then --tab
+	if action.pressed and self.text_box and action_id == hash("tab") then --tab
 		local txt_b_old = self.text_box
 		if l_data.snake_moving then
 			nochange(self)

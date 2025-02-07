@@ -91,7 +91,7 @@ function on_input(self, action_id, action)
 
 	if l_data.diff == 5 and not self.more_anims and l_data.key_is_there and l_data.door_state ~= "gone" and not self.zoomed then --key text
 		if gui.pick_node(gui.get_node("key-hit"), action.x, action.y) then
-			if action_id == hash("touch") and action.pressed then
+			if action.pressed and action_id == hash("touch") then
 				gui.set_color(gui.get_node("key"), vmath.vector4((251/255), (242/255), (54/255), 1))
 				self.holding_key = true
 			elseif gui.get_color(gui.get_node("key")) == vmath.vector4(1, 1, 1, 1) then
@@ -115,7 +115,7 @@ function on_input(self, action_id, action)
 		if gui.pick_node(gui.get_node("door-hit-closed"), action.x, action.y) then 
 			if gui.get(gui.get_node("lock-lit"), "color.w") == 0 and not self.door_unlocked then
 				gui.set(gui.get_node("lock-lit"), "color.w", 1)
-			elseif action_id == hash("touch") and action.pressed then
+			elseif action.pressed and action_id == hash("touch") then
 				l_data.key_is_there = false
 				gui.set(gui.get_node("key"), "color.w", 0)
 				self.door_unlocked = true

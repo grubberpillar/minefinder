@@ -2,6 +2,7 @@ local l_data = require "main.leveldata"
 
 function init(self)
 	gui.set_render_order(15)
+	msg.post(".", "acquire_input_focus")
 	self.time_alive = 0
 	self.stage = 0
 	self.fade_num = 0
@@ -32,6 +33,7 @@ function update(self, dt)
 		
 		if self.skip_splash or ((self.logo_loops == 2 and self.logo_frame > 14) or self.logo_loops > 2) then 
 			msg.post("#", "disable")
+			msg.post(".", "release_input_focus")
 			msg.post("/zoom#minefinder", "acquire_input_focus")
 			msg.post("/gui#minefinder", "acquire_input_focus")
 			msg.post("/gui-zoom#zoom", "acquire_input_focus")
@@ -85,6 +87,36 @@ function update(self, dt)
 				end
 				self.frame_time = self.frame_time%(1/self.logo_fps)
 			end
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	if action.pressed and action_id == hash("minus") then
+		if l_data.screen_scale > 1 then
+			if math.floor(l_data.screen_scale) == l_data.screen_scale then
+				l_data.screen_scale = l_data.screen_scale - 1
+			elseif l_data.screen_scale > 6 then
+				l_data.screen_scale = 5
+			else
+				l_data.screen_scale = math.floor(l_data.screen_scale) 
+			end
+			msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
+		end
+	end
+
+	if action.pressed and action_id == hash("plus") then
+		if l_data.screen_scale < 7 then
+			if math.floor(l_data.screen_scale) == l_data.screen_scale then
+				l_data.screen_scale = l_data.screen_scale + 1
+			else
+				print(l_data.screen_scale)
+				l_data.screen_scale = math.floor(l_data.screen_scale)+1
+			end
+			if l_data.os == "mac" and l_data.screen_scale == 2 then
+				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)-1, height = 216*(l_data.screen_scale)-1 } )
+			end
+			msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
 		end
 	end
 end
