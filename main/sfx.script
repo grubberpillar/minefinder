@@ -1,0 +1,14 @@
+function init(self)
+	print(msg.url())
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("key-snap") then
+		sound.play("/sfx#key-snapp")
+		-- if message.num then
+		-- 	sound.play("/sfx#key-snap-"..message.num)
+		-- else
+		-- 	sound.play("/sfx#key-snap-"..math.random(5))
+		-- end
+	end
+end

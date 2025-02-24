@@ -3,6 +3,9 @@ local D = {}
 D.in_game = false -- tracks if the splashscreen is finished
 D.os = "mac"
 D.screen_scale = 3
+D.player_id = nil
+D.default_name = ""
+D.reset_warning = false
 
 D.highscore = {}
 D.custom_hs_list = {{{}}}
@@ -11,7 +14,7 @@ D.header = {"-TINY-", "-EASY-", "-NORMAL-", "-HARD-", "-INSANE-", "-CUSTOM-"}
 
 D.description = {"pipsqueak mode", "OG minefinder size", "classic", "~get hard stay hard", "patience is ~~~~~~~~~~~~~~~", "~[max: 32x32]"}
 
-D.mine_nums = {10, 14, 40, 99, 169, 40}
+D.mine_nums = {10, 14, 40, 99, 159, 40}
 D.size_nums = {{8, 10, 16, 16, 24, 16}, {8, 10, 16, 30, 30, 16}}
 
 D.diff = 3
@@ -35,5 +38,6 @@ D.s_hs = 0
 
 D.door_state = "closed"
 D.key_is_there = true
+D.doors_found = {false, false, false, false, false}
 
 return D

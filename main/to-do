@@ -30,7 +30,7 @@ X settings
 		X graffiti
 	* large vs mini tiles diagram lol
 X reset game files
-- more controls view
+X more controls view
 * snapshot button
 - global highscores
 X windows icon
@@ -42,6 +42,10 @@ X windows icon
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
 * skip forward button for lose?
+X lower difficulty
+X cross out door hints
+X unconventional close settings in leaderboard hides gui
+X quit game splash text
 X fixed light render order
 X special lights switch does not turn on
 X move zoomed board while shift clicking tiles remain white

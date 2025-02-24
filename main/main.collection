@@ -8,6 +8,7 @@ embedded_instances {
   children: "diff-selected-temp"
   children: "light-switch"
   children: "selection"
+  children: "sfx"
   data: "components {\n"
   "  id: \"minefinder\"\n"
   "  component: \"/main/minefinder.script\"\n"
@@ -255,6 +256,7 @@ embedded_instances {
   children: "anims"
   children: "graffiti"
   children: "gui-zoom"
+  children: "leaderboard"
   children: "settings"
   data: "components {\n"
   "  id: \"minefinder\"\n"
@@ -733,6 +735,97 @@ embedded_instances {
   ""
   position {
     x: -1392.0
+    y: -864.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "leaderboard"
+  data: "components {\n"
+  "  id: \"leaderboard\"\n"
+  "  component: \"/main/leaderboard.gui\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "  property_decls {\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: -1392.0
+    y: 864.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "sfx"
+  data: "components {\n"
+  "  id: \"sfx\"\n"
+  "  component: \"/main/sfx.script\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "  property_decls {\n"
+  "  }\n"
+  "}\n"
+  "components {\n"
+  "  id: \"key-snapp\"\n"
+  "  component: \"/sfx/key-snapp.ogg\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "  property_decls {\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 0.0
     y: 0.0
     z: 0.0
   }

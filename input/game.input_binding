@@ -118,6 +118,10 @@ key_trigger {
   input: KEY_N
   action: "n-key"
 }
+key_trigger {
+  input: KEY_P
+  action: "debug3"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "touch"
@@ -145,4 +149,8 @@ gamepad_trigger {
 gamepad_trigger {
   input: GAMEPAD_RPAD_DOWN
   action: "select"
+}
+text_trigger {
+  input: TEXT
+  action: "typing"
 }

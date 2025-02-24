@@ -47,14 +47,6 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/control-scroll/more-controls-lit.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
-  image: "/assets/control-scroll/more-controls.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
   image: "/assets/control-scroll/mouse-symbol.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
@@ -96,6 +88,50 @@ images {
 }
 images {
   image: "/assets/control-scroll/little-coffee-drops.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/slash.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/minus-key-txt.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/plus-key-txt.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/door-scribble.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/bright-q.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/bright-check.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/hidden-door-underline.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/key-scribble.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/crossout-line.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/crossout-credits.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/control-scroll/crossout-controls.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 animations {
