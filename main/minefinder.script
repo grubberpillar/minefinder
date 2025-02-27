@@ -1,5 +1,23 @@
 local l_data = require "main.leveldata"
 
+local function hash_is_num(action_hash)
+	for i = 0,9 do
+		if action_hash == hash(""..i) then
+			return true
+		end
+	end
+	return false
+end
+
+local function hash_to_num(action_hash)
+	for i = 0,9 do
+		if action_hash == hash(""..i) then
+			return i
+		end
+	end
+	return nil
+end
+
 local function load_func(self, data)
 	print("save loaded")
 	l_data.player_id = data.gamedata.player_id or ""
@@ -557,6 +575,7 @@ go.property("dark_theme_mini", resource.tile_source("/main/minefinder-mini-dark.
 go.property("midnight_theme_mini", resource.tile_source("/main/minefinder-mini-midnight.tilesource"))
 
 function init(self)
+	math.randomseed(socket.gettime())
 	self.sfx_num = 0
 	
 	self.anim_vars = {"flag_place", "flag_remove", "flag_correct", "flag_incorrect", "explosion", "timer", "tileflip", "ui", "flip_bg", "faster_flip"}
@@ -624,7 +643,6 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("setup") then
-		math.randomseed(socket.gettime())
 		-- math.randomseed(0)
 		
 		self.board = {}
@@ -1073,8 +1091,8 @@ function on_message(self, message_id, message, sender)
 		save_game(self)
 	elseif message_id == hash("debug") then
 		msg.post("/sfx#sfx", "key-snap", {num = self.sfx_num%5+1})
+		print(self.sfx_num%5+1)
 		self.sfx_num = self.sfx_num + 1
-		print(self.sfx_num)
 		-- if not l_data.debug_shift then
 		-- 	l_data.profiling = not l_data.profiling
 		-- 	print(l_data.profiling)
@@ -1277,6 +1295,7 @@ function on_input(self, action_id, action)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flag-2"})
 							end
 						elseif (action_id == hash("select") or (action_id == hash("select-key") and not self.shifting) or ((action_id == hash("touch") or (action_id == hash("touch-key") and l_data.settings.dig_key)) and self.shifting)) and self.tile_clicked == 11 then -- place flag
+							msg.post("/sfx#sfx", "flap")
 							tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, 13)
 							if self.zoomed then
 								tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, 13)
@@ -1694,6 +1713,13 @@ function on_input(self, action_id, action)
 	if action.pressed and action_id == hash("debug3") then
 		l_data.debug_shift = not l_data.debug_shift
 		print("debug shift", l_data.debug_shift)
+	end
+
+	if action.pressed and hash_is_num(action_id) then --typing numbers
+		local num_type = hash_to_num(action_id)
+		if num_type < 6 then
+			msg.post("/sfx#sfx", "flap", {num = num_type})
+		end
 	end
 end
 

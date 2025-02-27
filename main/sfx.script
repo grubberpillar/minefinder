@@ -1,14 +1,28 @@
 function init(self)
-	print(msg.url())
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("key-snap") then
-		sound.play("/sfx#key-snapp")
-		-- if message.num then
-		-- 	sound.play("/sfx#key-snap-"..message.num)
-		-- else
-		-- 	sound.play("/sfx#key-snap-"..math.random(5))
-		-- end
+		if message.num then
+			sound.play("/sfx#key-snap-"..message.num)
+		else
+			local rand = math.random(5)
+			sound.play("/sfx#key-snap-"..rand)
+		end
+	elseif message_id == hash("key-click") then
+		if message.num then
+			sound.play("/sfx#key-click-"..message.num)
+		else
+			local rand = math.random(5)
+			sound.play("/sfx#key-click-"..rand)
+		end
+	elseif message_id == hash("flap") then
+		if message.num then
+			sound.play("/sfx#flap-"..message.num)
+		else
+			local rand = math.random(5)
+			sound.play("/sfx#flap-"..rand)
+		end
+		
 	end
 end

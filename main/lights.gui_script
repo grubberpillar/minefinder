@@ -13,7 +13,9 @@ function update(self, dt)
 		if self.light_color[self.light_iter] == 0 then
 			self.light_iter = (self.light_iter)%3+1
 		end
-		gui.set_color(gui.get_node("lights"), vmath.vector4(((20+self.light_color[1])/255), ((20+self.light_color[2])/255), ((20+self.light_color[3])/255), 1))
+		if not l_data.viewing_hs then
+			gui.set_color(gui.get_node("lights"), vmath.vector4(((20+self.light_color[1])/255), ((20+self.light_color[2])/255), ((20+self.light_color[3])/255), 1))
+		end
 	end
 end
 

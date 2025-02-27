@@ -3042,51 +3042,6 @@ animations {
   flip_vertical: 0
 }
 animations {
-  id: "flip-begin"
-  images {
-    image: "/assets/nothing.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/flip-board-shadow2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 14
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "flip-mid"
-  images {
-    image: "/assets/flip-board-shadow1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/flip-board-shadow2.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 14
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
-  id: "flip-end"
-  images {
-    image: "/assets/flip-board-shadow1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/nothing.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 14
-  flip_horizontal: 0
-  flip_vertical: 0
-}
-animations {
   id: "green-flash"
   images {
     image: "/assets/small-light-green-lit.png"
@@ -3098,6 +3053,97 @@ animations {
   }
   playback: PLAYBACK_ONCE_FORWARD
   fps: 10
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "single-flip"
+  images {
+    image: "/assets/flip-shadow-empty-top.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/flip-shadow-bot.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/nothing.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 17
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "single-flip-back"
+  images {
+    image: "/assets/flip-shadow-top.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/flip-shadow-empty-bot.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/nothing.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 17
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "flip-series"
+  images {
+    image: "/assets/flip-shadow-bot.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/nothing.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/flip-shadow-top.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 17
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "flip-start"
+  images {
+    image: "/assets/nothing.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/nothing.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/flip-shadow-top.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 17
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "flip-end"
+  images {
+    image: "/assets/flip-shadow-bot.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/nothing.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 17
   flip_horizontal: 0
   flip_vertical: 0
 }

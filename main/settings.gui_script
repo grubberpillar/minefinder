@@ -241,8 +241,10 @@ end
 function on_input(self, action_id, action)
 	if not (self.viewing_credits or self.viewing_more_controls) and gui.pick_node(self.nodes.settings_hit, action.x, action.y) then --settings toggle
 		if action.pressed and action_id == hash("touch") then --click
+			msg.post("/sfx#sfx", "key-snap")
 			gui.set(self.nodes.settings_top, "position.y", 0)
 		elseif action.released and action_id == hash("touch") and gui.get(self.nodes.settings_top, "position.y") == 0 then --release
+			msg.post("/sfx#sfx", "key-click")
 			if gui.get(gui.get_node("notif"), "color.w") == 1 then
 				gui.set(gui.get_node("notif-flash"), "color.w", 0)
 				gui.set(gui.get_node("notif"), "color.w", 0)

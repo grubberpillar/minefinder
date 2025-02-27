@@ -30,7 +30,7 @@ L.global_highscore = {{},{},{},{},{}}
 
 
 
-L.profanity = {"shit", "fuck", "dick", "piss", "tits", "tit", "sex", "fuk", "fuc"}
+L.profanity = {"shit", "fuck", "dick", "piss", "tits", "tit", "sex", "fuk", "fuc", "cum"}
 
 
 

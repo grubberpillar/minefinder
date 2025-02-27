@@ -114,7 +114,6 @@ end
 local function retry_but_on(self, action, action_id)
 	if action.pressed and (action_id == hash("touch") or action_id == hash("retry")) then
 		gui.set(node.get.retry, "position.y", -3)
-		msg.post("/sfx#sfx", "key-snap")
 	elseif action.released and (action_id == hash("touch") or action_id == hash("retry")) and gui.get(node.get.retry, "position.y") == -3 then
 		gui.set(node.get.retry, "position.y", 3)
 		msg.post("/zoom#minefinder", "reset")

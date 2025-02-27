@@ -42,6 +42,8 @@ X windows icon
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
 * skip forward button for lose?
+X fix flipboard while flipping causes tile anims to stop mid flip
+X +/- screen size leaderboard
 X lower difficulty
 X cross out door hints
 X unconventional close settings in leaderboard hides gui
