@@ -60,8 +60,13 @@ local function replace_char(str, index, new_char)
 	return str:sub(1, index - 1) .. char_fin .. str:sub(index + 1)
 end
 
-local function char_at_loc(self, col, row, char)
-	local full_string = gui.get_text(gui.get_node("txt-"..row.."-"..col))
+local function char_at_loc(self, col, row, char, type)
+	local full_string
+	if type == "char" then
+		full_string = gui.get_text(gui.get_node("txt-"..row.."-"..col))
+	else
+		full_string = gui.get_text(gui.get_node("title"))
+	end
 	if #full_string >= char then
 		local loc_found = string.find(self.letters, string.sub(full_string, char,char))
 		if loc_found then
@@ -70,11 +75,11 @@ local function char_at_loc(self, col, row, char)
 			return 0
 		end
 	end
-	if #full_string == 0 then
-		gui.set_text(gui.get_node("txt-"..row.."-"..col), "    ")
-	else
-		gui.set_text(gui.get_node("txt-"..row.."-"..col), string.format("%-4s", full_string))
-	end
+	-- if #full_string == 0 then
+	-- 	gui.set_text(gui.get_node("txt-"..row.."-"..col), "    ")
+	-- else
+	-- 	gui.set_text(gui.get_node("txt-"..row.."-"..col), string.format("%-4s", full_string))
+	-- end
 	return 0
 end
 
@@ -94,7 +99,7 @@ local function time_txt(time)
 end
 
 local function random_person()
-	local people = {{"NOAH", "noahISNTveryCOOL"}, {"COOL", "coolcoolcoolcool"}, {"YAEL", "yaelYAELyaelYAEL"}, {"KRIS", "mrkristophereiss"}, {"JAR", "evilEVILevilEVIL"}, {"A", "lazyahhpersonlol"}, {"DREW", "thissISjustMYdad"}, {"KATE", "dumbnannoyingsis"}, {"EVAN", "bigWINhesSOOcool"}, {"BOT", "BOTBOTBOTBOTBOTB"}}
+	local people = {{"NOAH", "noahISveryCOOLIO"}, {"COOL", "coolcoolcoolcool"}, {"ARJN", "hehastoomuchhair"}, {"YAEL", "yaelYAELyaelYAEL"}, {"KRIS", "mrkristophereiss"}, {"JAR", "evilEVILevilEVIL"}, {"A", "lazyahhpersonlol"}, {"DREW", "thissISjustMYdad"}, {"KATE", "dumbnannoyingsis"}, {"EVAN", "bigWINhesSOOcool"}, {"BOT", "BOTBOTBOTBOTBOTB"}}
 	local rand = math.random(#people)
 	return people[rand][1], people[rand][2]
 end
@@ -133,12 +138,71 @@ local function profane_check(str)
 	return str
 end
 
+local function flip_tile(self, input, col, row, type, flip_check)
+	local iters = 4
+	if type == "title" then
+		iters = 13
+	end
+	for i = 1, iters do 
+		local char = i
+		local end_char, start_char
+		if type ~= "num" then
+			start_char = char_at_loc(self,col,row,char,type)
+			if i <= #input then
+				end_char = string.find(self.letters, string.sub(input, i,i))-1
+			else
+				end_char = 0
+			end
+			
+		else
+			local char_t = char+math.floor(i/3)
+			local orig_num = gui.get_text(gui.get_node("num-"..row.."-"..col))
+
+			if i <= #orig_num then
+				local to_num = tonumber(string.sub(orig_num, char_t,char_t))
+				if to_num then
+					start_char = to_num
+				else
+					start_char = 10
+				end
+			else
+				start_char = 10
+			end
+
+			if i <= #input then
+				local to_num = tonumber(string.sub(input, char_t,char_t))
+				if to_num then
+					end_char = to_num
+				else
+					end_char = 10
+				end
+			else
+				end_char = 10
+			end
+		end
+
+		local is_flipping = -1
+		if flip_check then
+			is_flipping = already_flipping(self, col, row, char, type)
+		end
+		
+		if is_flipping ~= -1 then
+			self.flip_anim[is_flipping].fin = end_char
+		else
+			table.insert(self.flip_anim, {col = col, row = row, type = type, char = char, anim_loc = gui.get_node(type.."-c"..char.."-"..row.."-"..col), pos = start_char, fin = end_char, iter = 0}) --fin = string.find(self.allowed_chars, "I")
+			-- if char == 1 or char == 11 then
+			-- 	print(end_char)
+			-- end
+		end
+	end
+end
+
 local function update_board(self, diff)
-	self.lb_old = deep_copy(self.lb_instance)
+	self.lb_old = deep_copy(l_board.lb_instance)
 	-- local update_runs = 0
 	repeat
-		local lb_instance_temp = deep_copy(l_board.global_highscore)
-		self.lb_instance = deep_copy(l_board.global_highscore)
+		l_board.lb_instance = deep_copy(l_board.global_highscore) --download global leaderboard to lb_instance
+		local lb_instance_temp = deep_copy(l_board.lb_instance)
 		local player_hs = l_data.highscore[diff]
 		local player_name = l_data.default_name
 		local player_id = l_data.player_id
@@ -148,36 +212,36 @@ local function update_board(self, diff)
 		end
 		
 		-- print("update")
-		if #self.lb_instance[diff] > 0 then
+		if #l_board.lb_instance[diff] > 0 then
 			local iterating = true
 			local i = 1
-			while i <= #self.lb_instance[diff] do
-				if iterating and self.lb_instance[diff][i][2] > player_hs then
-					table.insert(self.lb_instance[diff], i, {player_name, player_hs, player_id})
-					-- print("new hs (", self.lb_instance[diff][i][1], time_txt(self.lb_instance[diff][i][2]), ")")
+			while i <= #l_board.lb_instance[diff] do
+				if iterating and l_board.lb_instance[diff][i][2] > player_hs then
+					table.insert(l_board.lb_instance[diff], i, {player_name, player_hs, player_id})
+					-- print("new hs (", l_board.lb_instance[diff][i][1], time_txt(l_board.lb_instance[diff][i][2]), ")")
 					iterating = false
-				elseif not iterating and self.lb_instance[diff][i][3] == player_id then
-					-- print("hs REPLACE (", self.lb_instance[diff][i][1], time_txt(self.lb_instance[diff][i][2]), ")")
-					table.remove(self.lb_instance[diff], i)
+				elseif not iterating and l_board.lb_instance[diff][i][3] == player_id then
+					-- print("hs REPLACE (", l_board.lb_instance[diff][i][1], time_txt(l_board.lb_instance[diff][i][2]), ")")
+					table.remove(l_board.lb_instance[diff], i)
 				end
 
-				if l_data.default_name == "RAND" and iterating and self.lb_instance[diff][i][3] == player_id then
-					-- print("hs too low (", self.lb_instance[diff][i][1], time_txt(self.lb_instance[diff][i][2]), ")")
+				if l_data.default_name == "RAND" and iterating and l_board.lb_instance[diff][i][3] == player_id then
+					-- print("hs too low (", l_board.lb_instance[diff][i][1], time_txt(l_board.lb_instance[diff][i][2]), ")")
 					iterating = false
 				end
 				i = i + 1
 			end
 			if iterating then
-				table.insert(self.lb_instance[diff], #self.lb_instance[diff]+1, {player_name, player_hs, player_id})
+				table.insert(l_board.lb_instance[diff], #l_board.lb_instance[diff]+1, {player_name, player_hs, player_id})
 			end
-			if #self.lb_instance[diff] > 10 then
-				for j = 11, #self.lb_instance[diff] do
-					table.remove(self.lb_instance[diff], j)
+			if #l_board.lb_instance[diff] > 10 then
+				for j = 11, #l_board.lb_instance[diff] do
+					table.remove(l_board.lb_instance[diff], j)
 				end
 			end
 		else
 			-- print("fresh")
-			table.insert(self.lb_instance[diff], {player_name, player_hs, player_id})
+			table.insert(l_board.lb_instance[diff], {player_name, player_hs, player_id})
 		end
 		
 		-- update_runs = update_runs + 1
@@ -185,20 +249,29 @@ local function update_board(self, diff)
 	until deep_equal(lb_instance_temp, l_board.global_highscore)
 
 	
-	l_board.global_highscore = deep_copy(self.lb_instance)
+	l_board.global_highscore = deep_copy(l_board.lb_instance) --upload lb_instance to global leaderboard
 
 	for d = 1, 5 do  --set new board
 		for j = 1, 10 do
-			if self.lb_old[d][j] ~= self.lb_instance[d][j] then
+			if self.lb_old[d][j] ~= l_board.lb_instance[d][j] then
 				-- print("news", j)
-				if self.lb_instance[d][j] == nil then
-					gui.set_text(gui.get_node("txt-"..j.."-"..d), "")
-					gui.set_text(gui.get_node("num-"..j.."-"..d), "")
+				if l_board.lb_instance[d][j] == nil then
+					if not l_data.gui_anims then
+						gui.set_text(gui.get_node("txt-"..j.."-"..d), "")
+						gui.set_text(gui.get_node("num-"..j.."-"..d), "")
+					else
+						local input = ""
+						local col = d
+						local row = j
+
+						flip_tile(self, input, col, row, "char", true)
+						flip_tile(self, input, col, row, "num", true)
+					end
 				else
 					local newcolor = nil
-					if self.lb_instance[d][j][3] == l_data.player_id then
+					if l_board.lb_instance[d][j][3] == l_data.player_id then
 						newcolor = vmath.vector4(1, 1, (200/255), 1)
-					elseif self.lb_instance[d][j][1] == "FLEA" then
+					elseif l_board.lb_instance[d][j][1] == "FLEA" then
 						newcolor = vmath.vector4((183/255), (146/255), (61/255), 1)
 					elseif gui.get_color(gui.get_node("txt-"..j.."-"..d)) ~= vmath.vector4(1, 1, 1, 1) then
 						newcolor = vmath.vector4(1, 1, 1, 1)
@@ -213,31 +286,24 @@ local function update_board(self, diff)
 					end
 
 					if not l_data.gui_anims then
-						gui.set_text(gui.get_node("txt-"..j.."-"..d), profane_check(self.lb_instance[d][j][1]))
+						gui.set_text(gui.get_node("txt-"..j.."-"..d), profane_check(l_board.lb_instance[d][j][1]))
 					else
-						local input = profane_check(self.lb_instance[d][j][1])
-						for i = 1, 4 do 
-							local col = d
-							local row = j
-							local char = i
-							local type = "char"
-							local end_char
-							if i <= #input then
-								end_char = string.find(self.allowed_chars, string.sub(input, i,i))
-							else
-								end_char = 0
-							end
-
-							local is_flipping = already_flipping(self, col, row, char, type)
-							if is_flipping ~= -1 then
-								self.flip_anim[is_flipping].fin = end_char
-							else
-								table.insert(self.flip_anim, {col = col, row = row, type = type, char = char, anim_loc = gui.get_node(type.."-c"..char.."-"..row.."-"..col), pos = char_at_loc(self,col,row,char), fin = end_char, iter = 0}) --fin = string.find(self.allowed_chars, "I")
-							end
-						end
+						local input = profane_check(l_board.lb_instance[d][j][1])
+						local col = d
+						local row = j
+						local type = "char"
+						flip_tile(self, input, col, row, type, true)
 					end
-					
-					gui.set_text(gui.get_node("num-"..j.."-"..d), time_txt(self.lb_instance[d][j][2]))
+
+					if not l_data.gui_anims then
+						gui.set_text(gui.get_node("num-"..j.."-"..d), time_txt(l_board.lb_instance[d][j][2]))
+					else
+						local input = time_txt(l_board.lb_instance[d][j][2])
+						local col = d
+						local row = j
+						local type = "num"
+						flip_tile(self, input, col, row, type, true)
+					end
 				end
 			end
 		end
@@ -246,8 +312,8 @@ end
 
 local function name_used(self, name)
 	for i = 1, 5 do
-		for j = 1, #self.lb_instance[i] do
-			if self.lb_instance[i][j][1] == name and self.lb_instance[i][j][3] ~= l_data.player_id then
+		for j = 1, #l_board.lb_instance[i] do
+			if l_board.lb_instance[i][j][1] == name and l_board.lb_instance[i][j][3] ~= l_data.player_id then
 				return true
 			end
 		end
@@ -290,19 +356,85 @@ end
 local function print_leaderboard(self)
 	for i = 1, 5 do
 		for j = 1, 10 do
-			if self.lb_instance[i][j] == nil then
+			if l_board.lb_instance[i][j] == nil then
 				gui.set_text(gui.get_node("txt-"..j.."-"..i), "")
 				gui.set_text(gui.get_node("num-"..j.."-"..i), "")
 			else
-				if self.lb_instance[i][j][3] == l_data.player_id then
+				if l_board.lb_instance[i][j][3] == l_data.player_id then
 					gui.set_color(gui.get_node("txt-"..j.."-"..i), vmath.vector4(1, 1, (200/255), 1))
-				elseif self.lb_instance[i][j][1] == "FLEA" then
+				elseif l_board.lb_instance[i][j][1] == "FLEA" then
 					gui.set_color(gui.get_node("txt-"..j.."-"..i), vmath.vector4((183/255), (146/255), (61/255), 1))
 				elseif gui.get_color(gui.get_node("txt-"..j.."-"..i)) ~= vmath.vector4(1, 1, 1, 1) then
 					gui.set_color(gui.get_node("txt-"..j.."-"..i), vmath.vector4(1, 1, 1, 1))
 				end
-				gui.set_text(gui.get_node("txt-"..j.."-"..i), profane_check(self.lb_instance[i][j][1]))
-				gui.set_text(gui.get_node("num-"..j.."-"..i), time_txt(self.lb_instance[i][j][2]))
+				gui.set_text(gui.get_node("txt-"..j.."-"..i), profane_check(l_board.lb_instance[i][j][1]))
+				gui.set_text(gui.get_node("num-"..j.."-"..i), time_txt(l_board.lb_instance[i][j][2]))
+			end
+		end
+	end
+end
+
+local function flip_leaderboard(self, first_flip)
+	for i = 1, 5 do
+		for j = 1, 10 do
+			local text_loc = gui.get_node("txt-"..j.."-"..i)
+			if l_board.lb_instance[i][j] == nil then
+				gui.set_text(text_loc, "")
+				gui.set_text(gui.get_node("num-"..j.."-"..i), "")
+			else
+				local newcolor = nil
+				if l_board.lb_instance[i][j][3] == l_data.player_id then
+					newcolor = vmath.vector4(1, 1, (200/255), 1)
+				elseif l_board.lb_instance[i][j][1] == "FLEA" then
+					newcolor = vmath.vector4((183/255), (146/255), (61/255), 1)
+				elseif gui.get_color(text_loc) ~= vmath.vector4(1, 1, 1, 1) then
+					newcolor = vmath.vector4(1, 1, 1, 1)
+				end
+
+				if newcolor then
+					if l_data.gui_anims then
+						table.insert(self.color_change, {loc = text_loc, color = newcolor, iter = 0})
+					else
+						gui.set_color(text_loc, newcolor)
+					end
+				end
+
+				local input = profane_check(l_board.lb_instance[i][j][1])
+				if string.sub(gui.get_text(text_loc), 0, #input) ~= input then
+					if not l_data.gui_anims then
+						gui.set_text(text_loc, input)
+					else
+						-- print(i, j)
+						-- print(string.format("|%-s| v |%-s|", string.sub(gui.get_text(text_loc), 0, #input), input))
+
+						local col = i
+						local row = j
+						local type = "char"
+						
+						flip_tile(self, input, col, row, type, not first_flip)
+					end
+				end
+
+				local num_loc = gui.get_node("num-"..j.."-"..i)
+				input = time_txt(l_board.lb_instance[i][j][2])
+				
+				if gui.get_text(num_loc) ~= input then
+					if not l_data.gui_anims then
+						gui.set_text(num_loc, input)
+					else
+						-- print(i, j)
+						-- print(string.format("|%-s| v |%-s|", gui.get_text(num_loc), input))
+
+						local col = i
+						local row = j
+						local type = "num"
+
+						flip_tile(self, input, col, row, type, not first_flip)
+					end
+					
+				end
+
+				
 			end
 		end
 	end
@@ -313,24 +445,35 @@ function init(self)
 	self.hs_submittable = {false, false, false, false, false}
 	self.entering_name = nil
 	self.allowed_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	self.letters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	self.letters_vis = "`ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	self.lb_instance = nil
+	self.letters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ-*"
+	self.letters_vis = "`ABCDEFGHIJKLMNOPQRSTUVWXYZ-"
+	self.numbers_vis = "0123456789`"
+	self.diff_colors = {vmath.vector4((55/255), (148/255), (110/255), 1), vmath.vector4((153/255), (229/255), (80/255), 1), vmath.vector4((251/255), (242/255), (54/255), 1), vmath.vector4((223/255), (113/255), (38/255), 1), vmath.vector4((217/255), (87/255), (99/255), 1)}
 	self.name_char_delay = {nil,nil,nil,nil}
 	self.flip_anim = {}
-	self.text_change = {}
-	self.text_change_template = {}
+	self.flip_change = {char = {}, num = {}}
+	self.change_template = {}
+	self.title_change_template = {{}}
+	self.col_change = {}
 	self.color_change = {}
-	for c = 1, 5 do
-		table.insert(self.text_change_template, {})
+	
+	for c = 1, 5 do --text change array setup
+		table.insert(self.change_template, {})
 		for r = 1, 10 do
-			table.insert(self.text_change_template[c], {})
+			table.insert(self.change_template[c], {})
 			for i = 1, 4 do
-				self.text_change_template[c][r][i] = nil
+				self.change_template[c][r][i] = nil
 			end
-			self.text_change_template[c][r][5] = false
+			self.change_template[c][r][5] = false
 		end
 	end
+	
+	table.insert(self.title_change_template, {}) --title change array setup
+	table.insert(self.title_change_template[1], {})
+	for i = 1, 13 do
+		self.title_change_template[1][1][i] = nil
+	end
+	self.title_change_template[1][1][14] = false
 end
 
 function on_message(self, message_id, message, sender)
@@ -338,7 +481,12 @@ function on_message(self, message_id, message, sender)
 		msg.post(".", "acquire_input_focus")
 		self.connected = false
 		self.failed_connection = false
-		gui.set_text(gui.get_node("title"), "CONNECTING~. . .")
+		
+		gui.set_text(gui.get_node("title"), "")
+		local input = " CONNECTING*"
+		flip_tile(self, input, 1, 1, "title", false)
+		table.insert(self.color_change, {loc = gui.get_node("title"), color = vmath.vector4((203/255), (219/255), (252/255), 1), iter = 0})
+		
 		for i = 1, 5 do
 			for j = 1, 10 do
 				gui.set_text(gui.get_node("txt-"..j.."-"..i), "")
@@ -349,6 +497,10 @@ function on_message(self, message_id, message, sender)
 			gui.play_flipbook(gui.get_node("diff-light"..i), "small-light-off")
 			gui.play_flipbook(gui.get_node("submit-"..i.."-top"), "submit-off")
 			gui.set_color(gui.get_node("submit-"..i.."-bg"), vmath.vector4((105/255), (106/255), (106/255), 1))
+			gui.set_color(gui.get_node("diff-circle"..i), vmath.vector4(1, 1, 1, 1))
+			if i == 5 then
+				gui.play_flipbook(gui.get_node("face5"), "insane-face")
+			end
 		end
 	elseif message_id == hash("disable") then
 		msg.post(".", "release_input_focus")
@@ -373,9 +525,27 @@ function on_message(self, message_id, message, sender)
 				self.error_msg = false
 			end
 		end
+
+		--finish color changes
+		if #self.color_change > 0 then
+			for i = #self.color_change, 1, -1 do
+				gui.set_color(self.color_change[i].loc, self.color_change[i].color)
+				table.remove(self.color_change, i)
+			end
+		end
+		
+		--clear any active tile anims
+		for i = #self.flip_anim, 1, -1 do
+			gui.play_flipbook(self.flip_anim[i].anim_loc, "nothing")
+			table.remove(self.flip_anim, i)
+		end
 	elseif message_id == hash("profanity_switch") then
 		if l_data.viewing_hs then
-			print_leaderboard(self)
+			if l_data.gui_anims then
+				flip_leaderboard(self)
+			else
+				print_leaderboard(self)
+			end
 		end
 	end
 end
@@ -385,8 +555,12 @@ function on_input(self, action_id, action)
 		if not self.connected and not self.failed_connection then
 			if action.pressed and action_id == hash("y-key") then
 				self.connected = true
-				gui.set_text(gui.get_node("title"), "~~ LEADERBOARD")
-				self.lb_instance = deep_copy(l_board.global_highscore)
+				
+				local input = " LEADERBOARD"
+				flip_tile(self, input, 1, 1, "title", true)
+				table.insert(self.color_change, {loc = gui.get_node("title"), color = vmath.vector4(1, 1, 1, 1), iter = 0})
+				
+				l_board.lb_instance = deep_copy(l_board.global_highscore) --download global leaderboard to lb_instance
 				if l_data.player_id == nil then
 					local id = make_id(self)
 					print(id)
@@ -395,20 +569,22 @@ function on_input(self, action_id, action)
 
 				self.hs_submittable = {false, false, false, false, false}
 				for i = 1,5 do
-					if l_data.highscore[i] ~= nil and #self.lb_instance[i] == 0 then
+					if l_data.highscore[i] ~= nil and #l_board.lb_instance[i] == 0 then
 						self.hs_submittable[i] = true
-					elseif #self.lb_instance[i] > 0 and l_data.highscore[i] and l_data.highscore[i] < self.lb_instance[i][#self.lb_instance[i]][2] then
+					elseif #l_board.lb_instance[i] > 0 and l_data.highscore[i] and l_data.highscore[i] < l_board.lb_instance[i][#l_board.lb_instance[i]][2] then
 						self.hs_submittable[i] = true
 					end
 					local j = 1
 					local set_hs = nil
-					while j <= #self.lb_instance[i] and not set_hs do
-						if self.lb_instance[i][j][3] == l_data.player_id then
-							set_hs = self.lb_instance[i][j][2]
+					while j <= #l_board.lb_instance[i] and not set_hs do
+						if l_board.lb_instance[i][j][3] == l_data.player_id then
+							set_hs = l_board.lb_instance[i][j][2]
 						end
 						j = j + 1
 					end
-					if set_hs and set_hs <= l_data.highscore[i] then
+					if l_data.highscore[i] and l_data.highscore[i] >= 6000 then
+						self.hs_submittable[i] = false
+					elseif set_hs and set_hs <= l_data.highscore[i] then
 						self.hs_submittable[i] = false
 					end
 				end
@@ -423,13 +599,23 @@ function on_input(self, action_id, action)
 						gui.play_flipbook(gui.get_node("submit-"..i.."-top"), "submit-off")
 						gui.set_color(gui.get_node("submit-"..i.."-bg"), vmath.vector4((105/255), (106/255), (106/255), 1))
 					end
+					gui.set_color(gui.get_node("diff-circle"..i), self.diff_colors[i])
+					if i == 5 then
+						gui.play_flipbook(gui.get_node("face5"), "insane-face-on")
+					end
 				end
 
-				print_leaderboard(self)
+				if l_data.gui_anims then
+					flip_leaderboard(self, true)
+				else
+					print_leaderboard(self)
+				end
 			end
 			if action.pressed and action_id == hash("n-key") then
 				self.failed_connection = true
-				gui.set_text(gui.get_node("title"), "NO~ ~CONNECTION")
+				local input = "NO CONNECTION"
+				flip_tile(self, input, 1, 1, "title", true)
+				table.insert(self.color_change, {loc = gui.get_node("title"), color = vmath.vector4((217/255), (87/255), (99/255), 1), iter = 0})
 			end
 		elseif self.connected then
 			for i = 1,5 do --submit buttons
@@ -443,6 +629,13 @@ function on_input(self, action_id, action)
 							if self.hs_submittable[j] then
 								gui.play_flipbook(gui.get_node("submit-"..j.."-top"), "submit-off")
 								gui.set_color(gui.get_node("submit-"..j.."-bg"), vmath.vector4((105/255), (106/255), (106/255), 1))
+							end
+
+							if j ~= self.entering_name then
+								gui.set_color(gui.get_node("diff-circle"..j), vmath.vector4((79/255), (76/255), (74/255), 1))
+								if j == 5 then
+									gui.play_flipbook(gui.get_node("face5"), "insane-face-off")
+								end
 							end
 						end
 						for c = 1, #l_data.default_name do
@@ -516,6 +709,12 @@ function on_input(self, action_id, action)
 									if self.hs_submittable[j] then
 										gui.play_flipbook(gui.get_node("submit-"..j.."-top"), "submit-on")
 										gui.set_color(gui.get_node("submit-"..j.."-bg"), vmath.vector4((217/255), (87/255), (99/255), 1))
+									end
+									if j ~= self.entering_name then
+										gui.set_color(gui.get_node("diff-circle"..j), self.diff_colors[j])
+										if j == 5 then
+											gui.play_flipbook(gui.get_node("face5"), "insane-face-on")
+										end
 									end
 								end
 								gui.set_color(gui.get_node("accept-bg"), vmath.vector4((59/255), (59/255), (59/255), 1))
@@ -632,32 +831,23 @@ function on_input(self, action_id, action)
 				end
 				l_data.default_name = name_store
 			end
-
-			-- for c = 1, 3 do 
-			-- 	for r = 1, 6 do
-			-- 		local input = random_person_plus()
-			-- 		for i = 1, 4 do 
-			-- 			local col = c
-			-- 			local row = r
-			-- 			local char = i
-			-- 			local type = "char"
-			-- 			local end_char
-			-- 			if i <= #input then
-			-- 				end_char = string.find(self.allowed_chars, string.sub(input, i,i))
-			-- 			else
-			-- 				end_char = 0
-			-- 			end
-			-- 			
-			-- 			local is_flipping = already_flipping(self, col, row, char, type)
-			-- 			if is_flipping ~= -1 then
-			-- 				self.flip_anim[is_flipping].fin = end_char
-			-- 			else
-			-- 				table.insert(self.flip_anim, {col = col, row = row, type = type, char = char, anim_loc = gui.get_node(type.."-c"..char.."-"..row.."-"..col), pos = char_at_loc(self,col,row,char), fin = end_char, iter = 0}) --fin = string.find(self.allowed_chars, "I")
-			-- 			end
-			-- 		end
-			-- 	end
-			-- end
+			
+			-- local input = time_txt(math.random(1200))
+			-- print(input)
+			-- local col = 1
+			-- local row = 1
+			-- local type = "num"
+			-- flip_tile(self, input, col, row, type, true)
 		end
+		if action.pressed and action_id == hash("debug2") then
+			local input = "HEYO WASGOOD "
+			-- print(input)
+			local col = 1
+			local row = 1
+			local type = "title"
+			flip_tile(self, input, col, row, type, true)
+		end
+		
 	end
 end
 
@@ -688,18 +878,29 @@ function update(self, dt)
 				self.flip_delay = 0.176-dt
 			elseif self.flip_delay <= 0 then
 				self.flip_delay = 0.176-dt
-				self.text_change = deep_copy(self.text_change_template)
-				self.col_change = {false,false,false,false,false}
+				self.flip_change = {char = deep_copy(self.change_template), num = deep_copy(self.change_template), title = deep_copy(self.change_template)}
+				self.col_change =  {char = {false,false,false,false,false}, num = {false,false,false,false,false}, title = {false}}
 				local removed_anims = {}
+
 				for i, f in ipairs(self.flip_anim) do
 					if f.pos ~= f.fin then
 						if f.iter ~= 0 then --advance char
-							f.pos = (f.pos + 1)%27
-							self.text_change[f.col][f.row][f.char] = string.sub(self.letters_vis, f.pos+1,f.pos+1)
-							if not self.text_change[f.col][f.row][5] then
-								self.text_change[f.col][f.row][5] = true
-								if not self.col_change[f.col] then
-									self.col_change[f.col] = true
+							if f.type ~= "num" then
+								f.pos = (f.pos + 1)%28
+								self.flip_change[f.type][f.col][f.row][f.char] = string.sub(self.letters_vis, f.pos+1,f.pos+1)
+							else
+								f.pos = (f.pos + 1)%11
+								self.flip_change["num"][f.col][f.row][f.char] = string.sub(self.numbers_vis, f.pos+1,f.pos+1)
+							end
+
+							local bool_loc = 5
+							if f.type == "title" then
+								bool_loc = 14
+							end
+							if not self.flip_change[f.type][f.col][f.row][bool_loc] then
+								self.flip_change[f.type][f.col][f.row][bool_loc] = true
+								if not self.col_change[f.type][f.col] then
+									self.col_change[f.type][f.col] = true
 								end
 							end
 						end
@@ -726,23 +927,64 @@ function update(self, dt)
 					table.remove(self.flip_anim, removed_anims[i])
 				end
 
-				for c = 1,5 do
-					if self.col_change[c] then
-						for r = 1,10 do
-							if self.text_change[c][r][5] then
-								local fin_str = ""
-								local str_loc = gui.get_node("txt-"..r.."-"..c)
-								local start_str = gui.get_text(str_loc)
-								for i = 1,4 do
-									if self.text_change[c][r][i] then
-										fin_str = fin_str..self.text_change[c][r][i]
-									else
-										fin_str = fin_str..string.sub(start_str, i,i)
+				local f_types = {"char", "num"}
+				local f_id = {"txt", "num"}
+
+				for t,f in ipairs(f_types) do --printing all accumulated change
+					for c = 1,5 do
+						if self.col_change[f][c] then
+							for r = 1,10 do
+								if self.flip_change[f][c][r][5] then
+									local fin_str = ""
+									local str_loc = gui.get_node(f_id[t].."-"..r.."-"..c)
+									local start_str = gui.get_text(str_loc)
+									for i = 1,4 do
+										local char_t = i 
+										
+										if f == "num"then
+											if i == 3 then
+												fin_str = fin_str..":"
+											end
+											char_t = i+math.floor(i/3)
+										end
+										
+										if self.flip_change[f][c][r][i] then
+											fin_str = fin_str..self.flip_change[f][c][r][i]
+										else
+											fin_str = fin_str..string.sub(start_str, char_t,char_t)
+										end
 									end
+									if fin_str == "``:``" then
+										fin_str = ""
+									end
+									gui.set_text(str_loc, fin_str)
 								end
-								gui.set_text(str_loc, fin_str)
 							end
 						end
+					end
+				end
+
+
+				if self.col_change["title"][1] then --print change to title
+					local t = "title"
+					if self.flip_change[t][1][1][14] then
+						local fin_str = ""
+						local str_loc = gui.get_node(t)
+						local start_str = gui.get_text(str_loc)
+						for i = 1,13 do
+							local char_t = i 
+
+							if self.flip_change[t][1][1][i] then
+								fin_str = fin_str..self.flip_change[t][1][1][i]
+							else
+								local addition = string.sub(start_str, char_t,char_t)
+								if addition == "" then
+									addition = "`"
+								end
+								fin_str = fin_str..addition
+							end
+						end
+						gui.set_text(str_loc, fin_str)
 					end
 				end
 

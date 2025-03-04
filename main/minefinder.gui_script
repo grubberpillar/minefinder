@@ -1,5 +1,18 @@
 local l_data = require "main.leveldata"
+local l_board = require "main.leaderboard"
 local node = require "main.gui-nodes"
+
+local function deep_copy(orig) --outside/unoriginal method
+	local copy = {}
+	for k, v in pairs(orig) do
+		if type(v) == "table" then
+			copy[k] = deep_copy(v)  -- Recursively copy nested tables
+		else
+			copy[k] = v  -- Copy primitive values
+		end
+	end
+	return copy
+end
 
 local function hide_floppy(self)
 	gui.set(node.get.set_check, "color.w", 0)
@@ -43,7 +56,7 @@ local function round(num)
 end
 
 local function get_firework_color(id)
-	--_									-#1-													-#2-												-#3-												-#4-												-#5-												-#6-												-#7-													-#8-												-#9-												-#10-
+	-- 									-#1-													-#2-												-#3-												-#4-												-#5-												-#6-												-#7-													-#8-												-#9-												-#10-
 	local colors = {(vmath.vector4((172/255), (50/255), (50/255), 1)), (vmath.vector4((251/255), (242/255), (54/255), 1)), (vmath.vector4((99/255), (155/255), (255/255), 1)), (vmath.vector4((95/255), (205/255), (228/255), 1)), (vmath.vector4((153/255), (229/255), (80/255), 1)), (vmath.vector4((223/255), (113/255), (38/255), 1)), (vmath.vector4((215/255), (123/255), (186/255), 1)), (vmath.vector4((217/255), (87/255), (99/255), 1)), (vmath.vector4((234/255), (167/255), (0/255), 1)), (vmath.vector4((203/255), (219/255), (252/255), 1))}
 	return colors[id]
 end
@@ -578,6 +591,34 @@ function on_message(self, message_id, message)
 					if l_data.size_nums[1][6] == l_data.size_nums[1][i] and l_data.size_nums[2][6] == l_data.size_nums[2][i] and l_data.mine_nums[6] == l_data.mine_nums[i] then
 						l_data.highscore[i] = math.floor(l_data.seconds + l_data.minutes*60 + l_data.hours*3600)
 						break
+					end
+				end
+			end
+
+			if l_data.diff ~= 6 then
+				if l_board.lb_instance == nil then
+					msg.post("/settings#settings", "world-flash")
+				else
+					l_board.lb_instance = deep_copy(l_board.global_highscore) --download global leaderboard to lb_instance
+					if #l_board.lb_instance[l_data.diff] == 0 or (#l_board.lb_instance[l_data.diff] > 0 and l_data.highscore[l_data.diff] < l_board.lb_instance[l_data.diff][#l_board.lb_instance[l_data.diff]][2]) then
+						local flash_world = true
+						local j = 1
+						local set_hs = nil
+						while j <= #l_board.lb_instance[l_data.diff] and not set_hs do
+							if l_board.lb_instance[l_data.diff][j][3] == l_data.player_id then
+								set_hs = l_board.lb_instance[l_data.diff][j][2]
+							end
+							j = j + 1
+						end
+						if l_data.highscore[l_data.diff] >= 6000 then
+							flash_world = false
+						elseif set_hs and set_hs <= l_data.highscore[l_data.diff] then
+							flash_world = false
+						end
+
+						if flash_world then
+							msg.post("/settings#settings", "world-flash")
+						end
 					end
 				end
 			end

@@ -446,6 +446,14 @@ images {
   image: "/assets/mini-floppy-lit.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assets/insane-face-off.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/insane-face-on.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 animations {
   id: "explosion-wick"
   images {
@@ -3144,6 +3152,29 @@ animations {
   }
   playback: PLAYBACK_ONCE_FORWARD
   fps: 17
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "world-blink"
+  images {
+    image: "/assets/world.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/world.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/world-lit.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  images {
+    image: "/assets/world-lit.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 3
   flip_horizontal: 0
   flip_vertical: 0
 }

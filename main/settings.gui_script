@@ -107,6 +107,8 @@ function init(self)
 
 	self.controls_button = false
 	self.controls_visible = false
+
+	self.world_blinking = false
 end
 
 function on_message(self, message_id, message, sender)
@@ -205,6 +207,12 @@ function on_message(self, message_id, message, sender)
 			l_data.doors_found[4] = true
 			gui.set(gui.get_node("hidden-door-underline"), "color.w", 1)
 		end
+	elseif message_id == hash("world-flash") then
+		gui.play_flipbook(gui.get_node("hs-top"), "world-blink")
+		self.world_blinking = true
+		gui.set(gui.get_node("notif-hs"), "color.w", 1)
+		gui.set(gui.get_node("notif-flash-hs"), "color.w", 1)
+		self.notif_timer_hs = 0.1
 	end
 end
 
@@ -235,7 +243,15 @@ function update(self, dt)
 			self.notif_timer = self.notif_timer - dt
 		end
 	end	
-	
+
+	if self.notif_timer_hs then
+		if self.notif_timer_hs <= 0 then
+			gui.set(gui.get_node("notif-flash-hs"), "color.w", 0)
+			self.notif_timer_hs = nil
+		else
+			self.notif_timer_hs = self.notif_timer_hs - dt
+		end
+	end	
 end
 
 function on_input(self, action_id, action)
@@ -303,6 +319,12 @@ function on_input(self, action_id, action)
 				msg.post("/anims#anims", "acquire_input_focus")
 			end
 			gui.set(self.nodes.hs_top, "position.y", 1)
+
+			if self.world_blinking then
+				gui.play_flipbook(gui.get_node("hs-top"), "world")
+				self.world_blinking = false
+				gui.set(gui.get_node("notif-hs"), "color.w", 0)
+			end
 		elseif gui.get(self.nodes.hs_bot, "color") ~= vmath.vector4((99/255), (155/255), (255/255), 1) then --hover
 			gui.set_color(self.nodes.hs_bot, vmath.vector4((99/255), (155/255), (255/255), 1))
 		end

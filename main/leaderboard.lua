@@ -2,6 +2,7 @@ local L = {}
 
 L.global_highscore = {{},{},{},{},{}}
 
+L.lb_instance = nil
 
 
 
@@ -30,7 +31,7 @@ L.global_highscore = {{},{},{},{},{}}
 
 
 
-L.profanity = {"shit", "fuck", "dick", "piss", "tits", "tit", "sex", "fuk", "fuc", "cum"}
+L.profanity = {"shit", "fuck", "dick", "piss", "tits", "tit", "sex", "fuk", "fuc", "cum", "hoe ", "hoes", "ahoe"}
 
 
 

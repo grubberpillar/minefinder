@@ -264,6 +264,23 @@ local function move_off_tile(self)
 				end
 				msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flag-2"})
 			end
+
+			local flag_count = 0
+			local tile
+			for r = 1, self.row_size do
+				for c = 1, self.col_size do
+					tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.col_offS+self.mini_offS, r+1+self.row_offS+self.mini_offS)
+					if tile == 13 then
+						flag_count = flag_count + 1
+					end
+				end
+			end
+
+			if not self.zoomed then
+				msg.post("/gui#minefinder", "set_flags", {num = self.num_mines-flag_count})
+			else
+				msg.post("/gui-zoom#zoom", "set_flags", {num = self.num_mines-flag_count})
+			end
 		end
 	else
 		tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", self.col_clicked+1, self.row_clicked+1, self.tile_clicked)
