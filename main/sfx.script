@@ -1,28 +1,124 @@
+local l_data = require "main.leveldata"
+
 function init(self)
+	self.sound_instances = {pencil_check = 5, dig_sugar = 10, dig_barley = 5}
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("key-snap") then
 		if message.num then
-			sound.play("/sfx#key-snap-"..message.num)
+			sound.play("/key-snap#key-snap-"..message.num, {gain = l_data.settings.sfx_slider/5})
 		else
 			local rand = math.random(5)
-			sound.play("/sfx#key-snap-"..rand)
+			sound.play("/key-snap#key-snap-"..rand, {gain = l_data.settings.sfx_slider/5})
 		end
 	elseif message_id == hash("key-click") then
 		if message.num then
-			sound.play("/sfx#key-click-"..message.num)
+			sound.play("/key-click#key-click-"..message.num, {gain = l_data.settings.sfx_slider/5})
 		else
 			local rand = math.random(5)
-			sound.play("/sfx#key-click-"..rand)
+			sound.play("/key-click#key-click-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("tile") then
+		if message.num then
+			sound.play("/tile#tile-"..message.num, {gain = l_data.settings.sfx_slider/15})
+		else
+			local rand = math.random(10)
+			sound.play("/tile#tile-"..rand, {gain = l_data.settings.sfx_slider/15})
+		end
+	elseif message_id == hash("flip-tile") then
+		local amplitude_array = {"single", "light", "medium", "heavy"}
+		local amplitude = amplitude_array[message.strength]
+		if message.num then
+			sound.play("/flip-tile-"..amplitude.."#flip-tile-"..amplitude.."-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/flip-tile-"..amplitude.."#flip-tile-"..amplitude.."-"..rand, {gain = l_data.settings.sfx_slider/5})
 		end
 	elseif message_id == hash("flap") then
 		if message.num then
-			sound.play("/sfx#flap-"..message.num)
+			sound.play("/flap#flap-"..message.num, {gain = l_data.settings.sfx_slider/5})
 		else
 			local rand = math.random(5)
-			sound.play("/sfx#flap-"..rand)
+			sound.play("/flap#flap-"..rand, {gain = l_data.settings.sfx_slider/5})
 		end
-		
+	elseif message_id == hash("flap-delay") then
+		if message.num then
+			sound.play("/flap-delay#flap-delay-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			print(rand)
+			sound.play("/flap-delay#flap-delay-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("button1-depress") then
+		if message.num then
+			sound.play("/button1-depress#button1-depress-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/button1-depress#button1-depress-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("button1-release") then
+		if message.num then
+			sound.play("/button1-release#button1-release-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/button1-release#button1-release-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("button2-depress") then
+		if message.num then
+			sound.play("/button2-depress#button2-depress-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(3)
+			sound.play("/button2-depress#button2-depress-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("button2-release") then
+		if message.num then
+			sound.play("/button2-release#button2-release-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(3)
+			sound.play("/button2-release#button2-release-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("button2-release-delay") then
+		if message.num then
+			sound.play("/button2-release-delay#button2-release-delay-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(3)
+			sound.play("/button2-release-delay#button2-release-delay-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("pencil-check") then
+		if message.num then
+			sound.play("/pencil-check#pencil-check-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/pencil-check#pencil-check-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("dig-sugar") then
+		if message.num then
+			sound.play("/dig-sugar#dig-sugar-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(10)
+			sound.play("/dig-sugar#dig-sugar-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("dig-barley") then
+		if message.num then
+			sound.play("/dig-barley#dig-barley-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/dig-barley#dig-barley-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("dig-barley-heavy") then
+		if message.num then
+			sound.play("/dig-barley-heavy#dig-barley-heavy-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/dig-barley-heavy#dig-barley-heavy-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("switch") then
+		if message.num then
+			sound.play("/switch#switch-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(4)
+			sound.play("/switch#switch-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
 	end
 end

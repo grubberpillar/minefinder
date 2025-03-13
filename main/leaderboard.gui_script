@@ -582,7 +582,7 @@ function on_input(self, action_id, action)
 						end
 						j = j + 1
 					end
-					if l_data.highscore[i] and l_data.highscore[i] >= 6000 then
+					if l_data.highscore[i] and l_data.highscore[i] > 6000 then
 						self.hs_submittable[i] = false
 					elseif set_hs and set_hs <= l_data.highscore[i] then
 						self.hs_submittable[i] = false
@@ -621,8 +621,10 @@ function on_input(self, action_id, action)
 			for i = 1,5 do --submit buttons
 				if not self.entering_name and self.hs_submittable[i] and gui.pick_node(gui.get_node("submit-"..i.."-hit"), action.x, action.y) then
 					if action.pressed and action_id == hash("touch") then --click
+						msg.post("/sfx#sfx", "button1-depress")
 						gui.set(gui.get_node("submit-"..i.."-top"), "position.y", 0)
 					elseif action.released and action_id == hash("touch") and gui.get(gui.get_node("submit-"..i.."-top"), "position.y") == 0 then --release
+						msg.post("/sfx#sfx", "button2-release")
 						self.entering_name = i
 						gui.set(gui.get_node("submit-"..i.."-top"), "position.y", 1)
 						for j = 1,5 do 
@@ -679,8 +681,10 @@ function on_input(self, action_id, action)
 				for i,k in ipairs(buttons) do --name set/cancel
 					if gui.pick_node(gui.get_node(k.."-hit"), action.x, action.y) or (i == 1 and action_id == hash("enter")) or (i == 2 and action_id == hash("esc")) then --set new name
 						if action.pressed and (action_id == hash("touch") or ((i == 1 and action_id == hash("enter")) or (i == 2 and action_id == hash("esc")))) then --click
+							msg.post("/sfx#sfx", "switch")
 							gui.set(gui.get_node(k.."-top"), "position.y", 0)
 						elseif action.released and (action_id == hash("touch") or (i == 1 and action_id == hash("enter")) or (i == 2 and action_id == hash("esc"))) and gui.get(gui.get_node(k.."-top"), "position.y") == 0 then --release
+							msg.post("/sfx#sfx", "button2-release")
 							gui.set(gui.get_node(k.."-top"), "position.y", 1)
 							local set_name = gui.get_text(gui.get_node("name-txt"))
 							if i == 1 and not allowed_name(self, set_name)then 
@@ -752,6 +756,7 @@ function on_input(self, action_id, action)
 						local char_loc = #new_txt
 						gui.play_flipbook(gui.get_node("name-box-"..char_loc), "single-flip")
 						gui.set_text(txt_box, new_txt)
+						msg.post("/sfx#sfx", "flip-tile", {strength = 1})
 
 						if self.name_char_delay[char_loc] then
 							gui.set_text(gui.get_node("box-txt-"..char_loc), "")
@@ -770,6 +775,7 @@ function on_input(self, action_id, action)
 					local old_txt = gui.get_text(txt_box)
 					local char_loc = #old_txt
 					if char_loc > 0 then
+						msg.post("/sfx#sfx", "flip-tile", {strength = 1})
 						local new_txt = string.sub(old_txt, 1, char_loc-1)
 						local char_removed = string.sub(old_txt, char_loc)
 						gui.set_text(gui.get_node("box-txt-".. char_loc), char_removed)
@@ -930,6 +936,8 @@ function update(self, dt)
 				local f_types = {"char", "num"}
 				local f_id = {"txt", "num"}
 
+				local numchanges = 0
+				
 				for t,f in ipairs(f_types) do --printing all accumulated change
 					for c = 1,5 do
 						if self.col_change[f][c] then
@@ -950,6 +958,7 @@ function update(self, dt)
 										
 										if self.flip_change[f][c][r][i] then
 											fin_str = fin_str..self.flip_change[f][c][r][i]
+											numchanges = numchanges + 1
 										else
 											fin_str = fin_str..string.sub(start_str, char_t,char_t)
 										end
@@ -976,6 +985,7 @@ function update(self, dt)
 
 							if self.flip_change[t][1][1][i] then
 								fin_str = fin_str..self.flip_change[t][1][1][i]
+								numchanges = numchanges + 1
 							else
 								local addition = string.sub(start_str, char_t,char_t)
 								if addition == "" then
@@ -986,6 +996,16 @@ function update(self, dt)
 						end
 						gui.set_text(str_loc, fin_str)
 					end
+				end
+
+				if numchanges > 40 then --heavy tile flip
+					msg.post("/sfx#sfx", "flip-tile", {strength = 4})
+				elseif numchanges > 10 then --medium tile flip
+					msg.post("/sfx#sfx", "flip-tile", {strength = 3})
+				elseif numchanges > 2 then --light tile flip
+					msg.post("/sfx#sfx", "flip-tile", {strength = 2})
+				else --single tile flip
+					msg.post("/sfx#sfx", "flip-tile", {strength = 1})
 				end
 
 				if #self.color_change > 0 then

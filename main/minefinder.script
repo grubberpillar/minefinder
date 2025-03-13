@@ -233,11 +233,15 @@ end
 local function move_off_tile(self)
 	if (self.tile_action == hash("select") or (self.tile_action == hash("select-key") and not self.shifting) or (self.tile_action == hash("touch") and self.shifting)) and self.game_started and self.tile_clicked == 11 or self.tile_clicked == 13 then 
 		if self.tile_clicked == 11 then --flag
+			
 			tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", self.col_clicked+1, self.row_clicked+1, 13)
 			if self.zoomed and self.col_clicked_true+1 > 1 and self.col_clicked_true+1 < 29 and self.row_clicked_true+1 > 1 and self.row_clicked_true+1 < 18 then
 				tilemap.set_tile("/zoom#board-zoom", "layer1", self.col_clicked_true+1, self.row_clicked_true+1, 13)
 			end
 			if self.anims["flag_place"] then
+				msg.post("/sfx#sfx", "button2-release-delay")
+				msg.post("/sfx#sfx", "button2-release")
+				msg.post("/sfx#sfx", "flap-delay")
 				local props
 				local id
 				if not self.zoomed then
@@ -248,8 +252,11 @@ local function move_off_tile(self)
 					id = factory.create("#flag-factory", vmath.vector3(self.col_clicked_true*(6*self.tile_size)+3*self.tile_size, self.row_clicked_true*(6*self.tile_size)+3*self.tile_size, 0.65), nil, props)
 				end
 				msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flag-1"})
+			else
+				msg.post("/sfx#sfx", "flap")
 			end
 		elseif self.tile_clicked == 13 then --deflag
+			msg.post("/sfx#sfx", "flap")
 			tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", self.col_clicked+1, self.row_clicked+1, 11)
 			if self.zoomed and self.col_clicked_true+1 > 1 and self.col_clicked_true+1 < 29 and self.row_clicked_true+1 > 1 and self.row_clicked_true+1 < 18 then
 				tilemap.set_tile("/zoom#board-zoom", "layer1", self.col_clicked_true+1, self.row_clicked_true+1, 11)
@@ -1107,21 +1114,18 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("save_game_msg") then
 		save_game(self)
 	elseif message_id == hash("debug") then
-		msg.post("/sfx#sfx", "key-snap", {num = self.sfx_num%5+1})
-		print(self.sfx_num%5+1)
-		self.sfx_num = self.sfx_num + 1
-		-- if not l_data.debug_shift then
-		-- 	l_data.profiling = not l_data.profiling
-		-- 	print(l_data.profiling)
-		-- 	profiler.enable_ui(l_data.profiling)
-		-- else
-		-- 	self.profiler_mini = not self.profiler_full
-		-- 	if self.profiler_mini then
-		-- 		profiler.set_ui_view_mode(profiler.VIEW_MODE_MINIMIZED)
-		-- 	else
-		-- 		profiler.set_ui_view_mode(profiler.VIEW_MODE_FULL)
-		-- 	end
-		-- end
+		if not l_data.debug_shift then
+			l_data.profiling = not l_data.profiling
+			print(l_data.profiling)
+			profiler.enable_ui(l_data.profiling)
+		else
+			self.profiler_mini = not self.profiler_full
+			if self.profiler_mini then
+				profiler.set_ui_view_mode(profiler.VIEW_MODE_MINIMIZED)
+			else
+				profiler.set_ui_view_mode(profiler.VIEW_MODE_FULL)
+			end
+		end
 	elseif message_id == hash("debug2") then
 		if not l_data.debug_shift then
 			print(profiler.get_cpu_usage())
@@ -1163,6 +1167,7 @@ function on_input(self, action_id, action)
 				if not self.tile_clicked then
 					self.tile_clicked = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1)
 				end
+				msg.post("/sfx#sfx", "button1-depress")
 				self.row_clicked = moveRow_t
 				self.col_clicked = moveCol_t
 				self.row_clicked_true = moveRow
@@ -1277,6 +1282,7 @@ function on_input(self, action_id, action)
 						end
 
 						if self.board[row_1st][col_1st] == 1 then
+							msg.post("/sfx#sfx", "dig-barley-heavy")
 							show_block(self, moveRow_t, moveCol_t)
 						else
 							tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
@@ -1297,6 +1303,7 @@ function on_input(self, action_id, action)
 						self.quick_click_timer = 0.15
 						
 						if self.tile_clicked == 13 then -- remove flag
+							msg.post("/sfx#sfx", "flap")
 							tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, 11)
 							if self.zoomed then
 								tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, 11)
@@ -1312,12 +1319,14 @@ function on_input(self, action_id, action)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flag-2"})
 							end
 						elseif (action_id == hash("select") or (action_id == hash("select-key") and not self.shifting) or ((action_id == hash("touch") or (action_id == hash("touch-key") and l_data.settings.dig_key)) and self.shifting)) and self.tile_clicked == 11 then -- place flag
-							msg.post("/sfx#sfx", "flap")
 							tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, 13)
 							if self.zoomed then
 								tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, 13)
 							end
 							if self.anims["flag_place"] then
+								msg.post("/sfx#sfx", "button2-release-delay")
+								msg.post("/sfx#sfx", "button2-release")
+								msg.post("/sfx#sfx", "flap-delay")
 								local props
 								local id
 								if not self.zoomed then
@@ -1328,15 +1337,19 @@ function on_input(self, action_id, action)
 									id = factory.create("#flag-factory", vmath.vector3(moveCol*(6*self.tile_size)+3*self.tile_size, moveRow*(6*self.tile_size)+3*self.tile_size, 0.65), nil, props)
 								end
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flag-1"})
+							else
+								msg.post("/sfx#sfx", "flap")
 							end
 						elseif self.tile_clicked > 10 then-- flip tile
 							if self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS] == 1 then -- reveal block
+								msg.post("/sfx#sfx", "dig-barley-heavy")
 								show_block(self, moveRow_t, moveCol_t)
 								self.flashing = true
 								self.timer = 0.1
 							elseif self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS] == 12 then -- flip mine
 								lose_game(self, {{r = moveRow_t, c = moveCol_t}})
 							else -- digging a tile
+								msg.post("/sfx#sfx", "dig-sugar")
 								tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1, moveRow_t+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
 								if self.zoomed then
 									tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, self.board[moveRow_t-self.row_offS-self.mini_offS][moveCol_t-self.col_offS-self.mini_offS])
@@ -1349,19 +1362,24 @@ function on_input(self, action_id, action)
 							end
 							local dug_mine = nil
 							self.mines_dug_around = false
+							local tile, mine, block = false, false, false
 							for i = -1, 1 do
 								for j = -1, 1 do
 									if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1+i, moveRow_t+1+j) == 16 then
 										if self.board[moveRow_t+j-self.row_offS-self.mini_offS][moveCol_t+i-self.col_offS-self.mini_offS] == 1 then
+											block = true 
+											msg.post("/sfx#sfx", "dig-barley-heavy")
 											show_block(self, moveRow_t+j, moveCol_t+i)
 											self.flashing = true
 											self.timer = 0.1
 										elseif self.board[moveRow_t+j-self.row_offS-self.mini_offS][moveCol_t+i-self.col_offS-self.mini_offS] == 12 then
+											mine = true
 											if not dug_mine then
 												dug_mine = {}
 											end
 											table.insert(dug_mine, {r = moveRow_t+j, c = moveCol_t+i})
 										else
+											tile = true
 											tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", moveCol_t+1+i, moveRow_t+1+j, self.board[moveRow_t+j-self.row_offS-self.mini_offS][moveCol_t+i-self.col_offS-self.mini_offS])
 											if self.zoomed and moveCol+1+i > 1 and moveCol+1+i < 29 and moveRow+1+j > 1 and moveRow+1+j < 18 then
 												tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1+i, moveRow+1+j, self.board[moveRow_t+j-self.row_offS-self.mini_offS][moveCol_t+i-self.col_offS-self.mini_offS])
@@ -1369,6 +1387,10 @@ function on_input(self, action_id, action)
 										end
 									end
 								end
+							end
+
+							if tile then
+								msg.post("/sfx#sfx", "dig-barley")
 							end
 
 							if dug_mine then
@@ -1551,10 +1573,12 @@ function on_input(self, action_id, action)
 			end
 			self.current_orb = nil
 		end
-		if (action_id == hash("touch") or (action_id == hash("touch-key") and l_data.settings.dig_key)) and action.pressed and not self.tile_lit then
+		if action.pressed and (action_id == hash("touch") or (action_id == hash("touch-key") and l_data.settings.dig_key)) and not self.tile_lit then
+			msg.post("/sfx#sfx", "button2-depress")
 			go.set("/brighten", "position", vmath.vector3(moveCol*8+4, moveRow*8+4, 1))
 			self.tile_lit = true
-		elseif (action_id == hash("touch") or (action_id == hash("touch-key") and l_data.settings.dig_key)) and action.released and self.tile_lit then
+		elseif action.released and (action_id == hash("touch") or (action_id == hash("touch-key") and l_data.settings.dig_key)) and self.tile_lit then
+			msg.post("/sfx#sfx", "button2-release")
 			if moveCol - 19 ~= l_data.diff then
 				l_data.diff_temp = moveCol - 19
 				go.set("/diff-selected-temp", "position", vmath.vector3((19 + l_data.diff_temp)*8+4, 8*8+4, 0.7))
@@ -1717,11 +1741,15 @@ function on_input(self, action_id, action)
 		msg.post("/gui#door", "reset_warning")
 	end
 	
+
 	
 	if action.pressed and action_id == hash("debug") then
-		msg.post(".", "debug")
+		-- msg.post(".", "debug")
 	end
 
+	-- if action.released and action_id == hash("debug") then
+	-- 	msg.post("/sfx#sfx", "key-click")
+	-- end
 
 	if action_id == hash("debug2") and action.pressed then
 		msg.post(".", "debug2")
@@ -1734,8 +1762,15 @@ function on_input(self, action_id, action)
 
 	if action.pressed and hash_is_num(action_id) then --typing numbers
 		local num_type = hash_to_num(action_id)
-		if num_type < 6 then
-			msg.post("/sfx#sfx", "flap", {num = num_type})
+		if num_type < 4 then
+			msg.post("/sfx#sfx", "button2-depress", {num = num_type})
+		end
+	end
+
+	if action.released and hash_is_num(action_id) then --typing numbers
+		local num_type = hash_to_num(action_id)
+		if num_type < 4 then
+			msg.post("/sfx#sfx", "button2-release", {num = num_type})
 		end
 	end
 end

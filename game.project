@@ -35,3 +35,6 @@ max_instances = 2048
 [windows]
 app_icon = /assets/minefinder_icon_win.ico
 
+[sound]
+max_component_count = 128
+

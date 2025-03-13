@@ -22,7 +22,7 @@ D.diff_temp = nil
 
 D.gui_anims = true
 
-D.settings = {tutorial = true, profanity = false, autosave = true, dig_around = true, scroll = true, scroll_slider = 3, sfx_slider = 4, dig_key = true, graffiti = true, splashscreen = true, gamer_lights = false}
+D.settings = {tutorial = true, profanity = false, autosave = true, dig_around = true, scroll = true, scroll_slider = 3, sfx_slider = 5, dig_key = true, graffiti = true, splashscreen = true, gamer_lights = false}
 D.more_settings = false
 
 D.saved = false
