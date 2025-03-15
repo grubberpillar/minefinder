@@ -52,6 +52,19 @@ local function deep_equal(t1, t2, visited) --outside/unoriginal method
 	return true
 end
 
+function pprint(tbl, indent) --outside/unoriginal method
+	indent = indent or 0
+	for k, v in pairs(tbl) do
+		local formatting = string.rep("  ", indent) .. tostring(k) .. ": "
+		if type(v) == "table" then
+			print(formatting)
+			pprint(v, indent + 1)
+		else
+			print(formatting .. tostring(v))
+		end
+	end
+end
+
 local function replace_char(str, index, new_char)
 	local char_fin = new_char
 	if new_char == " " then
@@ -440,6 +453,27 @@ local function flip_leaderboard(self, first_flip)
 	end
 end
 
+local function handle_response(self, id, response)
+	print("connected")
+	print(response.status, response.response)
+	print(type(response.response))
+	local data = json.decode(response.response)
+	for d = 1,5 do
+		for i,l in ipairs(data.leaderboard[d]) do
+			l_board.lb_instance[d][i] = {l[2], l[1], l[3]}
+		end
+	end
+	flip_leaderboard(self, false)
+	l_board.global_highscore = deep_copy(l_board.lb_instance)
+	
+	pprint(data)
+end
+
+local function connect(self)
+	print("connecting...")
+	http.request("http://127.0.0.1:8000/lb_sort", "GET", handle_response)
+end
+
 function init(self)
 	gui.set_render_order(8)
 	self.hs_submittable = {false, false, false, false, false}
@@ -566,6 +600,8 @@ function on_input(self, action_id, action)
 					print(id)
 					l_data.player_id = id
 				end
+				l_data.player_id = "aakencinfosmfiem"
+
 
 				self.hs_submittable = {false, false, false, false, false}
 				for i = 1,5 do
@@ -846,12 +882,7 @@ function on_input(self, action_id, action)
 			-- flip_tile(self, input, col, row, type, true)
 		end
 		if action.pressed and action_id == hash("debug2") then
-			local input = "HEYO WASGOOD "
-			-- print(input)
-			local col = 1
-			local row = 1
-			local type = "title"
-			flip_tile(self, input, col, row, type, true)
+			connect(self)
 		end
 		
 	end

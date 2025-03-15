@@ -1,11 +1,28 @@
 local l_data = require "main.leveldata"
 
 function init(self)
-	self.sound_instances = {pencil_check = 5, dig_sugar = 10, dig_barley = 5}
+	--					1			2			3			4					5					6
+	self.soundID = {"key-snap", "key-click", "tile", "flip-tile-single", "flip-tile-light", "flip-tile-medium", 
+	--						7			 8			9				10					11				12
+					"flip-tile-heavy", "flap", "flap-delay", "button1-depress", "button1-release", "button2-depress", 
+	--						13					14					15				16			17
+					"button2-release", "button2-release-delay", "pencil-check", "dig-sugar", "dig-barley", 
+	--						18				19
+					"dig-barley-heavy", "switch"}
+
+	--				  1  2   3  4  5  6  7  8  9 10 11 12 13 14 15  16 17 18 19
+	self.sound_num = {5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3, 5, 10, 5, 5, 4}
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("key-snap") then
+	if message_id == hash("quick_play") then
+		local rand = math.random(self.sound_num[message.sound])
+		local vol_split = 5
+		if message.sound == 3 then
+			vol_split = 15
+		end
+		sound.play("/"..self.soundID[message.sound].."#"..self.soundID[message.sound].."-"..rand, {gain = l_data.settings.sfx_slider/vol_split})
+	elseif message_id == hash("key-snap") then
 		if message.num then
 			sound.play("/key-snap#key-snap-"..message.num, {gain = l_data.settings.sfx_slider/5})
 		else
@@ -69,9 +86,17 @@ function on_message(self, message_id, message, sender)
 			sound.play("/button2-depress#button2-depress-"..message.num, {gain = l_data.settings.sfx_slider/5})
 		else
 			local rand = math.random(3)
+			-- self.button2_save = msg.url("/button2-depress#button2-depress-"..rand)  
+			-- sound.play("/button2-depress#button2-depress-"..rand, {gain = l_data.settings.sfx_slider/5}, function()
+			-- 	print("Sound finished playing!")
+			-- 	self.button2_save = nil  -- Reset when done
+			-- end)
 			sound.play("/button2-depress#button2-depress-"..rand, {gain = l_data.settings.sfx_slider/5})
 		end
 	elseif message_id == hash("button2-release") then
+		-- if self.button2_save then
+		-- 	sound.stop(self.button2_save)
+		-- end
 		if message.num then
 			sound.play("/button2-release#button2-release-"..message.num, {gain = l_data.settings.sfx_slider/5})
 		else
