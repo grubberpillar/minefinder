@@ -736,12 +736,11 @@ function on_message(self, message_id, message, sender)
 
 			if tilemap.get_tile("/zoom#board", "layer1", 9, 9) ~= 20 and (self.row_size > 16 or self.col_size > 16) then --regular to mini swap
 				self.playing = false
-				local sound_play = 1
 				for r = 1, 16 do
 					for c = 1, 16 do
 						if tilemap.get_tile("/zoom#board", "layer1", c+1, r+1) ~= 14 then
 							if self.anims["tileflip"] and not self.first_setup then
-								local props = {final = 0, tile = tilemap.get_tile("/zoom#board", "layer1", c+1, r+1), mini = 0, tile_size = 8, theme_id = theme_to_id(self.theme), removing = 2, sound = sound_play}
+								local props = {final = 0, tile = tilemap.get_tile("/zoom#board", "layer1", c+1, r+1), mini = 0, tile_size = 8, theme_id = theme_to_id(self.theme), removing = 2, sound = 0}
 								local id = factory.create("#flip-factory", vmath.vector3(c*48+24, r*48+24, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 							else
@@ -749,9 +748,6 @@ function on_message(self, message_id, message, sender)
 							end
 						else
 							tilemap.set_tile("/zoom#board", "layer1", c+1, r+1, 20)
-						end
-						if r*16 + c == 25 then
-							sound_play = 0
 						end
 					end
 				end
@@ -777,7 +773,7 @@ function on_message(self, message_id, message, sender)
 						else
 							tilemap.set_tile("/zoom#board-mini", "layer1", c+2, r+2, 14)
 						end
-						if r*32 + c == 25 then
+						if (r-1)*32 + c == 25 then
 							sound_play = 0
 						end
 					end
@@ -1984,6 +1980,7 @@ function update(self, dt) --checkpoint
 					end
 				end
 				local sound_play = 1
+				local flips = 0
 				for r = 1, self.board_size do--
 					for c = 1, self.board_size do
 						if self.board_layout[r][c] == 0 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 14 then
@@ -1994,6 +1991,7 @@ function update(self, dt) --checkpoint
 							else
 								tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS, 14)
 							end
+							flips = flips + 1
 						elseif self.board_layout[r][c] == 1 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 11 then
 							if self.anims["tileflip"] and not self.saved_board then
 								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), sound = sound_play}
@@ -2004,10 +2002,12 @@ function update(self, dt) --checkpoint
 									tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS, 11)
 								end
 							end
+							flips = flips + 1
 						end
-						if r*16 + c > 25 then
+						if flips == 25 then
 							sound_play = 0
 						end
+						
 					end
 				end--
 
@@ -2048,6 +2048,7 @@ function update(self, dt) --checkpoint
 			elseif tile == 12 or (newhead.x == self.food.x and newhead.y == self.food.y) then
 				msg.post("/gui#minefinder", "update_snake_score")
 				self.snake_score = self.snake_score + 1
+				msg.post("/sfx#sfx", "key-snap")
 				-- self.snake_speed = self.snake_speed + 0.5
 				if self.food_url then
 					msg.post(self.food_url, "kill")

@@ -47,6 +47,11 @@ X windows icon
 	- bomb noises
 	- flag correct
 	- flag incorrect
+	- uncheck
+	- startup screen
+	- light door open
+- no flip sound on startup
+- change sound msg calling syntax
 - test flashing globe for new hs allowing upload vs new hs not allowing upload
 * [windows] can't click while flag anim playing??
 * UNSAVE study
