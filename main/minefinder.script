@@ -1,4 +1,5 @@
 local l_data = require "main.leveldata"
+local l_board = require "main.leaderboard"
 
 local function hash_is_num(action_hash)
 	for i = 0,9 do
@@ -34,6 +35,9 @@ local function load_func(self, data)
 	l_data.key_is_there = data.gamedata.key_is_there 
 	l_data.doors_found = data.gamedata.doors_found or l_data.doors_found
 	l_data.screen_scale = data.gamedata.scale or 3
+	l_board.lb_instance = data.gamedata.lb_instance or {{},{},{},{},{}}
+	l_board.profanity = data.gamedata.profanity or {}
+	l_board.banned = data.gamedata.banned or {}
 	self.theme = data.gamedata.theme or "dark"
 	self.anims = data.gamedata.anims or {flag_place = true, flag_remove = true, flag_correct = true, flag_incorrect = true, explosion = true, timer = true, ui = true, tileflip = true, flip_bg = false, faster_flip = true}
 	self.saved_screen = data.gamedata.screen or nil
@@ -77,7 +81,8 @@ local function save_game(self)
 	scale = l_data.screen_scale, 
 	door_state = l_data.door_state, key_is_there = l_data.key_is_there, doors_found = l_data.doors_found, 
 	screen = screen_data, board = board_data, 
-	game_secs = l_data.seconds, game_mins = l_data.minutes, game_hrs = l_data.hours, game_tick = l_data.ticking}
+	game_secs = l_data.seconds, game_mins = l_data.minutes, game_hrs = l_data.hours, game_tick = l_data.ticking,
+	lb_instance = l_board.lb_instance, profanity = l_board.profanity, banned = l_board.banned}
 	
 	sys.save(filename, {gamedata = props})
 	msg.post("/gui#minefinder", "done_saving")
@@ -239,8 +244,8 @@ local function move_off_tile(self)
 				tilemap.set_tile("/zoom#board-zoom", "layer1", self.col_clicked_true+1, self.row_clicked_true+1, 13)
 			end
 			if self.anims["flag_place"] then
-				msg.post("/sfx#sfx", "button2-release-delay")
-				msg.post("/sfx#sfx", "button2-release")
+				msg.post("/sfx#sfx", "button1-release-delay")
+				msg.post("/sfx#sfx", "button1-release")
 				msg.post("/sfx#sfx", "flap-delay")
 				local props
 				local id
@@ -553,6 +558,18 @@ local function lose_game(self, mines)
 			self.timer = 0.75
 		end
 	end
+
+	self.wrong_flags = {}
+	for r = self.row_size+self.row_offS+self.mini_offS, 1+self.row_offS+self.mini_offS, -1 do
+		for c = 1+self.col_offS, self.col_size+self.col_offS do
+			if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1, r+1) == 13 and self.board[r-(self.row_offS+self.mini_offS)][c-self.col_offS] ~= 12 then
+				table.insert(self.wrong_flags, {r, c})
+			end
+		end
+	end
+	self.wrong_flag_i = 1
+	self.wrong_flag_timer = 0.5
+	
 	if self.flashing then
 		deflash(self)
 	end
@@ -655,7 +672,7 @@ function init(self)
 	go.set("/zoom#board", "tile_source", self.tilesources[self.theme])
 	go.set("/zoom#board-mini", "tile_source", self.tilesources_mini[self.theme])
 	go.set("/diff-selected-temp", "position.z", -0.7)
-	-- resource.set_texture(path, table, buffer)
+	
 end
 
 
@@ -719,11 +736,12 @@ function on_message(self, message_id, message, sender)
 
 			if tilemap.get_tile("/zoom#board", "layer1", 9, 9) ~= 20 and (self.row_size > 16 or self.col_size > 16) then --regular to mini swap
 				self.playing = false
+				local sound_play = 1
 				for r = 1, 16 do
 					for c = 1, 16 do
 						if tilemap.get_tile("/zoom#board", "layer1", c+1, r+1) ~= 14 then
 							if self.anims["tileflip"] and not self.first_setup then
-								local props = {final = 0, tile = tilemap.get_tile("/zoom#board", "layer1", c+1, r+1), mini = 0, tile_size = 8, theme_id = theme_to_id(self.theme), removing = 2}
+								local props = {final = 0, tile = tilemap.get_tile("/zoom#board", "layer1", c+1, r+1), mini = 0, tile_size = 8, theme_id = theme_to_id(self.theme), removing = 2, sound = sound_play}
 								local id = factory.create("#flip-factory", vmath.vector3(c*48+24, r*48+24, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 							else
@@ -731,6 +749,9 @@ function on_message(self, message_id, message, sender)
 							end
 						else
 							tilemap.set_tile("/zoom#board", "layer1", c+1, r+1, 20)
+						end
+						if r*16 + c == 25 then
+							sound_play = 0
 						end
 					end
 				end
@@ -742,11 +763,12 @@ function on_message(self, message_id, message, sender)
 				end
 			elseif tilemap.get_tile("/zoom#board-mini", "layer1", 18, 18) ~= 14 and (self.row_size <= 16 and self.col_size <= 16) then --mini to regular swap
 				self.playing = false
+				local sound_play = 1
 				for r = 1, 32 do
 					for c = 1, 32 do
 						if tilemap.get_tile("/zoom#board-mini", "layer1", c+2, r+2) ~= 14 then
 							if self.anims["tileflip"] and not self.first_setup then
-								local props = {final = 0, tile = tilemap.get_tile("/zoom#board-mini", "layer1", c+2, r+2), mini = 1, tile_size = 4, theme_id = theme_to_id(self.theme), removing = 1}
+								local props = {final = 0, tile = tilemap.get_tile("/zoom#board-mini", "layer1", c+2, r+2), mini = 1, tile_size = 4, theme_id = theme_to_id(self.theme), removing = 1, sound = sound_play}
 								local id = factory.create("#flip-factory", vmath.vector3((c+1)*24+12, (r+1)*24+12, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 							else
@@ -754,6 +776,9 @@ function on_message(self, message_id, message, sender)
 							end
 						else
 							tilemap.set_tile("/zoom#board-mini", "layer1", c+2, r+2, 14)
+						end
+						if r*32 + c == 25 then
+							sound_play = 0
 						end
 					end
 				end
@@ -764,26 +789,36 @@ function on_message(self, message_id, message, sender)
 					self.swap_board_timer = 0
 				end
 			else--
+				local flips = 0
+				local sound_play = 1
 				for r = 1, self.board_size do
 					for c = 1, self.board_size do
 						if self.board_layout[r][c] == 0 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 14 then
 							if self.anims["tileflip"] and not self.first_setup then
-								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), removing = 1, set_playing = 1}
+								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), removing = 1, set_playing = 1, sound = sound_play}
 								local id = factory.create("#flip-factory", vmath.vector3((c+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, (r+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 							else
 								tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS, 14)
 							end
+							flips = flips + 1
 						elseif self.board_layout[r][c] == 1 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 11 then
 							if self.anims["tileflip"] and not self.first_setup then
-								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), set_playing = 1}
+								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), set_playing = 1, sound = sound_play}
 								local id = factory.create("#flip-factory", vmath.vector3((c+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, (r+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 							else
 								tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS, 11)	
 							end
+							flips = flips + 1
+						end
+						if flips == 25 then
+							sound_play = 0
 						end
 					end
+				end
+				if not self.anims["tileflip"] then
+					msg.post("/sfx#sfx", "quick_play", {sound = 3})
 				end
 				self.board_layout = nil
 			end--
@@ -1324,8 +1359,8 @@ function on_input(self, action_id, action)
 								tilemap.set_tile("/zoom#board-zoom", "layer1", moveCol+1, moveRow+1, 13)
 							end
 							if self.anims["flag_place"] then
-								msg.post("/sfx#sfx", "button2-release-delay")
-								msg.post("/sfx#sfx", "button2-release")
+								msg.post("/sfx#sfx", "button1-release-delay")
+								msg.post("/sfx#sfx", "button1-release")
 								msg.post("/sfx#sfx", "flap-delay")
 								local props
 								local id
@@ -1812,12 +1847,16 @@ function update(self, dt) --checkpoint
 					deflash(self)
 				elseif #self.to_flip > 0 then
 					if self.anims["tileflip"] then
+						local sound_play = 1
+						if #self.to_flip > 25 and ((self.anims["timer"] == false and not self.flashing and not self.force_timer) or self.anim_skip == true) then
+							sound_play = 0
+						end
 						if #self.to_flip == 1 then
 							if not self.full_board_anim then
 								self.full_board_anim = true
 								msg.post("/gui#minefinder", "full_board_anim", {anim = true})
 							end
-							local props = {final = 1, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
+							local props = {final = 1, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), sound = sound_play}
 							local id = factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*(6*self.tile_size)+3*self.tile_size, self.to_flip[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 							msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 						else
@@ -1825,7 +1864,7 @@ function update(self, dt) --checkpoint
 								self.full_board_anim = true
 								msg.post("/gui#minefinder", "full_board_anim", {anim = true})
 							end
-							local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
+							local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", self.to_flip[1][2]+1, self.to_flip[1][1]+1), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), sound = sound_play}
 							local id = factory.create("#flip-factory", vmath.vector3(self.to_flip[1][2]*(6*self.tile_size)+3*self.tile_size, self.to_flip[1][1]*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 							msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 						end
@@ -1871,35 +1910,12 @@ function update(self, dt) --checkpoint
 					end
 					
 					if self.mine_i == #self.mine_locs then
-						self.wrong_flags = {}
 						self.mine_i = 1000
-						self.flag_i = 1	
-						for r = self.row_size+self.row_offS+self.mini_offS, 1+self.row_offS+self.mini_offS, -1 do
-							for c = 1+self.col_offS, self.col_size+self.col_offS do
-								if tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1, r+1) == 13 then
-									table.insert(self.wrong_flags, {r, c})
-								end
-							end
-						end
-
-						-- shuffle(self.wrong_flags) --makes wrong flags show in random order
-						self.timer = 2.5
 					end
 					self.mine_i = self.mine_i + 1
 				end
 			end
-			while (self.timer <= 0 or self.anims["timer"] == false or self.anim_skip == true) and self.wrong_flags and self.flag_i <= #self.wrong_flags do
-				local flagRow = self.wrong_flags[self.flag_i][1]
-				local flagCol = self.wrong_flags[self.flag_i][2]
-				if self.anims["flag_incorrect"] then
-					local props = {type = 4 + self.mini_offS, theme_id = theme_to_id(self.theme)}
-					local id = factory.create("#flag-factory", vmath.vector3(flagCol*(6*self.tile_size)+3*self.tile_size, flagRow*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
-					msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flag-4"})
-				end
-				self.timer = 1
-				self.flag_i = self.flag_i + 1
-			end
-			if (self.board[1] or #self.to_flip > 0 or self.board_tiles) and self.flashing or (self.mine_locs and self.mine_i <= #self.mine_locs) or (self.wrong_flags and self.flag_i <= #self.wrong_flags) or #self.to_flip > 0 or self.board_tiles then
+			if (self.board[1] or #self.to_flip > 0 or self.board_tiles) and self.flashing or (self.mine_locs and self.mine_i <= #self.mine_locs) or #self.to_flip > 0 or self.board_tiles then
 				self.timer = self.timer - dt
 			else 
 				self.timer = nil
@@ -1934,6 +1950,30 @@ function update(self, dt) --checkpoint
 			end
 		end
 
+		if self.wrong_flag_timer then
+			while (self.wrong_flag_timer <= 0 or self.anims["timer"] == false or self.anim_skip == true) and self.wrong_flags do
+				if self.wrong_flag_i > #self.wrong_flags then
+					self.wrong_flags = nil
+					self.wrong_flag_i = nil
+				else
+					local flagRow = self.wrong_flags[self.wrong_flag_i][1]
+					local flagCol = self.wrong_flags[self.wrong_flag_i][2]
+					if self.anims["flag_incorrect"] then
+						local props = {type = 4 + self.mini_offS, theme_id = theme_to_id(self.theme)}
+						local id = factory.create("#flag-factory", vmath.vector3(flagCol*(6*self.tile_size)+3*self.tile_size, flagRow*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
+						msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flag-4"})
+					end
+					self.wrong_flag_timer = 1
+					self.wrong_flag_i = self.wrong_flag_i + 1
+				end
+			end
+			if self.wrong_flag_timer >= 0 then
+				self.wrong_flag_timer = self.wrong_flag_timer - dt
+			else
+				self.wrong_flag_timer = nil
+			end
+		end
+
 		if self.swap_board_timer then
 			if self.swap_board_timer <= 0 and l_data.swap_board then
 				if self.mini_offS == 0 then
@@ -1943,11 +1983,12 @@ function update(self, dt) --checkpoint
 						end
 					end
 				end
+				local sound_play = 1
 				for r = 1, self.board_size do--
 					for c = 1, self.board_size do
 						if self.board_layout[r][c] == 0 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 14 then
 							if self.anims["tileflip"] and not self.saved_board then
-								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), removing = 1}
+								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), removing = 1, sound = sound_play}
 								local id = factory.create("#flip-factory", vmath.vector3((c+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, (r+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 							else
@@ -1955,7 +1996,7 @@ function update(self, dt) --checkpoint
 							end
 						elseif self.board_layout[r][c] == 1 and tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS) ~= 11 then
 							if self.anims["tileflip"] and not self.saved_board then
-								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme)}
+								local props = {final = 0, tile = tilemap.get_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS), mini = self.mini_offS, tile_size = self.tile_size, theme_id = theme_to_id(self.theme), sound = sound_play}
 								local id = factory.create("#flip-factory", vmath.vector3((c+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, (r+self.mini_offS)*(6*self.tile_size)+3*self.tile_size, 0.5), nil, props)
 								msg.post(".", "add_url", {hash = msg.url(nil, id, nil), type = "flip"})
 							else
@@ -1963,6 +2004,9 @@ function update(self, dt) --checkpoint
 									tilemap.set_tile("/zoom#board"..self.mini_txt, "layer1", c+1+self.mini_offS, r+1+self.mini_offS, 11)
 								end
 							end
+						end
+						if r*16 + c > 25 then
+							sound_play = 0
 						end
 					end
 				end--

@@ -81,6 +81,13 @@ function on_message(self, message_id, message, sender)
 			local rand = math.random(5)
 			sound.play("/button1-release#button1-release-"..rand, {gain = l_data.settings.sfx_slider/5})
 		end
+	elseif message_id == hash("button1-release-delay") then
+		if message.num then
+			sound.play("/button1-release-delay#button1-release-delay-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/button1-release-delay#button1-release-delay-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
 	elseif message_id == hash("button2-depress") then
 		if message.num then
 			sound.play("/button2-depress#button2-depress-"..message.num, {gain = l_data.settings.sfx_slider/5})

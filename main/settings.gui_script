@@ -215,6 +215,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("world-flash") then
 		gui.play_flipbook(gui.get_node("hs-top"), "world-blink")
 		self.world_blinking = true
+	elseif message_id == hash("world-notif") then
 		gui.set(gui.get_node("notif-hs"), "color.w", 1)
 		gui.set(gui.get_node("notif-flash-hs"), "color.w", 1)
 		self.notif_timer_hs = 0.1

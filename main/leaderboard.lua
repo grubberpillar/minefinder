@@ -1,70 +1,8 @@
 local L = {}
 
-L.global_highscore = {{},{},{},{},{}}
+L.lb_instance = {{},{},{},{},{}}
 
-L.lb_instance = nil
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-L.profanity = {"shit", "fuck", "dick", "piss", "tits", "tit", "sex", "fuk", "fuc", "cum", "hoe ", "hoes", "ahoe"}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-L.banned = {"rand", "dike", "homo", "sped", "fag", "nig"}
-
-
+L.profanity = {}
+L.banned = {}
 
 return L

@@ -351,6 +351,56 @@ local function set_diff_details_blue(self, blue)
 	gui.set_color(node.get.mine_ct, color)
 end
 
+local function handle_response(self, id, response)
+	print("connected")
+	print(response.status, ";", response.response)
+	print(type(response.response))
+	if response.status == 0 then
+		print("Couldn't connect")
+	else
+		local data = json.decode(response.response)
+		for d = 1,5 do
+			for i,l in ipairs(data.leaderboard[d]) do
+				l_board.lb_instance[d][i] = {l[2], l[1], l[3]}
+			end
+			for i = #data.leaderboard[d]+1, 10 do
+				l_board.lb_instance[d][i] = nil
+			end
+		end
+	end
+
+	if #l_board.lb_instance[l_data.diff] == 0 or (#l_board.lb_instance[l_data.diff] > 0 and l_data.highscore[l_data.diff] < l_board.lb_instance[l_data.diff][#l_board.lb_instance[l_data.diff]][2]) then
+		local flash_world = true
+		local j = 1
+		local set_hs = nil
+		while j <= #l_board.lb_instance[l_data.diff] and not set_hs do
+			if l_board.lb_instance[l_data.diff][j][3] == l_data.player_id then
+				set_hs = l_board.lb_instance[l_data.diff][j][2]
+			end
+			j = j + 1
+		end
+		if l_data.highscore[l_data.diff] >= 6000 then
+			flash_world = false
+		elseif set_hs and set_hs <= l_data.highscore[l_data.diff] then
+			flash_world = false
+		end
+
+		if flash_world then
+			msg.post("/settings#settings", "world-flash")
+			msg.post("/settings#settings", "world-notif")
+		end
+	end
+end
+
+local function ping_server(msg, type)
+	http.request("http://127.0.0.1:8000"..msg, type, handle_response)
+end
+
+local function pull_board(self)
+	print("connecting...")
+	ping_server("/lb_sort", "GET")
+end
+
 function init(self)
 	gui.set_render_order(0)
 	set_nodes(self)
@@ -602,28 +652,9 @@ function on_message(self, message_id, message)
 			if l_data.diff ~= 6 then
 				if l_board.lb_instance == nil then
 					msg.post("/settings#settings", "world-flash")
+					msg.post("/settings#settings", "world-notif")
 				else
-					l_board.lb_instance = deep_copy(l_board.global_highscore) --download global leaderboard to lb_instance
-					if #l_board.lb_instance[l_data.diff] == 0 or (#l_board.lb_instance[l_data.diff] > 0 and l_data.highscore[l_data.diff] < l_board.lb_instance[l_data.diff][#l_board.lb_instance[l_data.diff]][2]) then
-						local flash_world = true
-						local j = 1
-						local set_hs = nil
-						while j <= #l_board.lb_instance[l_data.diff] and not set_hs do
-							if l_board.lb_instance[l_data.diff][j][3] == l_data.player_id then
-								set_hs = l_board.lb_instance[l_data.diff][j][2]
-							end
-							j = j + 1
-						end
-						if l_data.highscore[l_data.diff] > 6000 then
-							flash_world = false
-						elseif set_hs and set_hs <= l_data.highscore[l_data.diff] then
-							flash_world = false
-						end
-
-						if flash_world then
-							msg.post("/settings#settings", "world-flash")
-						end
-					end
+					pull_board(self)
 				end
 			end
 
@@ -913,6 +944,41 @@ function on_input(self, action_id, action)
 			end
 		end
 
+		if self.lightbulb_there and gui.pick_node(gui.get_node("lightbulb-hit"), action.x, action.y) and not self.midnight_timer then --lightbulb
+			self.input_override = true
+			if action.pressed and action_id == hash("touch") then --click
+				msg.post("/sfx#sfx", "switch")
+				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4(1, 1, 1, 1))
+			elseif action.released and action_id == hash("touch") and gui.get(gui.get_node("lightbulb-click"), "color.x") == 1 then --release
+				msg.post("/sfx#sfx", "key-snap")
+				-- print("switch!")
+				self.light_on = not self.light_on
+				if self.light_on then
+					gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((142/255), (149/255), (219/255), 1))
+					if self.theme == "light" and l_data.gui_anims then
+						self.theme = "midnight"
+						sprite.play_flipbook("/light-switch", "light-switch-off")
+						msg.post("/zoom#minefinder", "set_theme", {theme = "dark"})
+						self.midnight_timer = 0.15
+					else
+						midnight_switch_on(self)
+					end
+				else
+					midnight_switch_off(self)
+				end
+			elseif gui.get(gui.get_node("lightbulb-click"), "color.w") == 0 then --hover
+				msg.post("/zoom#minefinder", "hide_select", {hid = true})
+				if self.light_on then
+					gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((142/255), (149/255), (219/255), 1))
+				else
+					gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((203/255), (219/255), (252/255), 1))
+				end
+			end
+		elseif gui.get(gui.get_node("lightbulb-click"), "color.w") ~= 0 then --unhover
+			msg.post("/zoom#minefinder", "hide_select", {hid = false})
+			gui.set(gui.get_node("lightbulb-click"), "color.w", 0)
+			self.input_override = false
+		end
 
 		if gui.pick_node(node.get.anim_sel, action.x, action.y) then --switch click
 			self.input_override = true
@@ -1091,42 +1157,6 @@ function on_input(self, action_id, action)
 		elseif gui.get(node.get.cancel_x_lit, "color.w") ~= 0 then
 			gui.set(node.get.cancel_x_lit, "color.w", 0)
 			msg.post("/zoom#minefinder", "hide_select", {hid = false})
-			self.input_override = false
-		end
-
-		if self.lightbulb_there and gui.pick_node(gui.get_node("lightbulb-hit"), action.x, action.y) and not self.midnight_timer then --lightbulb
-			self.input_override = true
-			if action.pressed and action_id == hash("touch") then --click
-				msg.post("/sfx#sfx", "switch")
-				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4(1, 1, 1, 1))
-			elseif action.released and action_id == hash("touch") and gui.get(gui.get_node("lightbulb-click"), "color.x") == 1 then --release
-				msg.post("/sfx#sfx", "key-snap")
-				-- print("switch!")
-				self.light_on = not self.light_on
-				if self.light_on then
-					gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((142/255), (149/255), (219/255), 1))
-					if self.theme == "light" and l_data.gui_anims then
-						self.theme = "midnight"
-						sprite.play_flipbook("/light-switch", "light-switch-off")
-						msg.post("/zoom#minefinder", "set_theme", {theme = "dark"})
-						self.midnight_timer = 0.15
-					else
-						midnight_switch_on(self)
-					end
-				else
-					midnight_switch_off(self)
-				end
-			elseif gui.get(gui.get_node("lightbulb-click"), "color.w") == 0 then --hover
-				msg.post("/zoom#minefinder", "hide_select", {hid = true})
-				if self.light_on then
-					gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((142/255), (149/255), (219/255), 1))
-				else
-					gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4((203/255), (219/255), (252/255), 1))
-				end
-			end
-		elseif gui.get(gui.get_node("lightbulb-click"), "color.w") ~= 0 then --unhover
-			msg.post("/zoom#minefinder", "hide_select", {hid = false})
-			gui.set(gui.get_node("lightbulb-click"), "color.w", 0)
 			self.input_override = false
 		end
 	end
