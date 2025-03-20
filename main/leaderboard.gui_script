@@ -210,119 +210,6 @@ local function flip_tile(self, input, col, row, type, flip_check)
 	end
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 local function name_used(self, name)
 	for i = 1, 5 do
 		for j = 1, #l_board.lb_instance[i] do
@@ -400,7 +287,6 @@ local function true_len(self, str)
 end
 
 local function flip_leaderboard(self, first_flip)
-	
 	for i = 1, 5 do
 		for j = 1, 10 do
 			local text_loc = gui.get_node("txt-"..j.."-"..i)
@@ -458,10 +344,7 @@ local function flip_leaderboard(self, first_flip)
 
 						flip_tile(self, input, col, row, type, not first_flip)
 					end
-					
 				end
-
-				
 			end
 		end
 	end
@@ -528,7 +411,6 @@ local function leaderboard_shutdown(self)
 	gui.set(gui.get_node("error-txt"), "color.w", 1)
 	gui.set_text(gui.get_node("error-txt"), "~USING SAVED TIMES")
 
-
 	for d = 1,5 do
 		for j = 1, #l_board.lb_instance[d] do
 			if l_board.lb_instance[d][j][3] ~= l_data.player_id then
@@ -546,7 +428,6 @@ local function handle_response(self, id, response)
 	print("connected")
 	print(response.status, ";", response.response)
 	print(type(response.response))
-
 
 
 	if response.response == "true" then
@@ -604,7 +485,6 @@ local function handle_response(self, id, response)
 			print("banned updated")
 			l_board.banned = deep_copy(data.banned)
 		end
-		
 	end
 end
 
