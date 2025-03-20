@@ -64,7 +64,6 @@ function on_message(self, message_id, message, sender)
 			sound.play("/flap-delay#flap-delay-"..message.num, {gain = l_data.settings.sfx_slider/5})
 		else
 			local rand = math.random(5)
-			print(rand)
 			sound.play("/flap-delay#flap-delay-"..rand, {gain = l_data.settings.sfx_slider/5})
 		end
 	elseif message_id == hash("button1-depress") then
@@ -83,39 +82,24 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == hash("button1-release-delay") then
 		if message.num then
-			sound.play("/button1-release-delay#button1-release-delay-"..message.num, {gain = l_data.settings.sfx_slider/5})
+			sound.play("/button1-release-delay#button1-release-delay-"..message.num, {gain = l_data.settings.sfx_slider/10})
 		else
 			local rand = math.random(5)
-			sound.play("/button1-release-delay#button1-release-delay-"..rand, {gain = l_data.settings.sfx_slider/5})
+			sound.play("/button1-release-delay#button1-release-delay-"..rand, {gain = l_data.settings.sfx_slider/10})
 		end
 	elseif message_id == hash("button2-depress") then
 		if message.num then
 			sound.play("/button2-depress#button2-depress-"..message.num, {gain = l_data.settings.sfx_slider/5})
 		else
 			local rand = math.random(3)
-			-- self.button2_save = msg.url("/button2-depress#button2-depress-"..rand)  
-			-- sound.play("/button2-depress#button2-depress-"..rand, {gain = l_data.settings.sfx_slider/5}, function()
-			-- 	print("Sound finished playing!")
-			-- 	self.button2_save = nil  -- Reset when done
-			-- end)
 			sound.play("/button2-depress#button2-depress-"..rand, {gain = l_data.settings.sfx_slider/5})
 		end
 	elseif message_id == hash("button2-release") then
-		-- if self.button2_save then
-		-- 	sound.stop(self.button2_save)
-		-- end
 		if message.num then
 			sound.play("/button2-release#button2-release-"..message.num, {gain = l_data.settings.sfx_slider/5})
 		else
 			local rand = math.random(3)
 			sound.play("/button2-release#button2-release-"..rand, {gain = l_data.settings.sfx_slider/5})
-		end
-	elseif message_id == hash("button2-release-delay") then
-		if message.num then
-			sound.play("/button2-release-delay#button2-release-delay-"..message.num, {gain = l_data.settings.sfx_slider/5})
-		else
-			local rand = math.random(3)
-			sound.play("/button2-release-delay#button2-release-delay-"..rand, {gain = l_data.settings.sfx_slider/5})
 		end
 	elseif message_id == hash("pencil-check") then
 		if message.num then
