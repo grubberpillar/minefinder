@@ -822,7 +822,11 @@ function on_input(self, action_id, action)
 				else
 					l_data.screen_scale = math.floor(l_data.screen_scale) 
 				end
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
+				if l_data.os == "web" then
+					msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)*2, height = 216*(l_data.screen_scale)*2 } )
+				else
+					msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
+				end
 			end
 		end
 
@@ -837,7 +841,11 @@ function on_input(self, action_id, action)
 				if l_data.os == "mac" and l_data.screen_scale == 2 then
 					msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)-1, height = 216*(l_data.screen_scale)-1 } )
 				end
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
+				if l_data.os == "web" then
+					msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)*2, height = 216*(l_data.screen_scale)*2 } )
+				else
+					msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
+				end
 			end
 		end
 		

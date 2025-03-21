@@ -52,14 +52,12 @@ function on_message(self, message_id, message, sender)
 		if self.removing > 0 then
 			if self.sound == 1 then
 				msg.post("/sfx#sfx", "quick_play", {sound = 3})
-				print("~!~")
 			end
 			msg.post("/zoom#minefinder", "remove_url", {hash = msg.url()})
 			go.delete()
 		elseif self.anim == 0 then 
 			if self.sound == 1 then
 				msg.post("/sfx#sfx", "quick_play", {sound = 3})
-				print("`!`")
 			end
 			if self.reverse == 1 then
 				sprite.play_flipbook("#sprite", "tileflip-"..self.tile.."-"..self.theme..self.mini_txt.."-rev")

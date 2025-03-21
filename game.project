@@ -21,7 +21,7 @@ default_texture_min_filter = nearest
 default_texture_mag_filter = nearest
 
 [osx]
-app_icon = /assets/bomb-icon.icns
+app_icon = /assets/minefinder-mac.icns
 
 [sprite]
 max_count = 2048
@@ -33,8 +33,12 @@ max_tile_count = 8192
 max_instances = 2048
 
 [windows]
-app_icon = /assets/minefinder_icon_win.ico
+app_icon = /assets/minefinder-win.ico
 
 [sound]
 max_component_count = 128
+
+[html5]
+show_made_with_defold = 0
+show_fullscreen_button = 0
 

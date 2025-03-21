@@ -35,22 +35,28 @@ X more controls view
 - global highscores
 X windows icon
 - OPTIMIZE THIS SHIT
+- stuff for web
+	- info
+	- change controls
+	- move retry/remove saving
+	X change graphics quality
 
 
 - noises
-	- fireworks
-	- door open
-	- door close
+	- fireworks [bubble wrap]
+	- door open [door]
+	- door close [door]
 	- control scroll unroll
 	- control scroll door
 	- notif
 	- bomb noises
 	- flag correct
 	- flag incorrect
-	- uncheck
+	- uncheck [deck of cards]
 	- startup screen
 	- light door open
 - no flip sound on startup
+- new logo
 - change sound msg calling syntax
 - test flashing globe for new hs allowing upload vs new hs not allowing upload
 * [windows] can't click while flag anim playing??
