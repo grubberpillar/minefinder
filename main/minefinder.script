@@ -629,7 +629,7 @@ function init(self)
 	load_game(self)	
 
 	if l_data.os == "web" then
-		msg.post("@render:", "resize", { width = 1392*(l_data.screen_scale/8), height = 864*(l_data.screen_scale/8) } )
+		-- msg.post("@render:", "resize", { width = 1392*(l_data.screen_scale/8), height = 864*(l_data.screen_scale/8) } )
 	else
 		msg.post("@render:", "resize", { width = 1392*(l_data.screen_scale/4), height = 864*(l_data.screen_scale/4) } )
 	end
@@ -1188,7 +1188,7 @@ function on_message(self, message_id, message, sender)
 				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)-1, height = 216*(l_data.screen_scale)-1 } )
 			end
 			if l_data.os == "web" then
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)/2, height = 216*(l_data.screen_scale)/2 } )
+				-- msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)/2, height = 216*(l_data.screen_scale)/2 } )
 				msg.post("/settings#settings", "update_scale")
 			else
 				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
@@ -1221,7 +1221,7 @@ function on_message(self, message_id, message, sender)
 				l_data.screen_scale = math.floor(l_data.screen_scale) 
 			end
 			if l_data.os == "web" then
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)/2, height = 216*(l_data.screen_scale)/2 } )
+				-- msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)/2, height = 216*(l_data.screen_scale)/2 } )
 				msg.post("/settings#settings", "update_scale")
 			else
 				msg.post("@render:", "resize", { width = 348	*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
