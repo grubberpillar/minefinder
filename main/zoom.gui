@@ -1290,8 +1290,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "-:--\n"
-  ""
+  text: "-:--"
   font: "pixel-font"
   id: "timer"
   xanchor: XANCHOR_NONE

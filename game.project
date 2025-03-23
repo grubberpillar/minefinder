@@ -40,5 +40,6 @@ max_component_count = 128
 
 [html5]
 show_made_with_defold = 0
+splash_image = /assets/logo/logo-jar-1.png
 show_fullscreen_button = 0
 

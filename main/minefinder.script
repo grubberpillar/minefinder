@@ -22,7 +22,7 @@ end
 local function load_func(self, data)
 	local scale_default = 3
 	if l_data.os == "web" then
-		scale_default = 2
+		scale_default = 1
 	end
 	print("save loaded")
 	l_data.player_id = data.gamedata.player_id or ""
@@ -629,7 +629,7 @@ function init(self)
 	load_game(self)	
 
 	if l_data.os == "web" then
-		msg.post("@render:", "resize", { width = 1392*(l_data.screen_scale/2), height = 864*(l_data.screen_scale/2) } )
+		msg.post("@render:", "resize", { width = 1392*(l_data.screen_scale/8), height = 864*(l_data.screen_scale/8) } )
 	else
 		msg.post("@render:", "resize", { width = 1392*(l_data.screen_scale/4), height = 864*(l_data.screen_scale/4) } )
 	end
@@ -1171,6 +1171,77 @@ function on_message(self, message_id, message, sender)
 			print(profiler.get_cpu_usage())
 		else
 			print(profiler.recorded_frame_count())
+		end
+	elseif message_id == hash("scale_up") then
+		local upper_thresh = 7
+		if l_data.os == "web" then
+			upper_thresh = 3
+		end
+		if l_data.screen_scale < upper_thresh then
+			if math.floor(l_data.screen_scale) == l_data.screen_scale then
+				l_data.screen_scale = l_data.screen_scale + 1
+			else
+				print(l_data.screen_scale)
+				l_data.screen_scale = math.floor(l_data.screen_scale)+1
+			end
+			if l_data.os == "mac" and l_data.screen_scale == 2 then
+				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)-1, height = 216*(l_data.screen_scale)-1 } )
+			end
+			if l_data.os == "web" then
+				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)/2, height = 216*(l_data.screen_scale)/2 } )
+				msg.post("/settings#settings", "update_scale")
+			else
+				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
+			end
+
+			-- local win_width, win_height = window.get_size()
+			-- print(win_width, win_height)
+			-- print(window.get_size())
+			-- print("size: "..l_data.screen_scale)
+			-- if l_data.os ~= "windows" then
+			-- 	-- win_width, win_height = win_width*0.75, win_height*0.75
+			-- end
+			-- if win_width ~= 348*(l_data.screen_scale) or win_height ~= 216*(l_data.screen_scale) then -- faulty resize protection
+			-- 	print("width:", win_width, "vs", 348*(l_data.screen_scale))
+			-- 	print("height:", win_height, "vs", 216*(l_data.screen_scale))
+			-- else
+			-- 	print("width:", win_width, "vs", 348*(l_data.screen_scale))
+			-- 	print("height:", win_height, "vs", 216*(l_data.screen_scale))
+			-- end
+			-- print((348*(l_data.screen_scale))/win_width)
+			-- print("----")
+		end
+	elseif message_id == hash("scale_down") then
+		if l_data.screen_scale > 1 then
+			if math.floor(l_data.screen_scale) == l_data.screen_scale then
+				l_data.screen_scale = l_data.screen_scale - 1
+			elseif l_data.screen_scale > 6 then
+				l_data.screen_scale = 5
+			else
+				l_data.screen_scale = math.floor(l_data.screen_scale) 
+			end
+			if l_data.os == "web" then
+				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)/2, height = 216*(l_data.screen_scale)/2 } )
+				msg.post("/settings#settings", "update_scale")
+			else
+				msg.post("@render:", "resize", { width = 348	*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
+			end
+			-- local win_width, win_height = window.get_size()
+			-- print(win_width, win_height)
+			-- print(window.get_size())
+			-- print("size: "..l_data.screen_scale)
+			-- if l_data.os ~= "windows" then
+			-- 	-- win_width, win_height = win_width*0.75, win_height*0.75
+			-- end
+			-- if win_width ~= 348*(l_data.screen_scale) or win_height ~= 216*(l_data.screen_scale) then -- faulty resize protection
+			-- 	print("width:", win_width, "vs", 348*(l_data.screen_scale))
+			-- 	print("height:", win_height, "vs", 216*(l_data.screen_scale))
+			-- else
+			-- 	print("width:", win_width, "vs", 348*(l_data.screen_scale))
+			-- 	print("height:", win_height, "vs", 216*(l_data.screen_scale))
+			-- end
+			-- print((348*(l_data.screen_scale))/win_width)
+			-- print("----")
 		end
 	end
 end
@@ -1717,76 +1788,11 @@ function on_input(self, action_id, action)
 	self.m_col_prev = m_col
 
 	if action.pressed and action_id == hash("minus") then
-		if l_data.screen_scale > 1 then
-			if math.floor(l_data.screen_scale) == l_data.screen_scale then
-				l_data.screen_scale = l_data.screen_scale - 1
-			elseif l_data.screen_scale > 6 then
-				l_data.screen_scale = 5
-			else
-				l_data.screen_scale = math.floor(l_data.screen_scale) 
-			end
-			if l_data.os == "web" then
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)*2, height = 216*(l_data.screen_scale)*2 } )
-			else
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
-			end
-			-- local win_width, win_height = window.get_size()
-			-- print(win_width, win_height)
-			-- print(window.get_size())
-			-- print("size: "..l_data.screen_scale)
-			-- if l_data.os ~= "windows" then
-			-- 	-- win_width, win_height = win_width*0.75, win_height*0.75
-			-- end
-			-- if win_width ~= 348*(l_data.screen_scale) or win_height ~= 216*(l_data.screen_scale) then -- faulty resize protection
-			-- 	print("width:", win_width, "vs", 348*(l_data.screen_scale))
-			-- 	print("height:", win_height, "vs", 216*(l_data.screen_scale))
-			-- else
-			-- 	print("width:", win_width, "vs", 348*(l_data.screen_scale))
-			-- 	print("height:", win_height, "vs", 216*(l_data.screen_scale))
-			-- end
-			-- print((348*(l_data.screen_scale))/win_width)
-			-- print("----")
-		end
+		msg.post(".", "scale_down")
 	end
 
 	if action.pressed and action_id == hash("plus") then
-		local upper_thresh = 7
-		if l_data.os == "web" then
-			upper_thresh = 3
-		end
-		if l_data.screen_scale < upper_thresh then
-			if math.floor(l_data.screen_scale) == l_data.screen_scale then
-				l_data.screen_scale = l_data.screen_scale + 1
-			else
-				print(l_data.screen_scale)
-				l_data.screen_scale = math.floor(l_data.screen_scale)+1
-			end
-			if l_data.os == "mac" and l_data.screen_scale == 2 then
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)-1, height = 216*(l_data.screen_scale)-1 } )
-			end
-			if l_data.os == "web" then
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)*2, height = 216*(l_data.screen_scale)*2 } )
-			else
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
-			end
-						
-			-- local win_width, win_height = window.get_size()
-			-- print(win_width, win_height)
-			-- print(window.get_size())
-			-- print("size: "..l_data.screen_scale)
-			-- if l_data.os ~= "windows" then
-			-- 	-- win_width, win_height = win_width*0.75, win_height*0.75
-			-- end
-			-- if win_width ~= 348*(l_data.screen_scale) or win_height ~= 216*(l_data.screen_scale) then -- faulty resize protection
-			-- 	print("width:", win_width, "vs", 348*(l_data.screen_scale))
-			-- 	print("height:", win_height, "vs", 216*(l_data.screen_scale))
-			-- else
-			-- 	print("width:", win_width, "vs", 348*(l_data.screen_scale))
-			-- 	print("height:", win_height, "vs", 216*(l_data.screen_scale))
-			-- end
-			-- print((348*(l_data.screen_scale))/win_width)
-			-- print("----")
-		end
+		msg.post(".", "scale_up")
 	end
 	
 	if action.pressed and self.shifting and action_id == hash("q-key") then --file reset

@@ -56,7 +56,6 @@ X windows icon
 	- startup screen
 	- light door open
 - no flip sound on startup
-- new logo
 - change sound msg calling syntax
 - test flashing globe for new hs allowing upload vs new hs not allowing upload
 * [windows] can't click while flag anim playing??
@@ -64,6 +63,7 @@ X windows icon
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
 * skip forward button for lose?
+X new logo
 X less than 100 min?
 X fix flipboard while flipping causes tile anims to stop mid flip
 X +/- screen size leaderboard

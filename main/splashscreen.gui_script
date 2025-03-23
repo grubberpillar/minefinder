@@ -93,39 +93,11 @@ end
 
 function on_input(self, action_id, action)
 	if action.pressed and action_id == hash("minus") then
-		if l_data.screen_scale > 1 then
-			if math.floor(l_data.screen_scale) == l_data.screen_scale then
-				l_data.screen_scale = l_data.screen_scale - 1
-			elseif l_data.screen_scale > 6 then
-				l_data.screen_scale = 5
-			else
-				l_data.screen_scale = math.floor(l_data.screen_scale) 
-			end
-			if l_data.os == "web" then
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)*2, height = 216*(l_data.screen_scale)*2 } )
-			else
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
-			end
-		end
+		msg.post("/zoom#minefinder", "scale_down")
 	end
 
 	if action.pressed and action_id == hash("plus") then
-		if l_data.screen_scale < 7 then
-			if math.floor(l_data.screen_scale) == l_data.screen_scale then
-				l_data.screen_scale = l_data.screen_scale + 1
-			else
-				print(l_data.screen_scale)
-				l_data.screen_scale = math.floor(l_data.screen_scale)+1
-			end
-			if l_data.os == "mac" and l_data.screen_scale == 2 then
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)-1, height = 216*(l_data.screen_scale)-1 } )
-			end
-			if l_data.os == "web" then
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)*2, height = 216*(l_data.screen_scale)*2 } )
-			else
-				msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
-			end
-		end
+		msg.post("/zoom#minefinder", "scale_up")
 	end
 
 	if action.pressed and action_id == hash("debug") then

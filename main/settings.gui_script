@@ -16,6 +16,26 @@ local function bool_to_word(bool)
 	end
 end
 
+local function quality_txt(int)
+	if int == 1 then
+		return "LOW"
+	elseif int == 2 then
+		return "MED"
+	else
+		return "HIGH"
+	end
+end
+
+local function quality_txt_2(int)
+	if int == 1 then
+		return "~LOW"
+	elseif int == 2 then
+		return "MEDIUM"
+	else
+		return "HIGH"
+	end
+end
+
 local function show_more_controls(self)
 	gui.set(gui.get_node("more-controls"), "color.w", 1)
 	self.controls_button = true
@@ -65,11 +85,14 @@ function init(self)
 	-- self.viewing_setttings = false
 	self.viewing_credits = false
 	self.viewing_more_controls = false
+	self.viewing_info = false
 	l_data.viewing_hs = false
 	gui.set(gui.get_node("credits-nodes"), "position.y", 0)
 	gui.set(gui.get_node("more-controls-nodes"), "position.x", 0)
+	gui.set(gui.get_node("info-nodes"), "position.x", 0)
 	gui.set(gui.get_node("credits-nodes"), "color.w", 0)
 	gui.set(gui.get_node("more-controls-nodes"), "color.w", 0)
+	gui.set(gui.get_node("info-nodes"), "color.w", 0)
 	msg.post("/leaderboard#leaderboard", "disable")
 	
 	self.nodes = {}
@@ -109,6 +132,17 @@ function init(self)
 	self.controls_visible = false
 
 	self.world_blinking = false
+
+	if l_data.os == "web" then
+		self.web_game = true
+		local info = gui.get_node("info-but")
+		local quit = gui.get_node("quit-x")
+		gui.set_position(info, gui.get_position(quit))
+		gui.set(info, "color.w", 1)
+		gui.set(quit, "color.w", 0)
+	else
+		self.web_game = false
+	end
 end
 
 function on_message(self, message_id, message, sender)
@@ -185,6 +219,11 @@ function on_message(self, message_id, message, sender)
 			l_data.doors_found[4] = true
 			gui.set(gui.get_node("hidden-door-underline"), "color.w", 1)
 		end
+
+		if l_data.os == "web" then
+			gui.set_text(gui.get_node("zoom-txt"), "CHANGE GRAPHICS QUALITY ["..quality_txt(l_data.screen_scale).."]")
+			gui.set_text(gui.get_node("graphics-setting"), quality_txt_2(l_data.screen_scale))
+		end
 	elseif message_id == hash("tutorial-off") then
 		self.switch_on[1] = false
 		gui.set_color(gui.get_node("tutorial-txt"), vmath.vector4((105/255), (106/255), (106/255), 1))
@@ -219,6 +258,9 @@ function on_message(self, message_id, message, sender)
 		gui.set(gui.get_node("notif-hs"), "color.w", 1)
 		gui.set(gui.get_node("notif-flash-hs"), "color.w", 1)
 		self.notif_timer_hs = 0.1
+	elseif message_id == hash("update_scale") then
+		gui.set_text(gui.get_node("zoom-txt"), "CHANGE GRAPHICS QUALITY ["..quality_txt(l_data.screen_scale).."]")
+		gui.set_text(gui.get_node("graphics-setting"), quality_txt_2(l_data.screen_scale))
 	end
 end
 
@@ -261,7 +303,7 @@ function update(self, dt)
 end
 
 function on_input(self, action_id, action)
-	if not (self.viewing_credits or self.viewing_more_controls) and gui.pick_node(self.nodes.settings_hit, action.x, action.y) then --settings toggle
+	if not (self.viewing_credits or self.viewing_more_controls or self.viewing_info) and gui.pick_node(self.nodes.settings_hit, action.x, action.y) then --settings toggle
 		if action.pressed and action_id == hash("touch") then --click
 			msg.post("/sfx#sfx", "key-snap")
 			gui.set(self.nodes.settings_top, "position.y", 0)
@@ -304,7 +346,7 @@ function on_input(self, action_id, action)
 		gui.set(self.nodes.settings_top, "position.y", 1)
 	end
 
-	if not (self.viewing_setttings or self.viewing_credits or self.viewing_more_controls) and gui.pick_node(self.nodes.hs_hit, action.x, action.y) then --leaderboard toggle --world
+	if not (self.viewing_setttings or self.viewing_credits or self.viewing_more_controls or self.viewing_info) and gui.pick_node(self.nodes.hs_hit, action.x, action.y) then --leaderboard toggle --world
 		if action.pressed and action_id == hash("touch") then --click
 			msg.post("/sfx#sfx", "button1-depress")
 			gui.set(self.nodes.hs_top, "position.y", 0)
@@ -341,7 +383,7 @@ function on_input(self, action_id, action)
 		gui.set(self.nodes.hs_top, "position.y", 1)
 	end
 
-	if action.pressed and self.viewing_setttings and action_id == hash("touch") and not (self.viewing_credits or self.viewing_more_controls) and not gui.pick_node(gui.get_node("settings"), action.x, action.y) and not gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) and not (self.controls_visible and gui.pick_node(gui.get_node("control-scroll-hit"), action.x, action.y)) and not (l_data.more_settings and gui.pick_node(gui.get_node("hidden-settings"), action.x, action.y)) then
+	if action.pressed and self.viewing_setttings and action_id == hash("touch") and not (self.viewing_credits or self.viewing_more_controls or self.viewing_info) and not gui.pick_node(gui.get_node("settings"), action.x, action.y) and not gui.pick_node(self.nodes.settings_hit, action.x, action.y) and not gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) and not (self.controls_visible and gui.pick_node(gui.get_node("control-scroll-hit"), action.x, action.y)) and not (l_data.more_settings and gui.pick_node(gui.get_node("hidden-settings"), action.x, action.y)) then
 		gui.set(self.nodes.settings_nodes, "color.w", 0)
 		msg.post("/sfx#sfx", "button1-release")
 		if not l_data.viewing_hs then
@@ -355,7 +397,7 @@ function on_input(self, action_id, action)
 		self.e_timer = nil
 	end
 
-	if gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) and not self.quit_timer and not l_data.save_quit then --quit game
+	if not self.web_game and gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) and not self.quit_timer and not l_data.save_quit then --quit game
 		if action.pressed and action_id == hash("touch") then
 			gui.play_flipbook(gui.get_node("mini-floppy"), "mini-floppy-lit")
 			gui.set_color(gui.get_node("quit-game-label-txt-save-"..bool_to_word(l_data.settings.autosave)), vmath.vector4((34/255), (32/255), (52/255), 1))
@@ -383,7 +425,35 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	if self.viewing_setttings and not (self.viewing_credits or self.viewing_more_controls) then 
+	if self.web_game and gui.pick_node(gui.get_node("info-hitbox"), action.x, action.y) then --info button
+		if action.pressed and action_id == hash("touch") then
+			gui.play_flipbook(gui.get_node("info-but"), "info-button-lit")
+			gui.set_color(gui.get_node("info-label-txt"), vmath.vector4((99/255), (155/255), 1, 1))
+			gui.set_size(gui.get_node("info-underline"), vmath.vector3(0,0,0))
+		elseif action.released and action_id == hash("touch") then
+			gui.play_flipbook(gui.get_node("info-but"), "info-button")
+			gui.set(gui.get_node("info-underline"), "color.w", 1)
+			gui.set_size(gui.get_node("info-underline"), vmath.vector3(6,1,0))
+			gui.set_color(gui.get_node("info-label-txt"), vmath.vector4(1, 1, 1, 1))
+			self.viewing_info = not self.viewing_info
+			if self.viewing_info then
+				gui.set(gui.get_node("info-nodes"), "color.w", 1)
+			else
+				gui.set(gui.get_node("info-nodes"), "color.w", 0)
+			end
+		elseif gui.get(gui.get_node("info-underline"), "color.w") == 0 then
+			gui.set(gui.get_node("info-underline"), "color.w", 1)
+		end
+	elseif gui.get(gui.get_node("info-underline"), "color.w") ~= 0 then
+		if gui.get_size(gui.get_node("info-underline")) ==  vmath.vector3(0,0,0) then
+			gui.set_size(gui.get_node("info-underline"), vmath.vector3(6,1,0))
+			gui.set_color(gui.get_node("info-label-txt"), vmath.vector4(1, 1, 1, 1))
+			gui.play_flipbook(gui.get_node("info-but"), "info-button")
+		end
+		gui.set(gui.get_node("info-underline"), "color.w", 0)
+	end
+
+	if self.viewing_setttings and not (self.viewing_credits or self.viewing_more_controls or self.viewing_info) then 
 		if not self.scroll_sliding and not self.sfx_sliding and gui.pick_node(self.nodes.credits_hit, action.x, action.y) then --credits button
 			if action.pressed and action_id == hash("touch") then --click
 				msg.post("/sfx#sfx", "button1-depress")
@@ -814,39 +884,12 @@ function on_input(self, action_id, action)
 
 	if self.viewing_setttings then
 		if action.pressed and action_id == hash("minus") then
-			if l_data.screen_scale > 1 then
-				if math.floor(l_data.screen_scale) == l_data.screen_scale then
-					l_data.screen_scale = l_data.screen_scale - 1
-				elseif l_data.screen_scale > 6 then
-					l_data.screen_scale = 5
-				else
-					l_data.screen_scale = math.floor(l_data.screen_scale) 
-				end
-				if l_data.os == "web" then
-					msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)*2, height = 216*(l_data.screen_scale)*2 } )
-				else
-					msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
-				end
-			end
+			msg.post("/zoom#minefinder", "scale_down")
+			print("1")
 		end
 
 		if action.pressed and action_id == hash("plus") then
-			if l_data.screen_scale < 7 then
-				if math.floor(l_data.screen_scale) == l_data.screen_scale then
-					l_data.screen_scale = l_data.screen_scale + 1
-				else
-					print(l_data.screen_scale)
-					l_data.screen_scale = math.floor(l_data.screen_scale)+1
-				end
-				if l_data.os == "mac" and l_data.screen_scale == 2 then
-					msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)-1, height = 216*(l_data.screen_scale)-1 } )
-				end
-				if l_data.os == "web" then
-					msg.post("@render:", "resize", { width = 348*(l_data.screen_scale)*2, height = 216*(l_data.screen_scale)*2 } )
-				else
-					msg.post("@render:", "resize", { width = 348*(l_data.screen_scale), height = 216*(l_data.screen_scale) } )
-				end
-			end
+			msg.post("/zoom#minefinder", "scale_up")
 		end
 		
 		if action.pressed and action_id == hash("debug") then

@@ -592,6 +592,16 @@ function on_message(self, message_id, message)
 		elseif l_data.diff == 6 then
 			gui.set(node.get.stars, "color.w", 1)
 		end
+
+		if l_data.os == "web" then
+			gui.set(gui.get_node("retry"), "position.x", 1104)
+			gui.set(gui.get_node("floppy"), "color.w", 0)
+			gui.set(gui.get_node("save-title"), "color.w", 0)
+			gui.set(gui.get_node("last-save-txt"), "color.w", 0)
+			gui.set(gui.get_node("last-save-time"), "color.w", 0)
+			gui.set(gui.get_node("colon"), "color.w", 0)
+			gui.set(gui.get_node("separator-3"), "color.w", 0)
+		end
 	elseif message_id == hash("set_ticking") then
 		l_data.ticking = message.ticking
 		if l_data.ticking then
@@ -884,7 +894,7 @@ function on_message(self, message_id, message)
 			sys.exit(0)
 		end
 	elseif message_id == hash("unsaved") then
-		if l_data.saved == true then
+		if l_data.saved == true and l_data.os ~= "web" then
 			gui.play_flipbook(node.get.floppy, "floppy")
 			gui.set_text(gui.get_node("save-title"), "SAVE")
 			gui.set_text(gui.get_node("last-save-time"), "~~0m")
@@ -908,7 +918,7 @@ end
 
 
 function on_input(self, action_id, action)
-	if gui.pick_node(node.get.input_box_top, action.x, action.y) or self.input_override then -- input top half
+	if self.input_override or gui.pick_node(node.get.input_box_top, action.x, action.y) then -- input top half
 		if gui.pick_node(node.get.more_box, action.x, action.y) then -- more anims button
 			self.input_override = true
 			if gui.get_color(node.get.more_lit) ~= vmath.vector4(0, 0, 0, 0.2) then
@@ -1049,7 +1059,7 @@ function on_input(self, action_id, action)
 			end
 		end
 
-		if gui.pick_node(node.get.theme_sel, action.x, action.y)  and not self.more_anims then --theme switch click
+		if not self.more_anims and gui.pick_node(node.get.theme_sel, action.x, action.y) then --theme switch click
 			self.input_override = true
 			if gui.get_color(node.get.theme_sel_bg) ~= vmath.vector4(1, 1, 1, 1) then
 				gui.set_color(node.get.theme_sel_bg, vmath.vector4(1, 1, 1, 1))
@@ -1160,7 +1170,7 @@ function on_input(self, action_id, action)
 			self.input_override = false
 		end
 	end
-	if gui.pick_node(node.get.input_box_bot, action.x, action.y) or self.input_override then --input bottom half
+	if self.input_override or gui.pick_node(node.get.input_box_bot, action.x, action.y) then --input bottom half
 		if (gui.pick_node(node.get.retry_hit, action.x, action.y) and not self.more_anims) then -- retry button
 			self.input_override = true
 			retry_but_on(self, action, action_id)
@@ -1245,7 +1255,7 @@ function on_input(self, action_id, action)
 			self.input_override = false
 		end
 
-		if gui.pick_node(node.get.floppy, action.x, action.y) and not self.more_anims and gui.get(node.get.floppy, "color.w") == 1 and l_data.saved == false then --floppy disk click
+		if l_data.saved == false and not self.more_anims and l_data.os ~= "web" and gui.pick_node(node.get.floppy, action.x, action.y) and gui.get(node.get.floppy, "color.w") == 1 then --floppy disk click
 			self.input_override = true
 			if action.pressed and action_id == hash("touch") then
 				gui.set_color(node.get.floppy_lit, vmath.vector4(1, 1, 1, 1))
