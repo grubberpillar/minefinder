@@ -6,8 +6,8 @@ render = /builtins/render/default.renderc
 shared_state = 1
 
 [display]
-width = 1392
-height = 864
+width = 232
+height = 144
 
 [android]
 input_method = HiddenInputField
@@ -42,4 +42,5 @@ max_component_count = 128
 show_made_with_defold = 0
 splash_image = /assets/logo/logo-jar-1.png
 show_fullscreen_button = 0
+scale_mode = fit
 

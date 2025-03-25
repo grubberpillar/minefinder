@@ -90,12 +90,12 @@ end
 local function set_stars_pos(self, override)
 	if self.text_box == 3 or override then
 		if gui.get(node.get.boxes[3], "size.x") < 23 then
-			gui.set(node.get.stars, "position.x", 1194+gui.get(node.get.boxes[3], "size.x")*6)
-			if gui.get(node.get.stars, "position.y") ~= 288 then
-				gui.set(node.get.stars, "position.y", 288)
+			gui.set(node.get.stars, "position.x", 199+gui.get(node.get.boxes[3], "size.x"))
+			if gui.get(node.get.stars, "position.y") ~= 48 then
+				gui.set(node.get.stars, "position.y", 48)
 			end
 		else
-			gui.set(node.get.stars, "position", vmath.vector3(1290, 234, 0))
+			gui.set(node.get.stars, "position", vmath.vector3(215, 39, 0))
 		end
 	end
 end
@@ -128,11 +128,11 @@ end
 
 local function retry_but_on(self, action, action_id)
 	if action.pressed and (action_id == hash("touch") or action_id == hash("retry")) then
-		gui.set(node.get.retry, "position.y", -3)
+		gui.set(node.get.retry, "position.y", -0.5)
 		msg.post("/sfx#sfx", "button1-depress")
-	elseif action.released and (action_id == hash("touch") or action_id == hash("retry")) and gui.get(node.get.retry, "position.y") == -3 then
+	elseif action.released and (action_id == hash("touch") or action_id == hash("retry")) and gui.get(node.get.retry, "position.y") == -0.5 then
 		msg.post("/sfx#sfx", "button1-release")
-		gui.set(node.get.retry, "position.y", 3)
+		gui.set(node.get.retry, "position.y", 0.5)
 		msg.post("/zoom#minefinder", "reset")
 	elseif gui.get_color(node.get.retry_lit) == vmath.vector4((63/255), (63/255), (116/255), 1) and action_id ~= hash("retry") then
 		msg.post("/zoom#minefinder", "hide_select", {hid = true})
@@ -143,7 +143,7 @@ end
 local function retry_but_off(self, action, action_id)
 	gui.set_color(node.get.retry_lit, vmath.vector4((63/255), (63/255), (116/255), 1))
 	msg.post("/zoom#minefinder", "hide_select", {hid = false})
-	gui.set(node.get.retry, "position.y", 3)
+	gui.set(node.get.retry, "position.y", 0.5)
 end
 
 local function deselect_txt(self)
@@ -578,12 +578,12 @@ function on_message(self, message_id, message)
 		end
 
 		if l_data.mine_nums[6] < 1000 then
-			gui.set(node.get.stars, "position.x", 1212+#(""..l_data.mine_nums[6])*30)
-			if gui.get(node.get.stars, "position.y") ~= 288 then
-				gui.set(node.get.stars, "position.y", 288)
+			gui.set(node.get.stars, "position.x", 202+#(""..l_data.mine_nums[6])*5)
+			if gui.get(node.get.stars, "position.y") ~= 48 then
+				gui.set(node.get.stars, "position.y", 48)
 			end
 		else
-			gui.set(node.get.stars, "position", vmath.vector3(1290, 234, 0))
+			gui.set(node.get.stars, "position", vmath.vector3(215, 39, 0))
 		end
 		self.mines_calced = false
 		
@@ -594,7 +594,7 @@ function on_message(self, message_id, message)
 		end
 
 		if l_data.os == "web" then
-			gui.set(gui.get_node("retry"), "position.x", 1104)
+			gui.set(gui.get_node("retry"), "position.x", 184)
 			gui.set(gui.get_node("floppy"), "color.w", 0)
 			gui.set(gui.get_node("save-title"), "color.w", 0)
 			gui.set(gui.get_node("last-save-txt"), "color.w", 0)
@@ -797,7 +797,7 @@ function on_message(self, message_id, message)
 			end
 		end
 
-		if diffic == 6 and (gui.get(node.get.row_OL, "color.w") == 0 or gui.get_position(node.get.row_ct).x == 984) then
+		if diffic == 6 and (gui.get(node.get.row_OL, "color.w") == 0 or gui.get_position(node.get.row_ct).x == 164) then
 			local color = vmath.vector4((34/255), (32/255), (52/255), 1)
 			if temporary then
 				color = vmath.vector4((203/255), (219/255), (252/255), 1)
@@ -808,9 +808,9 @@ function on_message(self, message_id, message)
 			if not self.mines_calced then
 				gui.set(node.get.stars, "color.w", 1)
 			end
-			gui.set(node.get.row_ct, "position.x", 984-6)
-			gui.set(node.get.col_ct, "position.x", 1032+6)
-			gui.set(node.get.mine_ct, "position.x", 1194+6)
+			gui.set(node.get.row_ct, "position.x", 164-1)
+			gui.set(node.get.col_ct, "position.x", 172+1)
+			gui.set(node.get.mine_ct, "position.x", 199+1)
 			gui.set(node.get.row_OL, "size.x", #tostring(l_data.size_nums[1][diffic])*5+3)
 			gui.set(node.get.col_OL, "size.x", #tostring(l_data.size_nums[2][diffic])*5+3)
 			gui.set(node.get.mine_OL, "size.x", #tostring(l_data.mine_nums[diffic])*5+3)
@@ -819,9 +819,9 @@ function on_message(self, message_id, message)
 			gui.set(node.get.col_OL, "color.w", 0)
 			gui.set(node.get.mine_OL, "color.w", 0)
 			gui.set(node.get.stars, "color.w", 0)
-			gui.set(node.get.row_ct, "position.x", 984)
-			gui.set(node.get.col_ct, "position.x", 1032)
-			gui.set(node.get.mine_ct, "position.x", 1194)
+			gui.set(node.get.row_ct, "position.x", 164)
+			gui.set(node.get.col_ct, "position.x", 172)
+			gui.set(node.get.mine_ct, "position.x", 199)
 		end
 	elseif message_id == hash("lightbulb_gotten") then
 		gui.set(gui.get_node("lightbulb"), "color.w", 1)

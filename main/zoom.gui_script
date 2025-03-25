@@ -94,41 +94,41 @@ function on_message(self, message_id, message, sender)
 		end
 
 		if l_data.size_nums[1][l_data.diff] < 17 then
-			if gui.get(gui.get_node("board_border-e"), "size.y") ~= l_data.size_nums[1][l_data.diff]*48 then
+			if gui.get(gui.get_node("board_border-e"), "size.y") ~= l_data.size_nums[1][l_data.diff]*8 then
 				if l_data.size_nums[1][l_data.diff]%2 == 1 then
-					gui.set(gui.get_node("board_border-e"), "position.y", 456)
-					gui.set(gui.get_node("board_border-w"), "position.y", 456)
+					gui.set(gui.get_node("board_border-e"), "position.y", 76)
+					gui.set(gui.get_node("board_border-w"), "position.y", 76)
 				else
-					gui.set(gui.get_node("board_border-e"), "position.y", 432)
-					gui.set(gui.get_node("board_border-w"), "position.y", 432)
+					gui.set(gui.get_node("board_border-e"), "position.y", 72)
+					gui.set(gui.get_node("board_border-w"), "position.y", 72)
 				end
-				gui.set(gui.get_node("board_border-e"), "size.y", l_data.size_nums[1][l_data.diff]*48)
-				gui.set(gui.get_node("board_border-w"), "size.y", l_data.size_nums[1][l_data.diff]*48)
+				gui.set(gui.get_node("board_border-e"), "size.y", l_data.size_nums[1][l_data.diff]*8)
+				gui.set(gui.get_node("board_border-w"), "size.y", l_data.size_nums[1][l_data.diff]*8)
 			end
-		elseif gui.get(gui.get_node("board_border-e"), "size.y") ~= 768 then
-			gui.set(gui.get_node("board_border-e"), "position.y", 432)
-			gui.set(gui.get_node("board_border-w"), "position.y", 432)
-			gui.set(gui.get_node("board_border-e"), "size.y", 768)
-			gui.set(gui.get_node("board_border-w"), "size.y", 768)
+		elseif gui.get(gui.get_node("board_border-e"), "size.y") ~= 128 then
+			gui.set(gui.get_node("board_border-e"), "position.y", 72)
+			gui.set(gui.get_node("board_border-w"), "position.y", 72)
+			gui.set(gui.get_node("board_border-e"), "size.y", 128)
+			gui.set(gui.get_node("board_border-w"), "size.y", 128)
 		end
 
 		if l_data.size_nums[2][l_data.diff] < 28 then
-			if gui.get(gui.get_node("board_border-n"), "size.x") ~= l_data.size_nums[2][l_data.diff]*48 then
+			if gui.get(gui.get_node("board_border-n"), "size.x") ~= l_data.size_nums[2][l_data.diff]*8 then
 				if l_data.size_nums[2][l_data.diff]%2 == 0 then
-					gui.set(gui.get_node("board_border-n"), "position.x", 720)
-					gui.set(gui.get_node("board_border-s"), "position.x", 720)
+					gui.set(gui.get_node("board_border-n"), "position.x", 120)
+					gui.set(gui.get_node("board_border-s"), "position.x", 120)
 				else
-					gui.set(gui.get_node("board_border-n"), "position.x", 696)
-					gui.set(gui.get_node("board_border-s"), "position.x", 696)
+					gui.set(gui.get_node("board_border-n"), "position.x", 116)
+					gui.set(gui.get_node("board_border-s"), "position.x", 116)
 				end
-				gui.set(gui.get_node("board_border-n"), "size.x", l_data.size_nums[2][l_data.diff]*48)
-				gui.set(gui.get_node("board_border-s"), "size.x", l_data.size_nums[2][l_data.diff]*48)
+				gui.set(gui.get_node("board_border-n"), "size.x", l_data.size_nums[2][l_data.diff]*8)
+				gui.set(gui.get_node("board_border-s"), "size.x", l_data.size_nums[2][l_data.diff]*8)
 			end
-		elseif gui.get(gui.get_node("board_border-n"), "size.x") ~= 1296 then
-			gui.set(gui.get_node("board_border-n"), "position.x", 696)
-			gui.set(gui.get_node("board_border-s"), "position.x", 696)
-			gui.set(gui.get_node("board_border-n"), "size.x", 1296)
-			gui.set(gui.get_node("board_border-s"), "size.x", 1296)
+		elseif gui.get(gui.get_node("board_border-n"), "size.x") ~= 216 then
+			gui.set(gui.get_node("board_border-n"), "position.x", 116)
+			gui.set(gui.get_node("board_border-s"), "position.x", 116)
+			gui.set(gui.get_node("board_border-n"), "size.x", 216)
+			gui.set(gui.get_node("board_border-s"), "size.x", 216)
 		end
 		
 

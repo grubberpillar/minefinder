@@ -62,7 +62,7 @@ function init(self)
 	self.visible = false
 	self.disabling = true --checks if the user just unchecked (true) or checked (false) a checkbox
 	self.boxes = {"place", "rmv", "right", "wrong", "mines", "delay", "t.flip", "ui", "flip_all", "fast_flip"}
-	self.text_y_pos = {444, 444, 408, 408, 330, 330, 294, 294, 216, 180}
+	self.text_y_pos = {74, 74, 68, 68, 55, 55, 49, 49, 36, 30}
 	self.hitbox_nodes = {}
 	self.check_nodes = {}
 	self.text_nodes = {}
@@ -203,9 +203,9 @@ function on_input(self, action_id, action)
 				if action.pressed and action_id == hash("touch") then
 					msg.post("/sfx#sfx", "button2-release")
 					if i == 9 then
-						gui.set(gui.get_node("flip_all-txt-top"), "position.y", self.text_y_pos[i]-6)
+						gui.set(gui.get_node("flip_all-txt-top"), "position.y", self.text_y_pos[i]-1)
 					else
-						gui.set(self.top_text_nodes[i], "position.y", self.text_y_pos[i]-6)
+						gui.set(self.top_text_nodes[i], "position.y", self.text_y_pos[i]-1)
 					end
 					self.node_clicked = i
 				end

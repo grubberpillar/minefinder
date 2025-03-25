@@ -43,8 +43,8 @@ end
 
 local function hide_flipbook(self)
 	gui.set(gui.get_node("control-scroll"), "color.w", 0)
-	gui.set(gui.get_node("gate-top"), "position.y", 30)
-	gui.set(gui.get_node("gate-bot"), "position.y", 18)
+	gui.set(gui.get_node("gate-top"), "position.y", 5)
+	gui.set(gui.get_node("gate-bot"), "position.y", 3)
 	gui.set_color(gui.get_node("control-cover-middle"), vmath.vector4((155/255), (173/255), (183/255), 1))
 end
 
@@ -58,8 +58,8 @@ local function set_gate_color(color)
 end
 
 local function set_sfx_slider(self)
-	gui.set(self.nodes.sfx_ring, "position.x", l_data.settings.sfx_slider*48-6)
-	gui.set(self.nodes.sfx_ring_hit, "position.x", l_data.settings.sfx_slider*48+3)
+	gui.set(self.nodes.sfx_ring, "position.x", l_data.settings.sfx_slider*8-1)
+	gui.set(self.nodes.sfx_ring_hit, "position.x", l_data.settings.sfx_slider*8+0.5)
 	for i = 0,5 do
 		if i <= l_data.settings.sfx_slider then
 			gui.set_color(gui.get_node("sfx-node-"..(i)), vmath.vector4((223/255), (113/255), (38/255), 1))
@@ -457,8 +457,8 @@ function on_input(self, action_id, action)
 		if not self.scroll_sliding and not self.sfx_sliding and gui.pick_node(self.nodes.credits_hit, action.x, action.y) then --credits button
 			if action.pressed and action_id == hash("touch") then --click
 				msg.post("/sfx#sfx", "button1-depress")
-				gui.set(self.nodes.credits_top, "position.y", -6)
-			elseif action.released and action_id == hash("touch") and gui.get(self.nodes.credits_top, "position.y") == -6 then --release
+				gui.set(self.nodes.credits_top, "position.y", -1)
+			elseif action.released and action_id == hash("touch") and gui.get(self.nodes.credits_top, "position.y") == -1 then --release
 				msg.post("/sfx#sfx", "button1-release")
 				self.viewing_credits = true
 				gui.set(gui.get_node("credits-nodes"), "color.w", 1)
@@ -620,8 +620,8 @@ function on_input(self, action_id, action)
 						gui.set_color(gui.get_node("scroll-node-"..i), self.slider_node_color[2][bool_to_num(i < l_data.settings.scroll_slider)])
 						l_data.settings.scroll_slider = i
 						msg.post("/gui#minefinder", "unsaved")
-						gui.set(self.nodes.scroll_ring, "position.x", (i-1)*48-6)
-						gui.set(self.nodes.scroll_ring_hit, "position.x", (i-1)*48+3)
+						gui.set(self.nodes.scroll_ring, "position.x", (i-1)*8-1)
+						gui.set(self.nodes.scroll_ring_hit, "position.x", (i-1)*8+0.5)
 						for j = 1,5 do
 							if j <= l_data.settings.scroll_slider then
 								gui.set_color(gui.get_node("scroll-node-"..(j)), vmath.vector4((223/255), (113/255), (38/255), 1))
@@ -656,8 +656,8 @@ function on_input(self, action_id, action)
 
 			if node_select < 5 and node_select > -1 and (node_select+1) ~= l_data.settings.scroll_slider then
 				msg.post("/sfx#sfx", "switch")
-				gui.set(self.nodes.scroll_ring, "position.x", node_select*48-6)
-				gui.set(self.nodes.scroll_ring_hit, "position.x", node_select*48+3)
+				gui.set(self.nodes.scroll_ring, "position.x", node_select*8-1)
+				gui.set(self.nodes.scroll_ring_hit, "position.x", node_select*8+0.5)
 				l_data.settings.scroll_slider = node_select+1
 				msg.post("/gui#minefinder", "unsaved")
 				for i = 1,5 do
@@ -794,8 +794,8 @@ function on_input(self, action_id, action)
 			elseif action.released and action_id == hash("touch") and gui.get_color(gui.get_node("gate-top")) == vmath.vector4(1, 1, 1, 1) then
 				set_gate_color(vmath.vector4((136/255), (135/255), (134/255), 1))
 				if not self.controls_visible then
-					gui.set(gui.get_node("gate-bot"), "position.y", 36)
-					gui.set(gui.get_node("gate-top"), "position.y", 12)
+					gui.set(gui.get_node("gate-bot"), "position.y", 6)
+					gui.set(gui.get_node("gate-top"), "position.y", 2)
 					gui.set_color(gui.get_node("control-cover-middle"), vmath.vector4((105/255), (106/255), (106/255), 1))
 					gui.set(gui.get_node("control-scroll"), "color.w", 1)
 					if l_data.gui_anims then
