@@ -5,6 +5,16 @@ local function hide_cover(self)
 	gui.set(gui.get_node("light-box"), "color.w", 0)
 end
 
+local function cover_noise(self)
+	for i = 1,6 do
+		timer.delay(0.4*i, false, function()
+			if self.cover_up then
+				msg.post("/sfx#sfx", "handbrake")
+			end
+		end)
+	end
+end
+
 local function replace_txt_color(self, node)
 	if node < 9 then
 		gui.set_color(self.text_nodes[node], vmath.vector4((142/255), (149/255), (219/255), 1))
@@ -32,6 +42,7 @@ local function check_set(self, i, check_tbl)
 	end
 
 	if check_tbl[i] then 
+		msg.post("/sfx#sfx", "flip-tile", {strength = 4})
 		if self.anims_on then --uncheck
 			gui.play_flipbook(self.check_nodes[i], "check-remove")
 		else
@@ -141,6 +152,8 @@ function on_message(self, message_id, message, sender)
 		end
 		if message.setting == true and self.visible then
 			msg.post("/sfx#sfx", "pencil-check")
+		elseif message.setting == false and self.visible then
+			msg.post("/sfx#sfx", "flip-tile", {strength = 4})
 		end
 		for i = 1, 8 do
 			if self.checked[i] ~= message.setting then
@@ -259,6 +272,7 @@ function on_input(self, action_id, action)
 					self.se_up = false
 					gui.play_flipbook(gui.get_node("cover"), "cover-raise")
 					self.cover_up = true
+					cover_noise(self)
 					for i = 1,10 do
 						if self.current_settings[i] ~= self.checked[i] then
 							check_set(self, i, self.checked)

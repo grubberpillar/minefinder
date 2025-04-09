@@ -42,6 +42,7 @@ local function show_more_controls(self)
 end
 
 local function hide_flipbook(self)
+	msg.post("/sfx#sfx", "handbrake")
 	gui.set(gui.get_node("control-scroll"), "color.w", 0)
 	gui.set(gui.get_node("gate-top"), "position.y", 5)
 	gui.set(gui.get_node("gate-bot"), "position.y", 3)
@@ -221,8 +222,14 @@ function on_message(self, message_id, message, sender)
 		end
 
 		if l_data.os == "web" then
-			gui.set_text(gui.get_node("zoom-txt"), "CHANGE GRAPHICS QUALITY ["..quality_txt(l_data.screen_scale).."]")
-			gui.set_text(gui.get_node("graphics-setting"), quality_txt_2(l_data.screen_scale))
+			gui.set_color(gui.get_node("shift-q"), vmath.vector4((155/255), (173/255), (183/255), 1))
+			gui.set_color(gui.get_node("plus-q"), vmath.vector4((155/255), (173/255), (183/255), 1))
+			gui.set_color(gui.get_node("q-key"), vmath.vector4((155/255), (173/255), (183/255), 1))
+			gui.set_color(gui.get_node("shift-q-txt"), vmath.vector4((155/255), (173/255), (183/255), 1))
+			gui.set_color(gui.get_node("plus-key"), vmath.vector4((155/255), (173/255), (183/255), 1))
+			gui.set_color(gui.get_node("slash"), vmath.vector4((155/255), (173/255), (183/255), 1))
+			gui.set_color(gui.get_node("minus-key"), vmath.vector4((155/255), (173/255), (183/255), 1))
+			gui.set_color(gui.get_node("zoom-txt"), vmath.vector4((155/255), (173/255), (183/255), 1))
 		end
 	elseif message_id == hash("tutorial-off") then
 		self.switch_on[1] = false
@@ -232,6 +239,7 @@ function on_message(self, message_id, message, sender)
 		gui.set(gui.get_node("hidden-settings"), "color.w", 1)
 		msg.post("/gui#lights", "outlet")
 		if not message.startup then
+			msg.post("/sfx#sfx", "notif")
 			gui.play_flipbook(gui.get_node("lights-light"), "small-light-on-purple")
 			gui.set_color(gui.get_node("lights-txt"), vmath.vector4((185/255), (142/255), (219/255), 1))
 			gui.set(gui.get_node("notif"), "color.w", 1)
@@ -255,12 +263,10 @@ function on_message(self, message_id, message, sender)
 		gui.play_flipbook(gui.get_node("hs-top"), "world-blink")
 		self.world_blinking = true
 	elseif message_id == hash("world-notif") then
+		msg.post("/sfx#sfx", "notif")
 		gui.set(gui.get_node("notif-hs"), "color.w", 1)
 		gui.set(gui.get_node("notif-flash-hs"), "color.w", 1)
 		self.notif_timer_hs = 0.1
-	elseif message_id == hash("update_scale") then
-		gui.set_text(gui.get_node("zoom-txt"), "CHANGE GRAPHICS QUALITY ["..quality_txt(l_data.screen_scale).."]")
-		gui.set_text(gui.get_node("graphics-setting"), quality_txt_2(l_data.screen_scale))
 	end
 end
 
@@ -346,7 +352,7 @@ function on_input(self, action_id, action)
 		gui.set(self.nodes.settings_top, "position.y", 1)
 	end
 
-	if not (self.viewing_setttings or self.viewing_credits or self.viewing_more_controls or self.viewing_info) and gui.pick_node(self.nodes.hs_hit, action.x, action.y) then --leaderboard toggle --world
+	if not (self.viewing_setttings or self.viewing_credits or self.viewing_more_controls or self.viewing_info) and gui.pick_node(self.nodes.hs_hit, action.x, action.y) then --leaderboard toggle --globe --world
 		if action.pressed and action_id == hash("touch") then --click
 			msg.post("/sfx#sfx", "button1-depress")
 			gui.set(self.nodes.hs_top, "position.y", 0)
@@ -399,6 +405,7 @@ function on_input(self, action_id, action)
 
 	if not self.web_game and gui.pick_node(gui.get_node("quit-hitbox"), action.x, action.y) and not self.quit_timer and not l_data.save_quit then --quit game
 		if action.pressed and action_id == hash("touch") then
+			msg.post("/sfx#sfx", "key-click")
 			gui.play_flipbook(gui.get_node("mini-floppy"), "mini-floppy-lit")
 			gui.set_color(gui.get_node("quit-game-label-txt-save-"..bool_to_word(l_data.settings.autosave)), vmath.vector4((34/255), (32/255), (52/255), 1))
 			gui.set_size(gui.get_node("quit-underline"), vmath.vector3(0,0,0))
@@ -427,19 +434,43 @@ function on_input(self, action_id, action)
 
 	if self.web_game and gui.pick_node(gui.get_node("info-hitbox"), action.x, action.y) then --info button
 		if action.pressed and action_id == hash("touch") then
+			msg.post("/sfx#sfx", "button2-depress")
 			gui.play_flipbook(gui.get_node("info-but"), "info-button-lit")
 			gui.set_color(gui.get_node("info-label-txt"), vmath.vector4((99/255), (155/255), 1, 1))
 			gui.set_size(gui.get_node("info-underline"), vmath.vector3(0,0,0))
 		elseif action.released and action_id == hash("touch") then
+			msg.post("/sfx#sfx", "button2-release")
 			gui.play_flipbook(gui.get_node("info-but"), "info-button")
 			gui.set(gui.get_node("info-underline"), "color.w", 1)
 			gui.set_size(gui.get_node("info-underline"), vmath.vector3(6,1,0))
 			gui.set_color(gui.get_node("info-label-txt"), vmath.vector4(1, 1, 1, 1))
 			self.viewing_info = not self.viewing_info
+
+			msg.post("/sfx#sfx", "paper")
 			if self.viewing_info then
 				gui.set(gui.get_node("info-nodes"), "color.w", 1)
+				if not self.viewing_setttings then
+					if l_data.viewing_hs then
+						msg.post("/settings#settings", "release_input_focus")
+					else
+						msg.post("/zoom#minefinder", "release_input_focus")
+						msg.post("/gui#minefinder", "release_input_focus")
+						msg.post("/gui-zoom#zoom", "release_input_focus")
+						msg.post("/anims#anims", "release_input_focus")
+					end
+				end
 			else
 				gui.set(gui.get_node("info-nodes"), "color.w", 0)
+				if not self.viewing_setttings then
+					if l_data.viewing_hs then
+						msg.post("/settings#settings", "acquire_input_focus")
+					else
+						msg.post("/zoom#minefinder", "acquire_input_focus")
+						msg.post("/gui#minefinder", "acquire_input_focus")
+						msg.post("/gui-zoom#zoom", "acquire_input_focus")
+						msg.post("/anims#anims", "acquire_input_focus")
+					end
+				end
 			end
 		elseif gui.get(gui.get_node("info-underline"), "color.w") == 0 then
 			gui.set(gui.get_node("info-underline"), "color.w", 1)
@@ -652,7 +683,7 @@ function on_input(self, action_id, action)
 			else
 				mouse_x = action.x
 			end
-			local node_select = math.floor((mouse_x+24-693)/48)
+			local node_select = math.floor((mouse_x+4-115.5)/8)
 
 			if node_select < 5 and node_select > -1 and (node_select+1) ~= l_data.settings.scroll_slider then
 				msg.post("/sfx#sfx", "switch")
@@ -760,7 +791,7 @@ function on_input(self, action_id, action)
 			else
 				mouse_x = action.x
 			end
-			local node_select = math.floor((mouse_x+24-669)/48)
+			local node_select = math.floor((mouse_x+4-111.5)/8)
 
 			if node_select < 6 and node_select > -1 and node_select ~= l_data.settings.sfx_slider then
 				msg.post("/sfx#sfx", "switch")
@@ -791,9 +822,11 @@ function on_input(self, action_id, action)
 		if not self.scroll_sliding and not self.sfx_sliding and gui.pick_node(gui.get_node("control-cover-hit"), action.x, action.y) then --controls
 			if action.pressed and action_id == hash("touch") then
 				set_gate_color(vmath.vector4(1, 1, 1, 1))
+				msg.post("/sfx#sfx", "button2-depress")
 			elseif action.released and action_id == hash("touch") and gui.get_color(gui.get_node("gate-top")) == vmath.vector4(1, 1, 1, 1) then
 				set_gate_color(vmath.vector4((136/255), (135/255), (134/255), 1))
 				if not self.controls_visible then
+					msg.post("/sfx#sfx", "handbrake")
 					gui.set(gui.get_node("gate-bot"), "position.y", 6)
 					gui.set(gui.get_node("gate-top"), "position.y", 2)
 					gui.set_color(gui.get_node("control-cover-middle"), vmath.vector4((105/255), (106/255), (106/255), 1))
@@ -816,6 +849,7 @@ function on_input(self, action_id, action)
 						hide_flipbook(self)
 					end
 				end
+				msg.post("/sfx#sfx", "paper")
 			elseif gui.get_color(gui.get_node("gate-top")) ~= vmath.vector4((136/255), (135/255), (134/255), 1) and gui.get(gui.get_node("gate-top"), "color.x") ~= 1 then
 				set_gate_color(vmath.vector4((136/255), (135/255), (134/255), 1))
 			end
@@ -830,6 +864,7 @@ function on_input(self, action_id, action)
 				gui.set(self.nodes.controls_top, "position.y", 0)
 			elseif action.released and action_id == hash("touch") and gui.get(self.nodes.controls_top, "position.y") == 0 then --release
 				msg.post("/sfx#sfx", "button2-release")
+				msg.post("/sfx#sfx", "paper")
 				self.viewing_more_controls = true
 				gui.set(gui.get_node("more-controls-nodes"), "color.w", 1)
 				gui.play_flipbook(self.nodes.controls_top, "more-controls-lit")
@@ -850,6 +885,7 @@ function on_input(self, action_id, action)
 
 	if self.viewing_credits and gui.pick_node(self.nodes.credits_door_hit, action.x, action.y) then -- exit credits
 		if action.pressed and action_id == hash("touch") then 
+			msg.post("/sfx#sfx", "quick_play", {sound = 22})
 			self.viewing_credits = false
 			gui.set(gui.get_node("credits-nodes"), "color.w", 0)
 			if not l_data.doors_found[2] then
@@ -857,6 +893,7 @@ function on_input(self, action_id, action)
 				msg.post(".", "found_door", {door = 2})
 			end
 		elseif not self.credits_door_hover then
+			msg.post("/sfx#sfx", "quick_play", {sound = 21, vol_div = 3})
 			gui.play_flipbook(self.nodes.credits_door, "credits-door-open")
 			self.credits_door_hover = true
 		end
@@ -867,13 +904,16 @@ function on_input(self, action_id, action)
 
 	if self.viewing_more_controls and gui.pick_node(self.nodes.control_door_hit, action.x, action.y) then -- exit more controls
 		if action.pressed and action_id == hash("touch") then 
+			msg.post("/sfx#sfx", "paper")
+			msg.post("/sfx#sfx", "quick_play", {sound = 22})
 			self.viewing_more_controls = false
 			gui.set(gui.get_node("more-controls-nodes"), "color.w", 0)
 			if not l_data.doors_found[1] then
 				l_data.doors_found[1] = true
 				msg.post(".", "found_door", {door = 1})
 			end
-		elseif not self.credits_door_hover then
+		elseif not self.control_door_hover then
+			msg.post("/sfx#sfx", "quick_play", {sound = 21, vol_div = 3})
 			gui.play_flipbook(self.nodes.control_door, "credits-door-open")
 			self.control_door_hover = true
 		end

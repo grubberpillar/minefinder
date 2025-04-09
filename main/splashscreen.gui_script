@@ -49,6 +49,7 @@ function update(self, dt)
 			else
 				self.skip_splash = true
 			end
+			msg.post("/zoom#minefinder", "black-gone")
 		elseif not self.logo_started and self.time_alive >= 1.5 then
 			self.logo_started = true
 			gui.set_color(logo, vmath.vector4(1, 1, 1, 1))

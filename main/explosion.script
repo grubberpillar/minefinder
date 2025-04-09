@@ -1,16 +1,28 @@
 go.property("wick", false)
 go.property("mini", 0)
 go.property("final", 1)
+go.property("sound", 1)
+go.property("noise_reduction", 1)
 
 function init(self)
 	self.mini_txt = ""
 	if self.mini == 1 then
 		self.mini_txt = "-mini"
 	end
+	self.first = 0
 	if self.wick then
+		self.first = 1
+	end
+	if self.wick then
+		if self.sound == 1 then
+			msg.post("/sfx#sfx", "quick_play", {sound = 27-self.mini, vol_div = 3})
+		end
 		sprite.play_flipbook("#sprite", "explosion-wick"..self.mini_txt)
 		self.anim_num = 0
 	else
+		if self.sound == 1 then
+			msg.post("/sfx#sfx", "quick_play", {sound = 19, vol_div = (5*self.noise_reduction)-self.first*3})
+		end
 		sprite.play_flipbook("#sprite", "explosion-blink"..self.mini_txt)
 		self.anim_num = 1
 	end
@@ -19,9 +31,15 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("animation_done") then
 		if self.anim_num < 2 then
+			if self.sound == 1 then
+				msg.post("/sfx#sfx", "quick_play", {sound = 19, vol_div = (5*self.noise_reduction)-self.first*3})
+			end
 			sprite.play_flipbook("#sprite", "explosion-blink"..self.mini_txt)
 			self.anim_num = self.anim_num + 1
 		elseif self.anim_num == 2 then
+			if self.sound == 1 then
+				msg.post("/sfx#sfx", "quick_play", {sound = 24, vol_div = (10*self.noise_reduction)-self.first*6})
+			end
 			sprite.play_flipbook("#sprite", "explosion-boom"..self.mini_txt)
 			self.anim_num = self.anim_num + 1
 		else

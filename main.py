@@ -63,6 +63,20 @@ def save_lb(lb_num: int, name: str, time: int, player_id: str):
     update_csv()
     return {"leaderboard":lb_sorted}
 
+@app.put("/clear")
+def clear_lb():
+    global lb_sorted
+    lb_sorted = [[] for i in range(5)]
+    update_csv()
+    return {"leaderboard":lb_sorted}
+
+@app.put("/rmv/{lb_num}/{score_num}")
+def rmv_score(lb_num: int, score_num: int):
+    global lb_sorted
+    lb_sorted[lb_num].pop(score_num)
+    update_csv()
+    return {"leaderboard":lb_sorted}
+
 
 # @app.put("/scores/{item_id}")
 # def update_scores(item_id: int):

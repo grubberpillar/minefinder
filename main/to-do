@@ -38,24 +38,24 @@ X windows icon
 - stuff for web
 	- info
 	- change controls
-	- move retry/remove saving
+	X move retry/remove saving
 	X change graphics quality
 
 
 - noises
-	- fireworks [bubble wrap]
-	- door open [door]
-	- door close [door]
-	- control scroll unroll
-	- control scroll door
-	- notif
-	- bomb noises
-	- flag correct
-	- flag incorrect
-	- uncheck [deck of cards]
-	- startup screen
-	- light door open
-- no flip sound on startup
+	X fireworks [bubble wrap] 
+	X door open [door] 
+	X door close [door]
+	X control scroll unroll 
+	X control scroll door 
+	X notif
+	X bomb noises
+	X flag correct 
+	X flag incorrect 
+	X uncheck
+	- startup screen 
+	X light door open 
+X no flip sound on startup
 - change sound msg calling syntax
 - test flashing globe for new hs allowing upload vs new hs not allowing upload
 * [windows] can't click while flag anim playing??

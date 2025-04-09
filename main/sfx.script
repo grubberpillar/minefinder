@@ -7,11 +7,13 @@ function init(self)
 					"flip-tile-heavy", "flap", "flap-delay", "button1-depress", "button1-release", "button2-depress", 
 	--						13					14					15				16			17
 					"button2-release", "button2-release-delay", "pencil-check", "dig-sugar", "dig-barley", 
-	--						18				19
-					"dig-barley-heavy", "switch"}
+	--						18				19			20			21		22			23		24		25
+					"dig-barley-heavy", "switch", "bubble-wrap", "door", "handbrake", "paper", "bomb", "notif", 
+	--					26			27				28
+					"hiss-short", "hiss-long", "door-close"}
 
-	--				  1  2   3  4  5  6  7  8  9 10 11 12 13 14 15  16 17 18 19
-	self.sound_num = {5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3, 5, 10, 5, 5, 4}
+	--				  1  2   3  4  5  6  7  8  9 10 11 12 13 14 15  16 17 18 19 20 21 22 23 24 25 26 27 28
+	self.sound_num = {5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3, 5, 10, 5, 5, 4, 5, 5, 5, 4, 5, 1, 1, 1, 1}
 end
 
 function on_message(self, message_id, message, sender)
@@ -21,6 +23,14 @@ function on_message(self, message_id, message, sender)
 		if message.sound == 3 then
 			vol_split = 15
 		end
+		if message.vol_div then
+			vol_split = vol_split*message.vol_div
+		end
+
+		-- if message.sound == 24 and vol_split == 40 then
+		-- 	print(vol_split)
+		-- end
+		
 		sound.play("/"..self.soundID[message.sound].."#"..self.soundID[message.sound].."-"..rand, {gain = l_data.settings.sfx_slider/vol_split})
 	elseif message_id == hash("key-snap") then
 		if message.num then
@@ -135,6 +145,69 @@ function on_message(self, message_id, message, sender)
 		else
 			local rand = math.random(4)
 			sound.play("/switch#switch-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("bubble-wrap") then
+		if message.num then
+			sound.play("/bubble-wrap#bubble-wrap-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/bubble-wrap#bubble-wrap-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("door") then
+		if message.num then
+			sound.play("/door#door-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/door#door-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("handbrake") then
+		if message.num then
+			sound.play("/handbrake#handbrake-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/handbrake#handbrake-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("paper") then
+		if message.num then
+			sound.play("/paper#paper-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(4)
+			sound.play("/paper#paper-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("bomb") then
+		if message.num then
+			sound.play("/bomb#bomb-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(5)
+			sound.play("/bomb#bomb-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("notif") then
+		if message.num then
+			sound.play("/notif#notif-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(1)
+			sound.play("/notif#notif-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("hiss-short") then
+		if message.num then
+			sound.play("/hiss-short#hiss-short-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(1)
+			sound.play("/hiss-short#hiss-short-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("hiss-long") then
+		if message.num then
+			sound.play("/hiss-long#hiss-long-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(1)
+			sound.play("/hiss-long#hiss-long-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
+	elseif message_id == hash("door-close") then
+		if message.num then
+			sound.play("/hiss-long#hiss-long-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(1)
+			sound.play("/hiss-long#hiss-long-"..rand, {gain = l_data.settings.sfx_slider/5})
 		end
 	end
 end

@@ -1,7 +1,7 @@
 local D = {}
 
 D.in_game = false -- tracks if the splashscreen is finished
-D.os = "web"
+D.os = "mac"
 D.screen_scale = 3
 D.player_id = nil
 D.default_name = ""
