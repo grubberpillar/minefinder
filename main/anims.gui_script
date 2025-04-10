@@ -9,7 +9,7 @@ local function cover_noise(self)
 	for i = 1,6 do
 		timer.delay(0.4*i, false, function()
 			if self.cover_up then
-				msg.post("/sfx#sfx", "handbrake")
+				msg.post("/sfx#sfx", "quick_play", {sound = 22})
 			end
 		end)
 	end
@@ -42,7 +42,7 @@ local function check_set(self, i, check_tbl)
 	end
 
 	if check_tbl[i] then 
-		msg.post("/sfx#sfx", "flip-tile", {strength = 4})
+		msg.post("/sfx#sfx", "quick_play", {sound = 7})
 		if self.anims_on then --uncheck
 			gui.play_flipbook(self.check_nodes[i], "check-remove")
 		else

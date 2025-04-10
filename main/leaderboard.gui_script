@@ -433,13 +433,10 @@ local function handle_response(self, id, response)
 		leaderboard_shutdown(self)
 	elseif response.response == "true" then
 		leaderboard_bootup(self) --https://minefinder.andrewprock.link
-		-- http.request("http://127.0.0.1:8000/lb_sort", "GET", handle_response)
-		-- http.request("http://127.0.0.1:8000/profanity", "GET", handle_response)
-		-- http.request("http://127.0.0.1:8000/banned", "GET", handle_response)
-		http.request("https://minefinder.andrewprock.link/lb_sort", "GET", handle_response)
-		http.request("https://minefinder.andrewprock.link/profanity", "GET", handle_response)
-		http.request("https://minefinder.andrewprock.link/banned", "GET", handle_response)
-		else
+		http.request(l_data.server.."/lb_sort", "GET", handle_response)
+		http.request(l_data.server.."/profanity", "GET", handle_response)
+		http.request(l_data.server.."/banned", "GET", handle_response)
+	else
 		local data = json.decode(response.response)
 		if data.leaderboard then
 			for d = 1,5 do
@@ -452,9 +449,15 @@ local function handle_response(self, id, response)
 			end
 			flip_leaderboard(self, false)
 
+			if l_data.os == "web" and self.web_board_storage then
+				-- print("web storage "..self.web_board_storage)
+				l_data.web_hs_storage[self.web_board_storage] = l_data.highscore[self.web_board_storage]
+				self.web_board_storage = nil
+			end
+			
 			self.hs_submittable = {false, false, false, false, false}
 			for i = 1,5 do
-				print(i)
+				-- print(i)
 				if l_data.highscore[i] ~= nil and #l_board.lb_instance[i] == 0 then
 					self.hs_submittable[i] = true
 					-- print(i.."a")
@@ -478,6 +481,9 @@ local function handle_response(self, id, response)
 				elseif set_hs and (l_data.highscore[i] == nil or (set_hs <= l_data.highscore[i])) then
 					self.hs_submittable[i] = false
 					-- print(i.."d")
+				elseif l_data.os == "web" and l_data.web_hs_storage[i] and l_data.highscore[i] and l_data.highscore[i] <= l_data.web_hs_storage[i] then
+					self.hs_submittable[i] = false
+					-- print(i.."e")
 				end
 				if self.hs_submittable[i] then
 					gui.play_flipbook(gui.get_node("diff-light"..i), "small-light-green")
@@ -500,8 +506,7 @@ local function handle_response(self, id, response)
 end
 
 local function ping_server(msg, type)
-	-- http.request("http://127.0.0.1:8000"..msg, type, handle_response)
-	http.request("https://minefinder.andrewprock.link"..msg, type, handle_response)
+	http.request(l_data.server..msg, type, handle_response)
 end
 
 local function pull_board(self)
@@ -536,6 +541,7 @@ function init(self)
 	self.title_change_template = {{}}
 	self.col_change = {}
 	self.color_change = {}
+	self.web_board_storage = nil
 	
 	for c = 1, 5 do --text change array setup
 		table.insert(self.change_template, {})
@@ -736,6 +742,7 @@ function on_input(self, action_id, action)
 									local player_id = l_data.player_id
 									if l_data.os == "web" then
 										player_id = player_name
+										self.web_board_storage = self.entering_name
 									end
 
 									send_name(self, self.entering_name, player_name, player_hs, player_id)
@@ -875,6 +882,8 @@ function on_input(self, action_id, action)
 			-- local row = 1
 			-- local type = "num"
 			-- flip_tile(self, input, col, row, type, true)
+			pprint(l_data.web_hs_storage)
+			pprint(l_data.highscore)
 		end
 		if action.pressed and action_id == hash("debug2") then
 			

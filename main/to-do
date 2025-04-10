@@ -32,12 +32,12 @@ X settings
 X reset game files
 X more controls view
 * snapshot button
-- global highscores
+X global highscores
 X windows icon
 - OPTIMIZE THIS SHIT
-- stuff for web
-	- info
-	- change controls
+X stuff for web
+	X info
+	X change controls
 	X move retry/remove saving
 	X change graphics quality
 
@@ -57,7 +57,7 @@ X windows icon
 	X light door open 
 X no flip sound on startup
 - change sound msg calling syntax
-- test flashing globe for new hs allowing upload vs new hs not allowing upload
+* test flashing globe for new hs allowing upload vs new hs not allowing upload
 * [windows] can't click while flag anim playing??
 * UNSAVE study
 * rapid board switching on custom

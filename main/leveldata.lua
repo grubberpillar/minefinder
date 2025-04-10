@@ -2,6 +2,8 @@ local D = {}
 
 D.in_game = false -- tracks if the splashscreen is finished
 D.os = "mac"
+-- D.server = "https://minefinder.andrewprock.link" 
+D.server = "http://127.0.0.1:8000"
 D.screen_scale = 3
 D.player_id = nil
 D.default_name = ""
@@ -9,6 +11,7 @@ D.reset_warning = false
 
 D.highscore = {}
 D.custom_hs_list = {{{}}}
+D.web_hs_storage = {}
 
 D.header = {"-TINY-", "-EASY-", "-NORMAL-", "-HARD-", "-INSANE-", "-CUSTOM-"}
 

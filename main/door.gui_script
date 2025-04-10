@@ -154,6 +154,9 @@ function on_input(self, action_id, action)
 	end
 
 	if l_data.reset_warning and action.pressed and action_id == hash("y-key") then
+		if l_data.os == "web" then
+			gui.set(gui.get_node("reset-msg"), "color.w", 1)
+		end
 		reset_save(self)
 	end
 

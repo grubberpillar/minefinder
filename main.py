@@ -2,8 +2,17 @@ from typing import Union
 import csv
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or ["*"] for all origins during testing
+    allow_credentials=True,
+    allow_methods=["*"],  # or ["GET", "POST", "PUT", "OPTIONS"]
+    allow_headers=["*"],
+)
 
 # evan = "cool"
 
@@ -73,9 +82,10 @@ def clear_lb():
 @app.put("/rmv/{lb_num}/{score_num}")
 def rmv_score(lb_num: int, score_num: int):
     global lb_sorted
-    lb_sorted[lb_num].pop(score_num)
+    removed = lb_sorted[lb_num].pop(score_num)
+    index = {"leaderboard": lb_num, "rank": score_num}
     update_csv()
-    return {"leaderboard":lb_sorted}
+    return {"leaderboard":lb_sorted, "rmv_score":removed, "rmv_index":index}
 
 
 # @app.put("/scores/{item_id}")

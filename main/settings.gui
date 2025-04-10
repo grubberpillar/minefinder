@@ -21023,8 +21023,9 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "You can NOT save\n"
-  "your progress on "
+  text: "While you can \n"
+  "save your \n"
+  "progress on the"
   font: "pixel-font"
   id: "saving-txt"
   xanchor: XANCHOR_NONE
@@ -21061,7 +21062,7 @@ nodes {
 nodes {
   position {
     x: 2.0
-    y: 113.0
+    y: 108.0
     z: 0.0
     w: 1.0
   }
@@ -21091,12 +21092,17 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "the WEB VERSION\n"
-  "of Minefinder. If\n"
-  "you download\n"
-  "the full game on \n"
-  "````~~`` or \n"
-  "you can save."
+  text: "WEB VERSION of\n"
+  "Minefinder, you \n"
+  "may lose this \n"
+  "save when you \n"
+  "reload or go to\n"
+  "another browser.\n"
+  "\n"
+  "Downloading the\n"
+  "full game on\n"
+  "````~~`` or\n"
+  "trivializes this."
   font: "pixel-font"
   id: "saving-txt2"
   xanchor: XANCHOR_NONE
@@ -21133,7 +21139,7 @@ nodes {
 nodes {
   position {
     x: 2.0
-    y: 93.0
+    y: 63.0
     z: 0.0
     w: 1.0
   }
@@ -21200,7 +21206,7 @@ nodes {
 nodes {
   position {
     x: 11.0
-    y: 62.0
+    y: 42.0
     z: 0.0
     w: 1.0
   }
@@ -21680,7 +21686,7 @@ nodes {
 nodes {
   position {
     x: 2.0
-    y: 61.0
+    y: 41.0
     z: 0.0
     w: 1.0
   }
@@ -21712,16 +21718,12 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "Controls are\n"
   "essentially the \n"
-  "same, with a few \n"
-  "minor differences\n"
-  "that can be \n"
-  "found in the \n"
-  "controls area of\n"
-  "settings.\n"
-  "\n"
-  "The inaccessible\n"
+  "same, however\n"
+  "inaccessible\n"
   "controls are \n"
-  "greyed out."
+  "greyed out in\n"
+  "more controls\n"
+  "in settings."
   font: "pixel-font"
   id: "saving-txt1"
   xanchor: XANCHOR_NONE

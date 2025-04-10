@@ -40,7 +40,7 @@ max_component_count = 128
 
 [html5]
 show_made_with_defold = 0
-splash_image = /assets/logo/logo-jar-1.png
+splash_image = /assets/fleajar-web-splash.png
 show_fullscreen_button = 0
 scale_mode = fit
 
