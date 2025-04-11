@@ -52,10 +52,15 @@ def lbsort():
 def save_lb(lb_num: int, name: str, time: int, player_id: str):
     lb_num = lb_num-1
 
+    inserted = False
     for i in range(len(lb_sorted[lb_num])):
         if lb_sorted[lb_num][i][0] > time:
                 lb_sorted[lb_num].insert(i, (time, name, player_id))
+                inserted = True
                 break
+
+    if not inserted:
+        lb_sorted[lb_num].append((time, name, player_id))
 
 
     player_found = False
