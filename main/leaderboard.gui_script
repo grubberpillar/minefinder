@@ -245,7 +245,7 @@ local function allowed_name(self, name)
 		gui.set_text(gui.get_node("error-txt"), "NAME IS IN USE")
 		return false
 	elseif l_data.os == "web" and name_higher(self, name) then
-		gui.set_text(gui.get_node("error-txt"), "SCORE TOO LOW")
+		gui.set_text(gui.get_node("error-txt"), "SCORE TOO LOW~")
 		return false
 	else
 		for i,s in ipairs(l_board.banned) do
