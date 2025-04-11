@@ -655,7 +655,7 @@ function init(self)
 	msg.post("/gui#minefinder", "done_saving")
 	window.set_listener(window_callback)
 	l_data.screen_size = {x = nil, y = nil}
-	l_data.screen_ratio = {x = 1392, y = 864}
+	l_data.screen_ratio = {x = 232, y = 144}
 	l_data.screen_size.x, l_data.screen_size.y = window.get_size()
 	local zoom = math.min(l_data.screen_size.x / l_data.screen_ratio.x, l_data.screen_size.y / l_data.screen_ratio.y)
 	l_data.projected_width = l_data.screen_size.x / zoom

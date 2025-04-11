@@ -485,10 +485,10 @@ local function handle_response(self, id, response)
 				-- print(i)
 				if l_data.highscore[i] ~= nil and #l_board.lb_instance[i] == 0 then
 					self.hs_submittable[i] = true
-					print(i.."a")
+					-- print(i.."a")
 				elseif #l_board.lb_instance[i] > 0 and l_data.highscore[i] and (#l_board.lb_instance[i] < 10 or l_data.highscore[i] < l_board.lb_instance[i][10][2]) then
 					self.hs_submittable[i] = true
-					print(i.."b")
+					-- print(i.."b")
 				-- elseif l_data.highscore[i] then
 				-- 	print(i .." ".. l_data.highscore[i], l_board.lb_instance[i][#l_board.lb_instance[i]][2])
 				end
@@ -502,13 +502,13 @@ local function handle_response(self, id, response)
 				end
 				if l_data.highscore[i] and l_data.highscore[i] >= 6000 then
 					self.hs_submittable[i] = false
-					print(i.."c")
+					-- print(i.."c")
 				elseif set_hs and (l_data.highscore[i] == nil or (set_hs <= l_data.highscore[i])) then
 					self.hs_submittable[i] = false
-					print(i.."d")
+					-- print(i.."d")
 				elseif l_data.os == "web" and l_data.web_hs_storage[i] and l_data.highscore[i] and l_data.highscore[i] >= l_data.web_hs_storage[i] then
 					self.hs_submittable[i] = false
-					print(i.."e")
+					-- print(i.."e")
 					print(l_data.highscore[i], l_data.web_hs_storage[i])
 				end
 				if self.hs_submittable[i] then
@@ -568,6 +568,9 @@ function init(self)
 	self.col_change = {}
 	self.color_change = {}
 	self.web_board_storage = nil
+	self.buttons_flashing = false
+	self.buttons_lit = false
+	self.buttons_timer = 0
 	
 	for c = 1, 5 do --text change array setup
 		table.insert(self.change_template, {})
@@ -593,6 +596,7 @@ function on_message(self, message_id, message, sender)
 		msg.post(".", "acquire_input_focus")
 		self.connected = false
 		self.failed_connection = false
+		self.buttons_flashing = false
 
 		if l_data.gui_anims then
 			gui.set_text(gui.get_node("title"), "")
@@ -717,6 +721,7 @@ function on_input(self, action_id, action)
 						gui.set_color(gui.get_node("cancel-bg"), vmath.vector4((217/255), (87/255), (99/255), 1))
 						gui.set_color(gui.get_node("accept-top"), vmath.vector4((106/255), (190/255), (48/255), 1))
 						gui.set_color(gui.get_node("cancel-top"), vmath.vector4((172/255), (50/255), (50/255), 1))
+						self.buttons_flashing = true
 						gui.play_flipbook(gui.get_node("name-insert-light"), "green-flash")
 					elseif gui.get(gui.get_node("submit-"..i.."-bg"), "color") ~= vmath.vector4(1, 1, 1, 1) then --hover
 						gui.set_color(gui.get_node("submit-"..i.."-bg"), vmath.vector4(1, 1, 1, 1))
@@ -805,6 +810,7 @@ function on_input(self, action_id, action)
 								gui.set_color(gui.get_node("accept-top"), vmath.vector4((38/255), (38/255), (38/255), 1))
 								gui.set_color(gui.get_node("cancel-top"), vmath.vector4((38/255), (38/255), (38/255), 1))
 								gui.play_flipbook(gui.get_node("name-insert-light"), "small-light-lit-on")
+								self.buttons_flashing = false
 								self.entering_name = nil
 								
 								if self.error_msg then
@@ -939,6 +945,24 @@ function update(self, dt)
 				end
 			end
 		end
+
+		if self.buttons_flashing then
+			self.buttons_timer = self.buttons_timer + dt
+			if self.buttons_timer >= 0.25 then
+				self.buttons_timer = self.buttons_timer - 0.25
+
+				self.buttons_lit = not self.buttons_lit
+
+				if self.buttons_lit then
+					gui.set_color(gui.get_node("accept-top"), vmath.vector4((153/255), (229/255), (80/255), 1))
+					gui.set_color(gui.get_node("cancel-top"), vmath.vector4((217/255), (87/255), (99/255), 1))
+				else
+					gui.set_color(gui.get_node("accept-top"), vmath.vector4((106/255), (190/255), (48/255), 1))
+					gui.set_color(gui.get_node("cancel-top"), vmath.vector4((172/255), (50/255), (50/255), 1))
+				end
+			end
+		end
+		
 
 		if #self.flip_anim > 0 then
 			if not self.flip_delay then

@@ -56,13 +56,13 @@ X stuff for web
 	- startup screen 
 	X light door open 
 X no flip sound on startup
-- change sound msg calling syntax
 * test flashing globe for new hs allowing upload vs new hs not allowing upload
 * [windows] can't click while flag anim playing??
 * UNSAVE study
 * rapid board switching on custom
 * click full screen button (not shortcut) while board is switching
 * skip forward button for lose?
+X change sound msg calling syntax
 X new logo
 X less than 100 min?
 X fix flipboard while flipping causes tile anims to stop mid flip

@@ -74,6 +74,7 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("enable") then
 		msg.post("/gui#door", "enable")
+		gui.play_flipbook(gui.get_node("zoom-out"), "zoom-out-anim")
 		self.hs = nil
 	elseif message_id == hash("edit_arrows") then
 		gui.set(gui.get_node("arrow-"..message.dir.."-bot"), "color.w", message.alpha)

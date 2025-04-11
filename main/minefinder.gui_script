@@ -14,6 +14,45 @@ local function deep_copy(orig) --outside/unoriginal method
 	return copy
 end
 
+local function deep_equal(t1, t2, visited) --outside/unoriginal method
+	if t1 == t2 then
+		return true
+	end
+
+	if type(t1) ~= "table" or type(t2) ~= "table" then
+		return false
+	end
+
+	-- Prevent recursive loops from cyclic references
+	visited = visited or {}
+	if visited[t1] or visited[t2] then
+		return visited[t1] == visited[t2]
+	end
+	visited[t1] = t2
+	visited[t2] = t1
+
+	-- Check if both tables have the same keys
+	for k in pairs(t1) do
+		if t2[k] == nil then
+			return false
+		end
+	end
+	for k in pairs(t2) do
+		if t1[k] == nil then
+			return false
+		end
+	end
+
+	-- Recursively check table values
+	for k, v in pairs(t1) do
+		if not deep_equal(v, t2[k], visited) then
+			return false
+		end
+	end
+
+	return true
+end
+
 local function firework_sound(id)
 	local delay = {0.4, 0.5, 0.5, 0.4, 0.3}
 	timer.delay(delay[id], false, function()
@@ -390,6 +429,8 @@ local function handle_response(self, id, response)
 			flash_world = false
 		elseif set_hs and set_hs <= l_data.highscore[l_data.diff] then
 			flash_world = false
+		elseif l_data.os == "web" and l_data.web_hs_storage[l_data.diff] and l_data.highscore[l_data.diff] and l_data.highscore[l_data.diff] >= l_data.web_hs_storage[l_data.diff] then
+			flash_world = false
 		end
 
 		if flash_world then
@@ -671,7 +712,7 @@ function on_message(self, message_id, message)
 			end
 
 			if l_data.diff ~= 6 then
-				if l_board.lb_instance == nil then
+				if deep_equal(l_board.lb_instance, {{},{},{},{},{}}) then
 					msg.post("/settings#settings", "world-flash")
 					msg.post("/settings#settings", "world-notif")
 				else
@@ -923,6 +964,8 @@ function on_message(self, message_id, message)
 				gui.play_flipbook(gui.get_node("firework-"..k.."-color"), "nothing")
 			end
 		end
+	elseif message_id == hash("enable") then
+		gui.play_flipbook(gui.get_node("zoom-in"), "zoom-in-anim")
 	end
 end
 
@@ -1376,6 +1419,7 @@ function on_input(self, action_id, action)
 	if not self.editing_dimensions and (l_data.size_nums[1][l_data.diff] > 16 or l_data.size_nums[2][l_data.diff] > 16) and not self.full_board_anim then --zoom
 		if gui.get(gui.get_node("zoom-in"), "color.w") == 0 then
 			gui.set(gui.get_node("zoom-in"), "color.w", 1)
+			gui.play_flipbook(gui.get_node("zoom-in"), "zoom-in-anim")
 		elseif not self.editing_dimensions and action.pressed and action_id == hash("touch") and gui.pick_node(gui.get_node("zoom-in-hit"), action.x, action.y) then
 			zoom_in(self)
 		end
