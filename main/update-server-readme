@@ -1,0 +1,24 @@
+1. push code > github
+2. log into server
+ - ssh minefinder@192.168.100.208
+3. attach to screen
+ - screen -r
+4. cd into minefinder directory
+5. stash any changes
+ - git stash save
+6. pull from github
+ - git pull origin main
+7. restore changes
+ - git stash pop
+8. switch to sever screen (venv running*)
+ - ctrl+a > ctrl+n
+9. stop the server
+ - ctrl+c
+10 restart server
+ - uvicorn main:app --host 0.0.0.0 --port 8000
+11 detach from screen
+ - ctrl+a > ctrl+d
+
+* if venv not runnning:
+- cd minefinder
+- source venv/bin/activate

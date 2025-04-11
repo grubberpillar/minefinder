@@ -5,3 +5,4 @@ not-needed/
 Thumbs.db
 venv
 *.pyc
+/.editor_settings

@@ -53,7 +53,7 @@ def save_lb(lb_num: int, name: str, time: int, player_id: str):
     lb_num = lb_num-1
 
     for i in range(len(lb_sorted[lb_num])):
-        if lb_sorted[lb_num][i][1] > time:
+        if lb_sorted[lb_num][i][0] > time:
                 lb_sorted[lb_num].insert(i, (time, name, player_id))
                 break
 
