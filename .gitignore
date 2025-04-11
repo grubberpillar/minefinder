@@ -1,8 +1,9 @@
 /.internal
-/build
+build
 not-needed/
 .DS_Store
 Thumbs.db
 venv
 *.pyc
 /.editor_settings
+__pycache__/
