@@ -1751,7 +1751,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
   custom_type: 0
@@ -1927,7 +1927,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
   custom_type: 0
@@ -3498,8 +3498,8 @@ nodes {
 }
 nodes {
   position {
-    x: 137.0
-    y: 1.0
+    x: 136.0
+    y: 0.0
     z: 0.0
     w: 1.0
   }
@@ -3556,8 +3556,8 @@ nodes {
 }
 nodes {
   position {
-    x: -1.0
-    y: -1.0
+    x: 0.0
+    y: 0.0
     z: 0.0
     w: 1.0
   }

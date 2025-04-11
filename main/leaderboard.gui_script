@@ -221,12 +221,31 @@ local function name_used(self, name)
 	return false
 end
 
+local function name_higher(self, name)
+	local i = self.entering_name
+	for j = 1, #l_board.lb_instance[i] do
+		if l_board.lb_instance[i][j][1] == name then
+			print(i.." "..name)
+			if #l_board.lb_instance[i][j][3] < 16 and l_board.lb_instance[i][j][2] <= l_data.highscore[i] then
+				print("return yes")
+				return true
+			else
+				print(l_board.lb_instance[i][j][3], l_board.lb_instance[i][j][2], l_data.highscore[i])
+			end
+		end
+	end
+	return false
+end
+
 local function allowed_name(self, name)
 	if name == "" then
 		gui.set_text(gui.get_node("error-txt"), "CANT USE THIS NAME")
 		return false
 	elseif name_used(self, name) then
 		gui.set_text(gui.get_node("error-txt"), "NAME IS IN USE")
+		return false
+	elseif l_data.os == "web" and name_higher(self, name) then
+		gui.set_text(gui.get_node("error-txt"), "SCORE TOO LOW")
 		return false
 	else
 		for i,s in ipairs(l_board.banned) do
@@ -236,6 +255,7 @@ local function allowed_name(self, name)
 			end
 		end
 	end
+	print("good")
 	return true
 end
 
@@ -264,6 +284,8 @@ local function print_leaderboard(self)
 					gui.set_color(gui.get_node("txt-"..j.."-"..i), vmath.vector4(1, 1, (200/255), 1))
 				elseif l_board.lb_instance[i][j][1] == "FLEA" then
 					gui.set_color(gui.get_node("txt-"..j.."-"..i), vmath.vector4((183/255), (146/255), (61/255), 1))
+				elseif #l_board.lb_instance[i][j][3] < 5 then
+					gui.set_color(gui.get_node("txt-"..j.."-"..i), vmath.vector4((210/255), (217/255), (221/255), 1))
 				elseif gui.get_color(gui.get_node("txt-"..j.."-"..i)) ~= vmath.vector4(1, 1, 1, 1) then
 					gui.set_color(gui.get_node("txt-"..j.."-"..i), vmath.vector4(1, 1, 1, 1))
 				end
@@ -299,6 +321,8 @@ local function flip_leaderboard(self, first_flip)
 					newcolor = vmath.vector4(1, 1, (200/255), 1)
 				elseif l_board.lb_instance[i][j][1] == "FLEA" then
 					newcolor = vmath.vector4((183/255), (146/255), (61/255), 1)
+				elseif #l_board.lb_instance[i][j][3] < 5 then
+					newcolor =  vmath.vector4((210/255), (217/255), (221/255), 1)
 				elseif gui.get_color(text_loc) ~= vmath.vector4(1, 1, 1, 1) then
 					newcolor = vmath.vector4(1, 1, 1, 1)
 				end
@@ -453,6 +477,7 @@ local function handle_response(self, id, response)
 				-- print("web storage "..self.web_board_storage)
 				l_data.web_hs_storage[self.web_board_storage] = l_data.highscore[self.web_board_storage]
 				self.web_board_storage = nil
+				msg.post("/zoom#minefinder", "save_game_msg")
 			end
 			
 			self.hs_submittable = {false, false, false, false, false}
@@ -460,10 +485,10 @@ local function handle_response(self, id, response)
 				-- print(i)
 				if l_data.highscore[i] ~= nil and #l_board.lb_instance[i] == 0 then
 					self.hs_submittable[i] = true
-					-- print(i.."a")
+					print(i.."a")
 				elseif #l_board.lb_instance[i] > 0 and l_data.highscore[i] and (#l_board.lb_instance[i] < 10 or l_data.highscore[i] < l_board.lb_instance[i][10][2]) then
 					self.hs_submittable[i] = true
-					-- print(i.."b")
+					print(i.."b")
 				-- elseif l_data.highscore[i] then
 				-- 	print(i .." ".. l_data.highscore[i], l_board.lb_instance[i][#l_board.lb_instance[i]][2])
 				end
@@ -477,13 +502,14 @@ local function handle_response(self, id, response)
 				end
 				if l_data.highscore[i] and l_data.highscore[i] >= 6000 then
 					self.hs_submittable[i] = false
-					-- print(i.."c")
+					print(i.."c")
 				elseif set_hs and (l_data.highscore[i] == nil or (set_hs <= l_data.highscore[i])) then
 					self.hs_submittable[i] = false
-					-- print(i.."d")
-				elseif l_data.os == "web" and l_data.web_hs_storage[i] and l_data.highscore[i] and l_data.highscore[i] <= l_data.web_hs_storage[i] then
+					print(i.."d")
+				elseif l_data.os == "web" and l_data.web_hs_storage[i] and l_data.highscore[i] and l_data.highscore[i] >= l_data.web_hs_storage[i] then
 					self.hs_submittable[i] = false
-					-- print(i.."e")
+					print(i.."e")
+					print(l_data.highscore[i], l_data.web_hs_storage[i])
 				end
 				if self.hs_submittable[i] then
 					gui.play_flipbook(gui.get_node("diff-light"..i), "small-light-green")
@@ -660,10 +686,10 @@ function on_input(self, action_id, action)
 			for i = 1,5 do --submit buttons
 				if not self.entering_name and self.hs_submittable[i] and gui.pick_node(gui.get_node("submit-"..i.."-hit"), action.x, action.y) then
 					if action.pressed and action_id == hash("touch") then --click
-						msg.post("/sfx#sfx", "button1-depress")
+						msg.post("/sfx#sfx", "quick_play", {sound = 10})
 						gui.set(gui.get_node("submit-"..i.."-top"), "position.y", 0)
 					elseif action.released and action_id == hash("touch") and gui.get(gui.get_node("submit-"..i.."-top"), "position.y") == 0 then --release
-						msg.post("/sfx#sfx", "button2-release")
+						msg.post("/sfx#sfx", "quick_play", {sound = 13})
 						self.entering_name = i
 						gui.set(gui.get_node("submit-"..i.."-top"), "position.y", 1)
 						for j = 1,5 do 
@@ -722,10 +748,10 @@ function on_input(self, action_id, action)
 				for i,k in ipairs(buttons) do --name set/cancel
 					if gui.pick_node(gui.get_node(k.."-hit"), action.x, action.y) or (i == 1 and action_id == hash("enter")) or (i == 2 and action_id == hash("esc")) then --set new name
 						if action.pressed and (action_id == hash("touch") or ((i == 1 and action_id == hash("enter")) or (i == 2 and action_id == hash("esc")))) then --click
-							msg.post("/sfx#sfx", "switch")
+							msg.post("/sfx#sfx", "quick_play", {sound = 19})
 							gui.set(gui.get_node(k.."-top"), "position.y", 0)
 						elseif action.released and (action_id == hash("touch") or (i == 1 and action_id == hash("enter")) or (i == 2 and action_id == hash("esc"))) and gui.get(gui.get_node(k.."-top"), "position.y") == 0 then --release
-							msg.post("/sfx#sfx", "button2-release")
+							msg.post("/sfx#sfx", "quick_play", {sound = 13})
 							gui.set(gui.get_node(k.."-top"), "position.y", 1)
 							local set_name = gui.get_text(gui.get_node("name-txt"))
 							if i == 1 and not allowed_name(self, set_name)then 
@@ -811,7 +837,7 @@ function on_input(self, action_id, action)
 							gui.play_flipbook(gui.get_node("name-box-"..char_loc), "single-flip")
 						end
 						gui.set_text(txt_box, new_txt)
-						msg.post("/sfx#sfx", "flip-tile", {strength = 1})
+						msg.post("/sfx#sfx", "quick_play", {sound = 4})
 
 						if self.name_char_delay[char_loc] then
 							gui.set_text(gui.get_node("box-txt-"..char_loc), "")
@@ -830,7 +856,7 @@ function on_input(self, action_id, action)
 					local old_txt = gui.get_text(txt_box)
 					local char_loc = #old_txt
 					if char_loc > 0 then
-						msg.post("/sfx#sfx", "flip-tile", {strength = 1})
+						msg.post("/sfx#sfx", "quick_play", {sound = 4})
 						local new_txt = string.sub(old_txt, 1, char_loc-1)
 						local char_removed = string.sub(old_txt, char_loc)
 						if l_data.gui_anims then
@@ -1060,13 +1086,13 @@ function update(self, dt)
 				end
 
 				if numchanges > 40 then --heavy tile flip
-					msg.post("/sfx#sfx", "flip-tile", {strength = 4})
+					msg.post("/sfx#sfx", "quick_play", {sound = 7})
 				elseif numchanges > 10 then --medium tile flip
-					msg.post("/sfx#sfx", "flip-tile", {strength = 3})
+					msg.post("/sfx#sfx", "quick_play", {sound = 6})
 				elseif numchanges > 2 then --light tile flip
-					msg.post("/sfx#sfx", "flip-tile", {strength = 2})
+					msg.post("/sfx#sfx", "quick_play", {sound = 5})
 				else --single tile flip
-					msg.post("/sfx#sfx", "flip-tile", {strength = 1})
+					msg.post("/sfx#sfx", "quick_play", {sound = 4})
 				end
 			else
 				self.flip_delay = self.flip_delay-dt

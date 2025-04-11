@@ -1,7 +1,7 @@
 local l_data = require "main.leveldata"
 
 local function zoom_out(self)
-	msg.post("/sfx#sfx", "key-snap")
+	msg.post("/sfx#sfx", "quick_play", {sound = 1})
 	
 	msg.post("/gui#minefinder", "enable")
 	msg.post("/gui#minefinder", "set_props", {highscore = self.hs})
@@ -225,11 +225,11 @@ function on_input(self, action_id, action)
 	for i = 1,4 do
 		if gui.get(gui.get_node("arrow-"..dir[i].."-bot"), "color.w") ~= 0 and gui.pick_node(gui.get_node("arrow-"..dir[i].."-hit"), action.x, action.y) then
 			if action.pressed and action_id == hash("touch") then
-				msg.post("/sfx#sfx", "switch")
+				msg.post("/sfx#sfx", "quick_play", {sound = 19})
 				gui.set(gui.get_node("arrow-"..dir[i].."-top"), "color.w", 0)
 				gui.set_color(gui.get_node("arrow-"..dir[i].."-bot"), vmath.vector4(1, 1, 1, 1))
 			elseif action.released and action_id == hash("touch") then
-				msg.post("/sfx#sfx", "button1-release")
+				msg.post("/sfx#sfx", "quick_play", {sound = 11})
 				gui.set(gui.get_node("arrow-"..dir[i].."-top"), "color.w", 1)
 				gui.set_color(gui.get_node("arrow-"..dir[i].."-bot"), vmath.vector4((175/255), (175/255), (0/255), 1))
 				msg.post(".", "edit_arrows", {dir = dir[i], alpha = 0})

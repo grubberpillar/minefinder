@@ -27,8 +27,8 @@ with open(scores, newline='') as csvfile:
         row_vals = row[0].split(",") #val 0 is the leaderboard number, 1 is player name, 2 is player time in seconds, 3 is player id
         
         lb_sorted[int(row_vals[0])-1].append((int(row_vals[2]), row_vals[1], row_vals[3])) #lb[ leaderboard num ].append( time, name, id ) 
-for i in range(len(lb_sorted)):
-    lb_sorted[i] = sorted(lb_sorted[i])
+# for i in range(len(lb_sorted)):
+#     lb_sorted[i] = sorted(lb_sorted[i])
 
 # saved = 0
 
@@ -51,17 +51,23 @@ def lbsort():
 @app.put("/save/{lb_num}/{name}/{time}/{player_id}")
 def save_lb(lb_num: int, name: str, time: int, player_id: str):
     lb_num = lb_num-1
-    lb_sorted[lb_num].append((time, name, player_id))
-    lb_sorted[lb_num] = sorted(lb_sorted[lb_num])
+
+    for i in range(len(lb_sorted[lb_num])):
+        if lb_sorted[lb_num][i][1] > time:
+                lb_sorted[lb_num].insert(i, (time, name, player_id))
+                break
+
 
     player_found = False
     repeat_loc = -1
+
     for i in range(len(lb_sorted[lb_num])):
         if lb_sorted[lb_num][i][2] == player_id:
             if player_found:
                 repeat_loc = i
             else:
                 player_found = True
+        
 
     if player_found and not repeat_loc == -1:
         lb_sorted[lb_num].pop(repeat_loc)

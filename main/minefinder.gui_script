@@ -17,7 +17,7 @@ end
 local function firework_sound(id)
 	local delay = {0.4, 0.5, 0.5, 0.4, 0.3}
 	timer.delay(delay[id], false, function()
-		msg.post("/sfx#sfx", "bubble-wrap")
+		msg.post("/sfx#sfx", "quick_play", {sound = 20})
 	end)
 end
 
@@ -122,7 +122,7 @@ local function calc_mine_ct(self)
 end
 
 local function zoom_in(self)
-	msg.post("/sfx#sfx", "key-snap")
+	msg.post("/sfx#sfx", "quick_play", {sound = 1})
 	
 	msg.post("/anims#anims", "disable")
 	msg.post(".", "disable")
@@ -136,9 +136,9 @@ end
 local function retry_but_on(self, action, action_id)
 	if action.pressed and (action_id == hash("touch") or action_id == hash("retry")) then
 		gui.set(node.get.retry, "position.y", -0.5)
-		msg.post("/sfx#sfx", "button1-depress")
+		msg.post("/sfx#sfx", "quick_play", {sound = 10})
 	elseif action.released and (action_id == hash("touch") or action_id == hash("retry")) and gui.get(node.get.retry, "position.y") == -0.5 then
-		msg.post("/sfx#sfx", "button1-release")
+		msg.post("/sfx#sfx", "quick_play", {sound = 11})
 		gui.set(node.get.retry, "position.y", 0.5)
 		msg.post("/zoom#minefinder", "reset")
 	elseif gui.get_color(node.get.retry_lit) == vmath.vector4((63/255), (63/255), (116/255), 1) and action_id ~= hash("retry") then
@@ -937,10 +937,10 @@ function on_input(self, action_id, action)
 				msg.post("/zoom#minefinder", "hide_select", {hid = true})
 			end
 			if action.pressed and action_id == hash("touch") and gui.get_color(node.get.more_down) ~= vmath.vector4(1, 1, 1, 1) then
-				msg.post("/sfx#sfx", "button2-depress")
+				msg.post("/sfx#sfx", "quick_play", {sound = 12})
 				gui.set_color(node.get.more_down, vmath.vector4(1, 1, 1, 1))
 			elseif action.released and action_id == hash("touch") and gui.get_color(node.get.more_down) ~= vmath.vector4(0, 0, 0, 0) then
-				msg.post("/sfx#sfx", "button2-release")
+				msg.post("/sfx#sfx", "quick_play", {sound = 13})
 				gui.set_color(node.get.more_down, vmath.vector4(0, 0, 0, 0))
 				self.more_anims = not self.more_anims
 				msg.post("/gui#door", "more_anims?", {anims = self.more_anims})
@@ -968,10 +968,10 @@ function on_input(self, action_id, action)
 		if self.lightbulb_there and gui.pick_node(gui.get_node("lightbulb-hit"), action.x, action.y) and not self.midnight_timer then --lightbulb
 			self.input_override = true
 			if action.pressed and action_id == hash("touch") then --click
-				msg.post("/sfx#sfx", "switch")
+				msg.post("/sfx#sfx", "quick_play", {sound = 19})
 				gui.set_color(gui.get_node("lightbulb-click"), vmath.vector4(1, 1, 1, 1))
 			elseif action.released and action_id == hash("touch") and gui.get(gui.get_node("lightbulb-click"), "color.x") == 1 then --release
-				msg.post("/sfx#sfx", "key-snap")
+				msg.post("/sfx#sfx", "quick_play", {sound = 1})
 				-- print("switch!")
 				self.light_on = not self.light_on
 				if self.light_on then
@@ -1008,10 +1008,10 @@ function on_input(self, action_id, action)
 				gui.set_color(node.get.anim_sel_bg, vmath.vector4(1, 1, 1, 1))
 			end
 			if not self.editing_dimensions and action_id == hash("touch") and action.pressed and gui.get_color(node.get.anim_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
-				msg.post("/sfx#sfx", "key-click")
+				msg.post("/sfx#sfx", "quick_play", {sound = 2})
 				gui.set_color(node.get.anim_sel_light, vmath.vector4(1, 1, 1, 1))
 			elseif action.released and action_id == hash("touch") and gui.get_color(node.get.anim_sel_light) == vmath.vector4(1, 1, 1, 1) then
-				msg.post("/sfx#sfx", "switch")
+				msg.post("/sfx#sfx", "quick_play", {sound = 19})
 				if gui.get_color(node.get.anim_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
 					gui.set_color(node.get.anim_sel_light, vmath.vector4(0, 0, 0, 0))
 				end
@@ -1076,10 +1076,10 @@ function on_input(self, action_id, action)
 				gui.set_color(node.get.theme_sel_bg, vmath.vector4(1, 1, 1, 1))
 			end
 			if action.pressed and action_id == hash("touch") and gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(1, 1, 1, 1) then
-				msg.post("/sfx#sfx", "key-click")
+				msg.post("/sfx#sfx", "quick_play", {sound = 2})
 				gui.set_color(node.get.theme_sel_light, vmath.vector4(1, 1, 1, 1))
 			elseif action.released and action_id == hash("touch") and gui.get(node.get.theme_sel_light, "color.w") == 1 then
-				msg.post("/sfx#sfx", "switch")
+				msg.post("/sfx#sfx", "quick_play", {sound = 19})
 				if gui.get_color(node.get.theme_sel_light) ~= vmath.vector4(0, 0, 0, 0) then
 					gui.set_color(node.get.theme_sel_light, vmath.vector4(0, 0, 0, 0))
 				end
@@ -1119,10 +1119,10 @@ function on_input(self, action_id, action)
 		if not self.more_anims and gui.get(node.get.set_check, "color.w") == 1 and gui.pick_node(node.get.set_check_hit, action.x, action.y) then --set new diff (check)
 			self.input_override = true
 			if action.pressed and action_id == hash("touch") then
-				msg.post("/sfx#sfx", "switch")
+				msg.post("/sfx#sfx", "quick_play", {sound = 19})
 				gui.set(node.get.set_check_lit, "color.w", 1)
 			elseif action.released and action_id == hash("touch") then
-				msg.post("/sfx#sfx", "button1-release")
+				msg.post("/sfx#sfx", "quick_play", {sound = 11})
 				gui.set(node.get.set_check_lit, "color.w", 0)
 				gui.set(node.get.set_check, "color.w", 0)
 
@@ -1161,10 +1161,10 @@ function on_input(self, action_id, action)
 		if not self.more_anims and gui.get(node.get.cancel_x, "color.w") == 1 and gui.pick_node(node.get.cancel_x_hit, action.x, action.y) then --cancel new diff (x)
 			self.input_override = true
 			if action.pressed and action_id == hash("touch") then
-				msg.post("/sfx#sfx", "switch")
+				msg.post("/sfx#sfx", "quick_play", {sound = 19})
 				gui.set(node.get.cancel_x_lit, "color.w", 1)
 			elseif action.released and action_id == hash("touch") then
-				msg.post("/sfx#sfx", "button1-release")
+				msg.post("/sfx#sfx", "quick_play", {sound = 11})
 				gui.set(node.get.cancel_x_lit, "color.w", 0)
 				gui.set(node.get.cancel_x, "color.w", 0)
 				l_data.diff_temp = l_data.diff
@@ -1232,12 +1232,12 @@ function on_input(self, action_id, action)
 		if l_data.diff == 6 and not self.mines_calced and not self.more_anims and gui.pick_node(node.get.stars_hit, action.x, action.y) then --stars
 			self.input_override = true
 			if action.pressed and action_id == hash("touch") then --click
-				msg.post("/sfx#sfx", "switch")
+				msg.post("/sfx#sfx", "quick_play", {sound = 19})
 				gui.set(node.get.stars, "color.w", 0)
 				gui.set(node.get.stars_lit, "position.y", -1)
 			elseif action.released and action_id == hash("touch") then --release
 				-- gui.set(node.get.stars, "color.w", 1)
-				msg.post("/sfx#sfx", "handbrake")
+				msg.post("/sfx#sfx", "quick_play", {sound = 22})
 				msg.post("/zoom#minefinder", "hide_select", {hid = false})
 				gui.set(node.get.stars_lit, "color.w", 0)
 				gui.set(node.get.stars_lit, "position.y", 0)
@@ -1271,10 +1271,10 @@ function on_input(self, action_id, action)
 		if l_data.saved == false and not self.more_anims and gui.pick_node(node.get.floppy, action.x, action.y) and gui.get(node.get.floppy, "color.w") == 1 then --floppy disk click --and l_data.os ~= "web"
 			self.input_override = true
 			if action.pressed and action_id == hash("touch") then
-				msg.post("/sfx#sfx", "button2-depress")
+				msg.post("/sfx#sfx", "quick_play", {sound = 12})
 				gui.set_color(node.get.floppy_lit, vmath.vector4(1, 1, 1, 1))
 			elseif action.released and action_id == hash("touch") and gui.get_color(node.get.floppy_lit) ==  vmath.vector4(1, 1, 1, 1) then
-				msg.post("/sfx#sfx", "handbrake")
+				msg.post("/sfx#sfx", "quick_play", {sound = 22})
 				gui.set(node.get.floppy_lit, "color.w", 0)
 				l_data.saved = nil
 				msg.post("/zoom#minefinder", "save_game_msg")

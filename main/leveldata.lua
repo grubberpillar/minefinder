@@ -1,7 +1,7 @@
 local D = {}
 
 D.in_game = false -- tracks if the splashscreen is finished
-D.os = "mac"
+D.os = "web"
 -- D.server = "https://minefinder.andrewprock.link" 
 D.server = "http://127.0.0.1:8000"
 D.screen_scale = 3
