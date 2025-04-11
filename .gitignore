@@ -4,3 +4,4 @@ not-needed/
 .DS_Store
 Thumbs.db
 venv
+*.pyc
