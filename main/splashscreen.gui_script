@@ -13,6 +13,7 @@ function init(self)
 	self.logo_frame = 1
 	self.logo_loops = 0
 	self.frame_time = 0
+	self.total_time = 0
 	self.logo_fps = 12
 	msg.post("#", "enable")
 	gui.set_color(gui.get_node("bg"), vmath.vector4(0, 0, 0, 1))
@@ -52,6 +53,12 @@ function update(self, dt)
 			msg.post("/zoom#minefinder", "black-gone")
 		elseif not self.logo_started and self.time_alive >= 1.5 then
 			self.logo_started = true
+			local rand = 0
+			while rand ~= 14 and rand ~= 24 and rand ~= 9 do
+				rand = math.random(25)
+			end
+			msg.post("/sfx#sfx", "quick_play", {sound = rand})
+			msg.post("/sfx#sfx", "quick_play", {sound = 29})
 			gui.set_color(logo, vmath.vector4(1, 1, 1, 1))
 			gui.set_color(text, vmath.vector4(1, 1, 1, 1))
 		end
@@ -60,6 +67,7 @@ function update(self, dt)
 
 		if self.logo_started and not l_data.in_game then
 			self.frame_time = self.frame_time + dt
+			self.total_time = self.total_time + dt
 			if self.frame_time > (1/self.logo_fps) then -- frame iterate
 				local flea = gui.get_node("flea")
 				self.logo_frame = self.logo_frame + math.floor(self.frame_time/(1/self.logo_fps))

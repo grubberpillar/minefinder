@@ -38934,6 +38934,378 @@ nodes {
   visible: true
   material: ""
 }
+nodes {
+  position {
+    x: 8.0
+    y: 8.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 58.0
+    y: 20.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 0.412
+    y: 0.416
+    z: 0.416
+    w: 1.0
+  }
+  type: TYPE_BOX
+  blend_mode: BLEND_MODE_ALPHA
+  texture: ""
+  id: "grey-name-outline"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  pivot: PIVOT_SW
+  adjust_mode: ADJUST_MODE_FIT
+  layer: ""
+  inherit_alpha: true
+  slice9 {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+  clipping_mode: CLIPPING_MODE_NONE
+  clipping_visible: true
+  clipping_inverted: false
+  alpha: 1.0
+  template_node_child: false
+  size_mode: SIZE_MODE_MANUAL
+  custom_type: 0
+  enabled: true
+  visible: true
+  material: ""
+}
+nodes {
+  position {
+    x: 1.0
+    y: 1.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 56.0
+    y: 18.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 0.231
+    y: 0.231
+    z: 0.231
+    w: 1.0
+  }
+  type: TYPE_BOX
+  blend_mode: BLEND_MODE_ALPHA
+  texture: ""
+  id: "grey-name-inline"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  pivot: PIVOT_SW
+  adjust_mode: ADJUST_MODE_FIT
+  parent: "grey-name-outline"
+  layer: ""
+  inherit_alpha: true
+  slice9 {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+  clipping_mode: CLIPPING_MODE_NONE
+  clipping_visible: true
+  clipping_inverted: false
+  alpha: 1.0
+  template_node_child: false
+  size_mode: SIZE_MODE_MANUAL
+  custom_type: 0
+  enabled: true
+  visible: true
+  material: ""
+}
+nodes {
+  position {
+    x: 3.0
+    y: 2.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 0.03905
+    y: 0.03875
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 200.0
+    y: 100.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 0.824
+    y: 0.851
+    z: 0.867
+    w: 1.0
+  }
+  type: TYPE_TEXT
+  blend_mode: BLEND_MODE_ALPHA
+  text: "GREY NAMES\n"
+  "ARE FROM\n"
+  "WEB PLAYERS"
+  font: "pixel-font"
+  id: "grey-name-txt"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  pivot: PIVOT_SW
+  outline {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  shadow {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  adjust_mode: ADJUST_MODE_FIT
+  line_break: false
+  parent: "grey-name-outline"
+  layer: ""
+  inherit_alpha: true
+  alpha: 1.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
+  template_node_child: false
+  text_leading: 1.0
+  text_tracking: 0.0
+  custom_type: 0
+  enabled: true
+  visible: true
+  material: ""
+}
+nodes {
+  position {
+    x: 166.0
+    y: 8.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 58.0
+    y: 20.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 0.412
+    y: 0.416
+    z: 0.416
+    w: 1.0
+  }
+  type: TYPE_BOX
+  blend_mode: BLEND_MODE_ALPHA
+  texture: ""
+  id: "white-name-outline"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  pivot: PIVOT_SW
+  adjust_mode: ADJUST_MODE_FIT
+  layer: ""
+  inherit_alpha: true
+  slice9 {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+  clipping_mode: CLIPPING_MODE_NONE
+  clipping_visible: true
+  clipping_inverted: false
+  alpha: 1.0
+  template_node_child: false
+  size_mode: SIZE_MODE_MANUAL
+  custom_type: 0
+  enabled: true
+  visible: true
+  material: ""
+}
+nodes {
+  position {
+    x: 1.0
+    y: 1.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 56.0
+    y: 18.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 0.231
+    y: 0.231
+    z: 0.231
+    w: 1.0
+  }
+  type: TYPE_BOX
+  blend_mode: BLEND_MODE_ALPHA
+  texture: ""
+  id: "white-name-inline"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  pivot: PIVOT_SW
+  adjust_mode: ADJUST_MODE_FIT
+  parent: "white-name-outline"
+  layer: ""
+  inherit_alpha: true
+  slice9 {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+  clipping_mode: CLIPPING_MODE_NONE
+  clipping_visible: true
+  clipping_inverted: false
+  alpha: 1.0
+  template_node_child: false
+  size_mode: SIZE_MODE_MANUAL
+  custom_type: 0
+  enabled: true
+  visible: true
+  material: ""
+}
+nodes {
+  position {
+    x: 3.0
+    y: 2.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 0.03905
+    y: 0.03875
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 200.0
+    y: 100.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 0.824
+    y: 0.851
+    z: 0.867
+    w: 1.0
+  }
+  type: TYPE_TEXT
+  blend_mode: BLEND_MODE_ALPHA
+  text: "WHITE NAMES\n"
+  "ARE FROM\n"
+  "DOWNLOADS"
+  font: "pixel-font"
+  id: "white-name-txt"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  pivot: PIVOT_SW
+  outline {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  shadow {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  adjust_mode: ADJUST_MODE_FIT
+  line_break: false
+  parent: "white-name-outline"
+  layer: ""
+  inherit_alpha: true
+  alpha: 1.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
+  template_node_child: false
+  text_leading: 1.0
+  text_tracking: 0.0
+  custom_type: 0
+  enabled: true
+  visible: true
+  material: ""
+}
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT
 max_nodes: 1024

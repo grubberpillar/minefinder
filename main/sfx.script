@@ -9,11 +9,11 @@ function init(self)
 					"button2-release", "button1-release-delay", "pencil-check", "dig-sugar", "dig-barley", 
 	--						18				19			20			21		22			23		24		25
 					"dig-barley-heavy", "switch", "bubble-wrap", "door", "handbrake", "paper", "bomb", "notif", 
-	--					26			27				28
-					"hiss-short", "hiss-long", "door-close"}
+	--					26			27				28				29
+					"hiss-short", "hiss-long", "door-close", "splashscreen"}
 
-	--				  1  2   3  4  5  6  7  8  9 10 11 12 13 14 15  16 17 18 19 20 21 22 23 24 25 26 27 28
-	self.sound_num = {5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3, 5, 10, 5, 5, 4, 5, 5, 5, 4, 5, 1, 1, 1, 1}
+	--				  1  2   3  4  5  6  7  8  9 10 11 12 13 14 15  16 17 18 19 20 21 22 23 24 25 26 27 28 29
+	self.sound_num = {5, 5, 10, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3, 5, 10, 5, 5, 4, 5, 5, 5, 4, 5, 1, 1, 1, 1, 6}
 end
 
 function on_message(self, message_id, message, sender)

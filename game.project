@@ -36,7 +36,8 @@ max_instances = 2048
 app_icon = /assets/minefinder-win.ico
 
 [sound]
-max_component_count = 128
+max_component_count = 256
+max_sound_data = 256
 
 [html5]
 show_made_with_defold = 0
