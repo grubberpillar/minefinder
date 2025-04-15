@@ -21101,7 +21101,7 @@ nodes {
   "\n"
   "Downloading the\n"
   "full game on\n"
-  "````~~`` or\n"
+  "````~~`` \n"
   "trivializes this."
   font: "pixel-font"
   id: "saving-txt2"
@@ -21169,7 +21169,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "ITCH.IO ``~~STEAM"
+  text: "ITCH.IO "
   font: "pixel-font"
   id: "saving-txt-highlights"
   xanchor: XANCHOR_NONE
