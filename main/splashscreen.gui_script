@@ -53,8 +53,8 @@ function update(self, dt)
 			msg.post("/zoom#minefinder", "black-gone")
 		elseif not self.logo_started and self.time_alive >= 1.5 then
 			self.logo_started = true
-			local rand = 0
-			while rand ~= 14 and rand ~= 24 and rand ~= 9 do
+			local rand = 14
+			while rand == 14 or rand == 24 or rand == 9 do
 				rand = math.random(25)
 			end
 			msg.post("/sfx#sfx", "quick_play", {sound = rand})

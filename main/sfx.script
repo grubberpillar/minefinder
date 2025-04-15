@@ -209,5 +209,12 @@ function on_message(self, message_id, message, sender)
 			local rand = math.random(1)
 			sound.play("/hiss-long#hiss-long-"..rand, {gain = l_data.settings.sfx_slider/5})
 		end
+	elseif message_id == hash("splashscreen") then
+		if message.num then
+			sound.play("/splashscreen#splashscreen-"..message.num, {gain = l_data.settings.sfx_slider/5})
+		else
+			local rand = math.random(6)
+			sound.play("/splashscreen#splashscreen-"..rand, {gain = l_data.settings.sfx_slider/5})
+		end
 	end
 end

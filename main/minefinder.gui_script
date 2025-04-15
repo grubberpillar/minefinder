@@ -429,8 +429,8 @@ local function handle_response(self, id, response)
 			flash_world = false
 		elseif set_hs and set_hs <= l_data.highscore[l_data.diff] then
 			flash_world = false
-		elseif l_data.os == "web" and l_data.web_hs_storage[l_data.diff] and l_data.highscore[l_data.diff] and l_data.highscore[l_data.diff] >= l_data.web_hs_storage[l_data.diff] then
-			flash_world = false
+		-- elseif l_data.os == "web" and l_data.web_hs_storage[l_data.diff] and l_data.highscore[l_data.diff] and l_data.highscore[l_data.diff] >= l_data.web_hs_storage[l_data.diff] then
+		-- 	flash_world = false
 		end
 
 		if flash_world then

@@ -1838,12 +1838,12 @@ function on_input(self, action_id, action)
 -- 		print("debug shift", l_data.debug_shift)
 -- 	end
 -- 
--- 	if action.pressed and hash_is_num(action_id) then --typing numbers
--- 		local num_type = hash_to_num(action_id)
--- 		if num_type < 6 then
--- 			-- msg.post("/sfx#sfx", "handbrake", {num = num_type})
--- 		end
+-- if action.pressed and hash_is_num(action_id) then --typing numbers
+-- 	local num_type = hash_to_num(action_id)
+-- 	if num_type < 7 then
+-- 		msg.post("/sfx#sfx", "splashscreen", {num = num_type})
 -- 	end
+-- end
 
 	-- if action.released and hash_is_num(action_id) then --typing numbers
 	-- 	local num_type = hash_to_num(action_id)
