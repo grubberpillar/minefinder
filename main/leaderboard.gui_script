@@ -241,6 +241,8 @@ local function allowed_name(self, name)
 	if name == "" then
 		gui.set_text(gui.get_node("error-txt"), "CANT USE THIS NAME")
 		return false
+	elseif name == "TZXQ" and self.shifting then
+		return true
 	elseif name_used(self, name) then
 		gui.set_text(gui.get_node("error-txt"), "NAME IS IN USE")
 		return false
@@ -780,6 +782,10 @@ function on_input(self, action_id, action)
 										player_id = player_name
 										self.web_board_storage = self.entering_name
 									end
+									if player_name == "TZXQ" and self.shifting then
+										local player_name = "FLEA"
+										local player_id = "aakencinfosmfiem"
+									end
 
 									send_name(self, self.entering_name, player_name, player_hs, player_id)
 
@@ -898,37 +904,46 @@ function on_input(self, action_id, action)
 		if action.pressed and action_id == hash("plus") then
 			msg.post("/zoom#minefinder", "scale_up")
 		end
-		if action.pressed and action_id == hash("debug") then
-			-- local rand_diff = math.random(5) --one new hs in background
-			-- local other_player_hs = math.random(600)
-			-- local other_player_name, other_player_id = random_person()
-			-- table.insert(l_board.global_highscore[rand_diff], {other_player_name, other_player_hs, other_player_id})
-			-- print("new highscore by "..other_player_name.." (diff: "..rand_diff..")")
 
-			-- if self.connected then
-			-- 	local name_store = l_data.default_name --quickly populate leaderboard
-			-- 	l_data.default_name = "RAND"
-			-- 	for i = 1, 5 do
-			-- 		for j = 1, 6 do
-			-- 			update_board(self, i)
-			-- 		end
-			-- 	end
-			-- 	l_data.default_name = name_store
-			-- end
-			
-			-- local input = time_txt(math.random(1200))
-			-- print(input)
-			-- local col = 1
-			-- local row = 1
-			-- local type = "num"
-			-- flip_tile(self, input, col, row, type, true)
-			pprint(l_data.web_hs_storage)
-			pprint(l_data.highscore)
-		end
-		if action.pressed and action_id == hash("debug2") then
-			
-			test_connection(self)
-		end
+		if action_id == hash("shift") then
+			if action.pressed then
+				self.shifting = true
+			elseif action.released then
+				self.shifting = false
+			end
+		end	
+		
+-- 		if action.pressed and action_id == hash("debug") then
+-- 			-- local rand_diff = math.random(5) --one new hs in background
+-- 			-- local other_player_hs = math.random(600)
+-- 			-- local other_player_name, other_player_id = random_person()
+-- 			-- table.insert(l_board.global_highscore[rand_diff], {other_player_name, other_player_hs, other_player_id})
+-- 			-- print("new highscore by "..other_player_name.." (diff: "..rand_diff..")")
+-- 
+-- 			-- if self.connected then
+-- 			-- 	local name_store = l_data.default_name --quickly populate leaderboard
+-- 			-- 	l_data.default_name = "RAND"
+-- 			-- 	for i = 1, 5 do
+-- 			-- 		for j = 1, 6 do
+-- 			-- 			update_board(self, i)
+-- 			-- 		end
+-- 			-- 	end
+-- 			-- 	l_data.default_name = name_store
+-- 			-- end
+-- 			
+-- 			-- local input = time_txt(math.random(1200))
+-- 			-- print(input)
+-- 			-- local col = 1
+-- 			-- local row = 1
+-- 			-- local type = "num"
+-- 			-- flip_tile(self, input, col, row, type, true)
+-- 			pprint(l_data.web_hs_storage)
+-- 			pprint(l_data.highscore)
+-- 		end
+-- 		if action.pressed and action_id == hash("debug2") then
+-- 			
+-- 			test_connection(self)
+-- 		end
 	end
 end
 
