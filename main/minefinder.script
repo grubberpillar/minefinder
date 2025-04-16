@@ -126,7 +126,7 @@ local function load_game(self)
 				end
 			end
 
-			msg.post(".", "set_theme", {theme = data.gamedata.theme, startup = true})
+			msg.post(".", "set_theme", {theme = self.theme, startup = true})
 
 			msg.post("/gui#minefinder", "load_game", {theme = self.theme, anims_on = num_anims_on, anims = stripped_anims})
 			msg.post("/anims#anims", "load_game", {anims = stripped_anims})

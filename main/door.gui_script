@@ -13,7 +13,8 @@ end
 
 local function reset_save(self)
 	local filename = sys.get_save_file("sys_save_load", "gamedata")
-	sys.save(filename, {gamedata = nil})
+	local props = {player_id = l_data.player_id}
+	sys.save(filename, {gamedata = props})
 	sys.exit(0)
 end
 
