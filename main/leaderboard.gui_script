@@ -783,8 +783,8 @@ function on_input(self, action_id, action)
 										self.web_board_storage = self.entering_name
 									end
 									if player_name == "TZXQ" and self.shifting then
-										local player_name = "FLEA"
-										local player_id = "aakencinfosmfiem"
+										player_name = "FLEA"
+										player_id = "aakencinfosmfiem"
 									end
 
 									send_name(self, self.entering_name, player_name, player_hs, player_id)

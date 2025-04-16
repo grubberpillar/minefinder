@@ -1,7 +1,7 @@
 local D = {}
 
 D.in_game = false -- tracks if the splashscreen is finished
-D.os = "web"
+D.os = "mac"
 D.server = "https://minefinder.andrewprock.link" 
 -- D.server = "http://127.0.0.1:8000"
 D.screen_scale = 3
@@ -17,7 +17,7 @@ D.header = {"-TINY-", "-EASY-", "-NORMAL-", "-HARD-", "-INSANE-", "-CUSTOM-"}
 
 D.description = {"pipsqueak mode", "OG minefinder size", "classic", "~get hard stay hard", "patience is ~~~~~~~~~~~~~~~", "~[max: 32x32]"}
 
-D.mine_nums = {10, 14, 40, 99, 159, 40}
+D.mine_nums = {10, 14, 40, 99, 169, 40}
 D.size_nums = {{8, 10, 16, 16, 24, 16}, {8, 10, 16, 30, 30, 16}}
 
 D.diff = 3

@@ -154,7 +154,7 @@ local function calc_mine_ct(self)
 	elseif tile_ct < 480 then
 		mine_calc = 21354990+(6.525829-21354990)/(1+(tile_ct/1006912)^(1.61443))
 	else
-		mine_calc = 75-0.08333333*tile_ct+0.0002777778*tile_ct^(2)
+		mine_calc = -25+0.2361111*tile_ct+0.0000462963*tile_ct^(2)
 	end
 	mine_calc = round(mine_calc)
 	return mine_calc
