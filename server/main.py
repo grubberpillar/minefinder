@@ -40,12 +40,26 @@ def update_csv():
                 for j in range(len(lb_sorted[i])):
                     csvwriter.writerow([(i+1),  lb_sorted[i][j][1], lb_sorted[i][j][0], lb_sorted[i][j][2]])
 
+def truncate_lb(lb_arr):
+    lb_fin = [[] for i in range(5)]
+    for i in range(5):
+        j = 0
+        while j < len(lb_arr[i]) and j < 10:
+            lb_fin[i] = lb_arr[i][:10]
+            j = j + 1
+    return lb_fin
+
 @app.get("/test_connection")
 def test():
     return True
 
 @app.get("/lb_sort") #returns lb_sorted
 def lbsort():
+    lb_top10 = truncate_lb(lb_sorted)
+    return {"leaderboard":lb_top10}
+
+@app.get("/lb_full") #returns full lb_sorted
+def lbfull():
     return {"leaderboard":lb_sorted}
 
 @app.put("/save/{lb_num}/{name}/{time}/{player_id}")
@@ -77,18 +91,17 @@ def save_lb(lb_num: int, name: str, time: int, player_id: str):
     if player_found and not repeat_loc == -1:
         lb_sorted[lb_num].pop(repeat_loc)
 
-    while len(lb_sorted[lb_num]) > 10:
-        lb_sorted[lb_num].pop(10)
-
     update_csv()
-    return {"leaderboard":lb_sorted}
+    lb_top10 = truncate_lb(lb_sorted)
+    return {"leaderboard":lb_top10}
 
 @app.put("/clear")
 def clear_lb():
     global lb_sorted
     lb_sorted = [[] for i in range(5)]
     update_csv()
-    return {"leaderboard":lb_sorted}
+    lb_top10 = truncate_lb(lb_sorted)
+    return {"leaderboard":lb_top10}
 
 @app.put("/rmv/{lb_num}/{score_num}")
 def rmv_score(lb_num: int, score_num: int):
@@ -96,7 +109,9 @@ def rmv_score(lb_num: int, score_num: int):
     removed = lb_sorted[lb_num].pop(score_num)
     index = {"leaderboard": lb_num, "rank": score_num}
     update_csv()
-    return {"leaderboard":lb_sorted, "rmv_score":removed, "rmv_index":index}
+    lb_top10 = truncate_lb(lb_sorted)
+
+    return {"leaderboard":lb_top10, "rmv_score":removed, "rmv_index":index}
 
 
 # @app.put("/scores/{item_id}")

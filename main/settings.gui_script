@@ -939,9 +939,9 @@ function on_input(self, action_id, action)
 			msg.post("/zoom#minefinder", "scale_up")
 		end
 		
--- 		if action.pressed and action_id == hash("debug") then
--- 			msg.post("/zoom#minefinder", "debug")
--- 		end
+-- 	if action.pressed and action_id == hash("debug") then
+-- 		print(l_data.settings.profanity)
+-- 	end
 -- 
 -- 
 -- 		if action_id == hash("debug2") and action.pressed then

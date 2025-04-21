@@ -147,6 +147,9 @@ local function profane_check(str)
 			end
 			return cleanstr
 		end
+		-- print("profanity rmv"..str)
+	else
+		-- print("profanity")
 	end
 	return str
 end
@@ -460,8 +463,6 @@ local function handle_response(self, id, response)
 	elseif response.response == "true" then
 		leaderboard_bootup(self) --https://minefinder.andrewprock.link
 		http.request(l_data.server.."/lb_sort", "GET", handle_response)
-		http.request(l_data.server.."/profanity", "GET", handle_response)
-		http.request(l_data.server.."/banned", "GET", handle_response)
 	else
 		local data = json.decode(response.response)
 		if data.leaderboard then
@@ -633,6 +634,8 @@ function on_message(self, message_id, message, sender)
 
 
 		test_connection(self)
+		http.request(l_data.server.."/profanity", "GET", handle_response)
+		http.request(l_data.server.."/banned", "GET", handle_response)
 	elseif message_id == hash("disable") then
 		msg.post(".", "release_input_focus")
 		if self.entering_name then
